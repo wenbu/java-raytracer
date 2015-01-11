@@ -11,11 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.jscience.mathematics.number.Float64;
-import org.jscience.mathematics.number.Real;
-import org.jscience.mathematics.vector.Float64Vector;
-import org.jscience.mathematics.vector.Vector;
-
 import camera.Camera;
 import raytracer.Raytracer;
 import raytracer.impl.SimpleRaytracer;
