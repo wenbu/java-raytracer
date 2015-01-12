@@ -5,18 +5,13 @@ public class VectorMath
 {
     public static Direction normalized(Direction v)
     {
-        return v.divide(getLength(v));
-    }
-
-    public static double getLength(Direction v)
-    {
-        double[] vector = v.getVector();
-
-        double x = vector[0];
-        double y = vector[1];
-        double z = vector[2];
-
-        return getLength(x, y, z);
+        Direction n = v.divide(v.length());
+        if (n.length() > 1.1)
+        {
+            System.out.println(v);
+            System.out.println(n);
+        }
+        return n;
     }
 
     static double getLength(double x, double y, double z)
@@ -26,10 +21,12 @@ public class VectorMath
 
     static double dotProduct(double[] v1, double[] v2)
     {
-        if (v1.length != 4 || v2.length != 4)
-            throw new IllegalArgumentException("array size is not 4");
+        if (v1.length != 3 || v2.length != 3)
+            throw new IllegalArgumentException("array size is not 3");
 
-        return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2] + v1[3] * v2[3];
+        return v1[0] * v2[0] +
+               v1[1] * v2[1] +
+               v1[2] * v2[2];
     }
 
     /*
@@ -52,11 +49,11 @@ public class VectorMath
 
     static double[] add(double[] v1, double[] v2)
     {
-        if (v1.length != 4 || v2.length != 4)
-            throw new IllegalArgumentException("array size is not 4");
+        if (v1.length != v2.length)
+            throw new IllegalArgumentException("array sizes do not match");
 
-        double[] sum = new double[4];
-        for (int i = 0; i < 4; i++)
+        double[] sum = new double[v1.length];
+        for (int i = 0; i < v1.length; i++)
         {
             sum[i] = v1[i] + v2[i];
         }
@@ -66,11 +63,11 @@ public class VectorMath
 
     static double[] subtract(double[] v1, double[] v2)
     {
-        if (v1.length != 4 || v2.length != 4)
-            throw new IllegalArgumentException("array size is not 4");
+        if (v1.length != v2.length)
+            throw new IllegalArgumentException("array sizes do not match");
 
-        double[] difference = new double[4];
-        for (int i = 0; i < 4; i++)
+        double[] difference = new double[v1.length];
+        for (int i = 0; i < v1.length; i++)
         {
             difference[i] = v1[i] - v2[i];
         }
@@ -80,11 +77,8 @@ public class VectorMath
 
     static double[] opposite(double[] v)
     {
-        if (v.length != 4)
-            throw new IllegalArgumentException("array size is not 4");
-
-        double[] opposite = new double[4];
-        for (int i = 0; i < 4; i++)
+        double[] opposite = new double[v.length];
+        for (int i = 0; i < v.length; i++)
         {
             opposite[i] = -v[i];
         }
@@ -94,11 +88,8 @@ public class VectorMath
 
     static double[] multiply(double[] v, double s)
     {
-        if (v.length != 4)
-            throw new IllegalArgumentException("array size is not 4");
-
-        double[] product = new double[4];
-        for (int i = 0; i < 4; i++)
+        double[] product = new double[v.length];
+        for (int i = 0; i < v.length; i++)
         {
             product[i] = s * v[i];
         }
@@ -106,6 +97,12 @@ public class VectorMath
         return product;
     }
     
+    /**
+     * 
+     * @param m a 4x4 matrix
+     * @param v a 4-vector (homogeneous)
+     * @return the product mv
+     */
     static double[] multiply(double[][] m, double[] v)
     {
         if (v.length != 4 || m.length != 4)

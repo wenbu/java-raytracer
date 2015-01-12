@@ -61,12 +61,12 @@ public class TransformationMatrix
 
     public Point times(Point other)
     {
-        return new Point(VectorMath.multiply(matrix, other.vector));
+        return new Point(VectorMath.multiply(matrix, other.getHomogeneousForm()));
     }
     
     public Direction times(Direction other)
     {
-        return new Direction(VectorMath.multiply(matrix, other.vector));
+        return new Direction(VectorMath.multiply(matrix, other.getHomogeneousForm()));
     }
 
     public static void main(String[] args)

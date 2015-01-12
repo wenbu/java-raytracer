@@ -7,25 +7,24 @@ public abstract class Vector
     
     protected Vector()
     {
-    	this.vector = new double[4];
+        this.vector = new double[3];
     }
     
     protected Vector(double[] vector)
     {
-    	this();
-        for (int i = 0; i < 4; i++)
+        this();
+        for (int i = 0; i < 3; i++)
         {
-        	this.vector[i] = vector[i];
+            this.vector[i] = vector[i];
         }
     }
     
-    protected Vector(double x, double y, double z, double w)
+    protected Vector(double x, double y, double z)
     {
-    	this();
-    	this.vector[0] = x;
-    	this.vector[1] = y;
-    	this.vector[2] = z;
-    	this.vector[3] = w;
+        this();
+        this.vector[0] = x;
+        this.vector[1] = y;
+        this.vector[2] = z;
     }
     
     double[] getVector()
@@ -35,21 +34,18 @@ public abstract class Vector
     
     public double x()
     {
-    	return vector[0];
+        return vector[0];
     }
     
     public double y()
     {
-    	return vector[1];
+        return vector[1];
     }
     
     public double z()
     {
-    	return vector[2];
+        return vector[2];
     }
     
-    public double w()
-    {
-    	return vector[3];
-    }
+    protected abstract double[] getHomogeneousForm();
 }

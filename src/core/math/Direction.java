@@ -1,16 +1,19 @@
 package core.math;
 
-
 public class Direction extends Vector
 {
+    private double[] homogeneous;
+    
     public Direction(double x, double y, double z)
     {
-        super(x, y, z, 0);
+        super(x, y, z);
+        homogeneous = new double[] {x, y, z, 0};
     }
 
     Direction(double[] vector)
     {
         super(vector);
+        homogeneous = new double[] {vector[0], vector[1], vector[2], 0};
     }
 
     public static Direction getNormalizedDirection(Direction direction)
@@ -29,7 +32,7 @@ public class Direction extends Vector
     }
 
     public static Direction getNormalizedDirection(Point source,
-            Point destination)
+                                                   Point destination)
     {
         return getNormalizedDirection(destination.x() - source.x(),
                                       destination.y() - source.y(),
@@ -75,13 +78,35 @@ public class Direction extends Vector
         double y2 = other.vector[1];
         double z2 = other.vector[2];
 
-        return new Direction(y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1
-                * x2);
+        return new Direction(y1 * z2 - z1 * y2,
+                             z1 * x2 - x1 * z2,
+                             x1 * y2 - y1 * x2);
+    }
+
+    public double length()
+    {
+        return Math.sqrt(lengthSquared());
+    }
+
+    public double lengthSquared()
+    {
+        return x() * x() +
+               y() * y() +
+               z() * z();
     }
 
     public String toString()
     {
-        return String.format("[<%f, %f, %f>, length=%f]", vector[0], vector[1],
-                vector[2], VectorMath.getLength(this));
+        return String.format("[<%f, %f, %f>, length=%f]",
+                             vector[0],
+                             vector[1],
+                             vector[2],
+                             length());
+    }
+
+    @Override
+    protected double[] getHomogeneousForm()
+    {
+        return homogeneous;
     }
 }
