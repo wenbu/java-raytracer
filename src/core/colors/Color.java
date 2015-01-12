@@ -108,4 +108,10 @@ public class Color
         return ( r == otherColor.r ) && ( g == otherColor.g ) &&
                ( b == otherColor.b );
     }
+    
+    @Override
+    public String toString()
+    {
+        return String.format("Color [%.3f, %.3f, %.3f]", r, g, b);
+    }
 }
