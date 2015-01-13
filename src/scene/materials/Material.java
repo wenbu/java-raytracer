@@ -11,5 +11,5 @@ import core.colors.Color;
 public interface Material
 {
     public Color getColor(Set<Light> lights, Intersection intersection,
-            Ray cameraRay, Raytracer raytracer, int traceDepth);
+            Ray cameraRay, Raytracer raytracer);
 }

@@ -24,17 +24,11 @@ public class SimpleRaytracer implements Raytracer
         this.geometry = geometry;
         this.lights = lights;
     }
-
+    
     @Override
     public Color traceRay(Ray ray)
     {
-        return traceRay(ray, 0);
-    }
-    
-    @Override
-    public Color traceRay(Ray ray, int depth)
-    {
-        if (depth >= MAX_DEPTH)
+        if (ray.getDepth() >= MAX_DEPTH)
             return Colors.BLACK;
         
         Intersection closestIntersection = getClosestIntersection(ray);
@@ -44,7 +38,7 @@ public class SimpleRaytracer implements Raytracer
         {
             Material material = closestIntersection.getMaterial();
 
-            color = material.getColor(lights, closestIntersection, ray, this, depth);
+            color = material.getColor(lights, closestIntersection, ray, this);
         }
         return color;
     }
@@ -93,7 +87,7 @@ public class SimpleRaytracer implements Raytracer
     		
     		double distance = intersection.getDistance();
     		
-    		if (distance < 1.0e-5 || distance > ray.getMaxT())
+    		if (distance < ray.getMinT() || distance > ray.getMaxT())
     			continue;
     		return true;
     	}

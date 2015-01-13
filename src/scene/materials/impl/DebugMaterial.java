@@ -22,8 +22,7 @@ public class DebugMaterial implements Material
     public Color getColor(Set<Light> lights,
                           Intersection intersection,
                           Ray cameraRay,
-                          Raytracer raytracer,
-                          int traceDepth)
+                          Raytracer raytracer)
     {
         return color;
     }

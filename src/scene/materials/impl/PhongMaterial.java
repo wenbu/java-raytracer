@@ -39,8 +39,7 @@ public class PhongMaterial implements Material
     public Color getColor(Set<Light> lights,
                           Intersection intersection,
                           Ray cameraRay,
-                          Raytracer raytracer,
-                          int traceDepth)
+                          Raytracer raytracer)
     {
         Set<Color> colorsPerLight = new HashSet<>();
 
@@ -67,8 +66,7 @@ public class PhongMaterial implements Material
                 color.add(getReflectionTerm(cameraRay,
                                             intersection.getPosition(),
                                             surfaceNormal,
-                                            raytracer,
-                                            traceDepth));
+                                            raytracer));
             }
             color.divideBy(lightRays.size());
             colorsPerLight.add(color);
@@ -122,16 +120,16 @@ public class PhongMaterial implements Material
     private Color getReflectionTerm(Ray cameraRay,
                                     Point point,
                                     Direction normal,
-                                    Raytracer raytracer,
-                                    int traceDepth)
+                                    Raytracer raytracer)
     {
         if (reflectionColor.equals(Colors.BLACK))
             return Colors.BLACK;
         Direction cameraDirection = cameraRay.getDirection();
         Direction reflectedCameraDirection = getReflectionVector(cameraDirection,
                                                                  normal).opposite();
-        Ray reflectedRay = new Ray(point, reflectedCameraDirection);
-        Color reflectionColor = raytracer.traceRay(reflectedRay, traceDepth + 1);
+        Ray reflectedRay = new Ray(point, reflectedCameraDirection,
+                                   cameraRay, 1e-5, Double.MAX_VALUE);
+        Color reflectionColor = raytracer.traceRay(reflectedRay);
         return reflectionColor.times(this.reflectionColor);
     }
 
