@@ -9,6 +9,11 @@ public class Direction extends Vector
         super(x, y, z);
         homogeneous = new double[] {x, y, z, 0};
     }
+    
+    public Direction(Normal normal)
+    {
+        this(normal.vector);
+    }
 
     Direction(double[] vector)
     {
@@ -68,6 +73,11 @@ public class Direction extends Vector
     {
         return VectorMath.dotProduct(vector, other.vector);
     }
+    
+    public double dot(Normal other)
+    {
+        return VectorMath.dotProduct(vector, other.vector);
+    }
 
     public Direction cross(Direction other)
     {
@@ -97,7 +107,7 @@ public class Direction extends Vector
 
     public String toString()
     {
-        return String.format("[<%f, %f, %f>, length=%f]",
+        return String.format("Direction [<%f, %f, %f>, length=%f]",
                              vector[0],
                              vector[1],
                              vector[2],
