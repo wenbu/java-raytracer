@@ -97,6 +97,46 @@ public class VectorMath
         return product;
     }
     
+    /*
+     * Operators that modify an existing double[].
+     */
+    
+    /**
+     * Component-wise addition of v2 to v1.
+     * The length of v2 must be at least that of v1.
+     */
+    static void plusEquals(double[] v1, double[] v2)
+    {
+        if (!(v2.length >= v1.length))
+        {
+            throw new IllegalArgumentException("v2 is too short for v1: "+v1.length+
+                                               " vs "+v2.length);
+        }
+        
+        for (int i =  0; i < v1.length; i++)
+        {
+            v1[i] += v2[i];
+        }
+    }
+    
+    /**
+     * Component-wise addition of v2 to v1.
+     * The length of v2 must be at least that of v1.
+     */
+    static void minusEquals(double[] v1, double[] v2)
+    {
+        if (!(v2.length >= v1.length))
+        {
+            throw new IllegalArgumentException("v2 is too short for v1: "+v1.length+
+                                               " vs "+v2.length);
+        }
+        
+        for (int i =  0; i < v1.length; i++)
+        {
+            v1[i] -= v2[i];
+        }
+    }
+    
     /**
      * 
      * @param m a 4x4 matrix
