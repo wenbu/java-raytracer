@@ -27,7 +27,7 @@ public abstract class Vector
         this.vector[2] = z;
     }
     
-    double[] getVector()
+    public double[] getVector()
     {
         return vector;
     }

@@ -47,7 +47,7 @@ public class VectorMath
      * Operators that return a new double[].
      */
 
-    static double[] add(double[] v1, double[] v2)
+    public static double[] add(double[] v1, double[] v2)
     {
         if (v1.length != v2.length)
             throw new IllegalArgumentException("array sizes do not match");
@@ -61,7 +61,7 @@ public class VectorMath
         return sum;
     }
 
-    static double[] subtract(double[] v1, double[] v2)
+    public static double[] subtract(double[] v1, double[] v2)
     {
         if (v1.length != v2.length)
             throw new IllegalArgumentException("array sizes do not match");
@@ -75,7 +75,7 @@ public class VectorMath
         return difference;
     }
 
-    static double[] opposite(double[] v)
+    public static double[] opposite(double[] v)
     {
         double[] opposite = new double[v.length];
         for (int i = 0; i < v.length; i++)
@@ -86,7 +86,7 @@ public class VectorMath
         return opposite;
     }
 
-    static double[] multiply(double[] v, double s)
+    public static double[] multiply(double[] v, double s)
     {
         double[] product = new double[v.length];
         for (int i = 0; i < v.length; i++)
@@ -105,7 +105,7 @@ public class VectorMath
      * Component-wise addition of v2 to v1.
      * The length of v2 must be at least that of v1.
      */
-    static void plusEquals(double[] v1, double[] v2)
+    public static void plusEquals(double[] v1, double[] v2)
     {
         if (!(v2.length >= v1.length))
         {
@@ -123,7 +123,7 @@ public class VectorMath
      * Component-wise addition of v2 to v1.
      * The length of v2 must be at least that of v1.
      */
-    static void minusEquals(double[] v1, double[] v2)
+    public static void minusEquals(double[] v1, double[] v2)
     {
         if (!(v2.length >= v1.length))
         {
@@ -143,7 +143,7 @@ public class VectorMath
      * @param v a 4-vector (homogeneous)
      * @return the product mv
      */
-    static double[] multiply(double[][] m, double[] v)
+    public static double[] multiply(double[][] m, double[] v)
     {
         if (v.length != 4 || m.length != 4)
             throw new IllegalArgumentException("array size is not 4");
