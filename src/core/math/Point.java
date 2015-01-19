@@ -15,6 +15,11 @@ public class Point extends Vector
         super(x, y, z);
         homogeneous = new double[] { x, y, z, 1 };
     }
+    
+    public Point(Point p)
+    {
+        this(p.x(), p.y(), p.z());
+    }
 
     Point(double[] vector)
     {
