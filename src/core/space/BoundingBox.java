@@ -17,8 +17,8 @@ public class BoundingBox
 
     public BoundingBox()
     {
-        minPoint = Point.POSITIVE_INFINITY;
-        maxPoint = Point.NEGATIVE_INFINITY;
+        minPoint = new Point(Point.POSITIVE_INFINITY);
+        maxPoint = new Point(Point.NEGATIVE_INFINITY);
     }
 
     public BoundingBox(Point p)
