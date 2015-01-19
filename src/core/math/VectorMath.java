@@ -32,6 +32,16 @@ public class VectorMath
     /*
      * Copy initializers
      */
+    
+    static double[] copy(double[] v)
+    {
+        double[] copy = new double[v.length];
+        for (int i = 0; i < v.length; i++)
+        {
+            copy[i] = v[i];
+        }
+        return copy;
+    }
 
     static double[][] copy(double[][] m)
     {
@@ -95,6 +105,20 @@ public class VectorMath
         }
 
         return product;
+    }
+    
+    public static double[][] inverse(double[][] m)
+    {
+        // TODO
+        throw new UnsupportedOperationException("matrix inverse not yet implemented");
+    }
+    
+    public static double[][] transpose(double[][] m)
+    {
+        return new double[][] { { m[0][0], m[1][0], m[2][0], m[3][0] },
+                                { m[0][1], m[1][1], m[2][1], m[3][1] },
+                                { m[0][2], m[1][2], m[2][2], m[3][2] },
+                                { m[0][3], m[1][3], m[2][3], m[3][3] } };
     }
     
     /*

@@ -9,16 +9,25 @@ public class TransformationMatrix
                              { 0,0,1,0 },
                              { 0,0,0,1 } };
     
-    private double[][] matrix;
+    private final double[][] matrix;
+    private final double[][] inverse;
 
     public TransformationMatrix()
     {
         matrix = VectorMath.copy(IDENTITY);
+        inverse = VectorMath.copy(IDENTITY);
     }
 
-    TransformationMatrix(double[][] matrix)
+    public TransformationMatrix(double[][] matrix)
     {
         this.matrix = matrix;
+        inverse = VectorMath.inverse(matrix);
+    }
+    
+    public TransformationMatrix(double[][] matrix, double[][] inverse)
+    {
+        this.matrix = matrix;
+        this.inverse = inverse;
     }
 
     public static TransformationMatrix getTranslation(double x,
@@ -29,7 +38,28 @@ public class TransformationMatrix
                                              { 0,1,0,y },
                                              { 0,0,1,z },
                                              { 0,0,0,1 } };
-        return new TransformationMatrix(matrix);
+        
+        double[][] inverse = new double[][] { { 1,0,0,-x },
+                                              { 0,1,0,-y },
+                                              { 0,0,1,-z },
+                                              { 0,0,0, 1 } };
+        
+        return new TransformationMatrix(matrix, inverse);
+    }
+    
+    public static TransformationMatrix getScale(double x, double y, double z)
+    {
+        double[][] matrix = new double[][] { { x,0,0,0 },
+                                             { 0,y,0,0 },
+                                             { 0,0,z,0 },
+                                             { 0,0,0,1 } };
+        
+        double[][] inverse = new double[][] { { 1.0/x,     0,     0, 0 },
+                                              {     0, 1.0/y,     0, 0 },
+                                              {     0,     0, 1.0/z, 0 },
+                                              {     0,     0,     0, 1 } };
+        
+        return new TransformationMatrix(matrix, inverse);
     }
 
     public static TransformationMatrix getRotation(double vx, double vy, double vz, double theta)
@@ -51,7 +81,9 @@ public class TransformationMatrix
                                              { myx, myy, myz, 0 },
                                              { mzx, mzy, mzz, 0 },
                                              { 0,   0,   0,   1 } };
-        return new TransformationMatrix(matrix);
+
+        return new TransformationMatrix(matrix, VectorMath.transpose(matrix));
+        // the inverse of a rotation matrix is its transpose
     }
     
     public static TransformationMatrix getRotation(Direction rotationAxis, double rotationAngle)
