@@ -38,12 +38,12 @@ public class BoundingBox
                              Math.max(p1.z(), p2.z()));
     }
 
-    BoundingBox(double minX,
-                double minY,
-                double minZ,
-                double maxX,
-                double maxY,
-                double maxZ)
+    public BoundingBox(double minX,
+                       double minY,
+                       double minZ,
+                       double maxX,
+                       double maxY,
+                       double maxZ)
     {
         minPoint = new Point(minX, minY, minZ);
         maxPoint = new Point(maxX, maxY, maxZ);

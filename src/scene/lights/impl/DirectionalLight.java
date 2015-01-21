@@ -9,7 +9,7 @@ import core.Ray;
 import core.colors.Color;
 import core.math.Direction;
 import core.math.Point;
-import core.math.TransformationMatrix;
+import core.math.Transformation;
 import core.math.VectorMath;
 import scene.lights.Light;
 
@@ -66,11 +66,11 @@ public class DirectionalLight extends Light
 			{
 				// generate random rotation axis perpendicular to normal
 				double rotationAxisRotation = random.nextDouble() * 2 * Math.PI;
-				Direction rotationAxis = TransformationMatrix.getRotation(
-						surfaceNormal, rotationAxisRotation).times(
+				Direction rotationAxis = Transformation.getRotation(
+						surfaceNormal, rotationAxisRotation).transform(
 						surfaceTangent);
-				Direction rayDirection = TransformationMatrix.getRotation(
-						rotationAxis, random.nextDouble() * lightAngle).times(
+				Direction rayDirection = Transformation.getRotation(
+						rotationAxis, random.nextDouble() * lightAngle).transform(
 						this.direction.opposite());
 				lightRays
 						.add(new Ray(intersection.getPosition(), rayDirection));

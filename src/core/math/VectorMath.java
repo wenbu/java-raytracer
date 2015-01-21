@@ -107,6 +107,11 @@ public class VectorMath
         return product;
     }
     
+    public static double[] divide(double[] v, double s)
+    {
+        return multiply(v, 1.0/s);
+    }
+    
     public static double[][] inverse(double[][] m)
     {
         // TODO
@@ -165,7 +170,7 @@ public class VectorMath
      * 
      * @param m a 4x4 matrix
      * @param v a 4-vector (homogeneous)
-     * @return the product mv
+     * @return the product m * v
      */
     public static double[] multiply(double[][] m, double[] v)
     {
@@ -179,6 +184,52 @@ public class VectorMath
             for (int j = 0; j < 4; j++)
             {
                 product[i] += m[i][j] * v[j];
+            }
+        }
+        
+        return product;
+    }
+    
+    /**
+     * 
+     * @param m a 4x4 matrix
+     * @param v a 4-vector (homogeneous)
+     * @return the product mT * v
+     */
+    public static double[] multiplyTranspose(double[][] m, double[] v)
+    {
+        if (v.length != 4 || m.length != 4)
+            throw new IllegalArgumentException("array size is not 4");
+        
+        double[] product = new double[4];
+        for (int i = 0; i < 4; i++)
+        {
+            product[i] = 0;
+            for (int j = 0; j < 4; j++)
+            {
+                product[i] += m[j][i] * v[j];
+            }
+        }
+        
+        return product;
+    }
+    
+    public static double[][] multiply(double[][] a, double[][] b)
+    {
+        if (a.length != 4 || b.length != 4)
+            throw new IllegalArgumentException("array size is not 4");
+        
+        double[][] product = new double[4][4];
+        
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                product[i][j] = 0;
+                for (int k = 0; k < 4; k++)
+                {
+                    product[i][j] += a[i][k] * b[k][j];
+                }
             }
         }
         
