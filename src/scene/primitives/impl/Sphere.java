@@ -6,7 +6,6 @@ import core.Intersection;
 import core.Ray;
 import core.math.Direction;
 import core.math.Point;
-import core.math.VectorMath;
 
 public class Sphere implements Primitive
 {
@@ -48,7 +47,7 @@ public class Sphere implements Primitive
 
         Point intersectionPoint = rayOrigin.plus(rayDirection.times(closer));
 
-        Direction normal = VectorMath.normalized(intersectionPoint.minus(center));
+        Direction normal = Direction.getNormalizedDirection(intersectionPoint.minus(center));
 
         return new Intersection(closer, intersectionPoint, normal, material);
     }

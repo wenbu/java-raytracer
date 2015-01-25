@@ -3,17 +3,6 @@ package core.math;
 
 public class VectorMath
 {
-    public static Direction normalized(Direction v)
-    {
-        Direction n = v.divide(v.length());
-        if (n.length() > 1.1)
-        {
-            System.out.println(v);
-            System.out.println(n);
-        }
-        return n;
-    }
-
     static double getLength(double x, double y, double z)
     {
         return Math.sqrt(x * x + y * y + z * z);

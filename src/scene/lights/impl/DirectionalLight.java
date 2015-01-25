@@ -4,14 +4,13 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import scene.lights.Light;
 import core.Intersection;
 import core.Ray;
 import core.colors.Color;
 import core.math.Direction;
 import core.math.Point;
 import core.math.Transformation;
-import core.math.VectorMath;
-import scene.lights.Light;
 
 public class DirectionalLight extends Light
 {
@@ -27,14 +26,14 @@ public class DirectionalLight extends Light
 	public DirectionalLight(Direction direction, Color color)
 	{
 		super(color);
-		this.direction = VectorMath.normalized(direction);
+		this.direction = Direction.getNormalizedDirection(direction);
 	}
 
 	public DirectionalLight(Direction direction, Color color,
 			int numShadowRays, double lightAngle)
 	{
 		super(color);
-		this.direction = VectorMath.normalized(direction);
+		this.direction = Direction.getNormalizedDirection(direction);
 		this.numRays = numShadowRays;
 		this.lightAngle = lightAngle;
 	}
@@ -43,7 +42,7 @@ public class DirectionalLight extends Light
 			Color diffuseColor, Color specularColor)
 	{
 		super(ambientColor, diffuseColor, specularColor);
-		this.direction = VectorMath.normalized(direction);
+		this.direction = Direction.getNormalizedDirection(direction);
 	}
 
 	@Override
