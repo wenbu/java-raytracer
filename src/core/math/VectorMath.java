@@ -101,10 +101,131 @@ public class VectorMath
         return multiply(v, 1.0/s);
     }
     
+    public static double[][] multiply(double[][] m, double s)
+    {
+        double[][] product = new double[m.length][];
+        for (int i = 0; i < m.length; i++)
+        {
+            product[i] = new double[m[i].length];
+            for (int j = 0; j < m[i].length; j++)
+            {
+                product[i][j] = m[i][j] * s;
+            }
+        }
+        return product;
+    }
+    
     public static double[][] inverse(double[][] m)
     {
-        // TODO
-        throw new UnsupportedOperationException("matrix inverse not yet implemented");
+        if (!isSquare(m))
+            throw new IllegalArgumentException("matrix is not square");
+        if (m.length == 2)
+            return get2x2inverse(m);
+        else if (m.length == 3)
+            return get3x3inverse(m);
+        else if (m.length == 4)
+            return get4x4inverse(m);
+        else
+            throw new IllegalArgumentException("illegal matrix size: " + m.length);
+    }
+    
+    private static double[][] get2x2inverse(double[][] m)
+    {
+        double determinant = m[0][0] * m[1][1] - m[0][1] * m[1][0];
+        if (determinant == 0)
+            throw new IllegalArgumentException("matrix is not invertible:\n"+matrixToString(m));
+        double inverseDeterminant = 1.0/determinant;
+        
+        return multiply(new double[][] { {  m[1][1], -m[0][1] },
+                                         { -m[1][0],  m[0][0] } },
+                        inverseDeterminant);
+    }
+    
+    private static double[][] get3x3inverse(double[][] m)
+    {
+        double determinant = m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1]) -
+                             m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0]) +
+                             m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+        if (determinant == 0)
+            throw new IllegalArgumentException("matrix is not invertible:\n"+matrixToString(m));
+        
+         double n00 = m[1][1] * m[2][2] - m[1][2] * m[2][1];
+         double n01 = m[0][2] * m[2][1] - m[0][1] * m[2][2];
+         double n02 = m[0][1] * m[1][2] - m[0][2] * m[1][1];
+         
+         double n10 = m[1][2] * m[2][0] - m[1][0] * m[2][2];
+         double n11 = m[0][0] * m[2][2] - m[0][2] * m[2][0];
+         double n12 = m[0][2] * m[1][0] - m[0][0] * m[1][2];
+         
+         double n20 = m[1][0] * m[2][1] - m[1][1] * m[2][0];
+         double n21 = m[0][1] * m[2][0] - m[0][0] * m[2][1];
+         double n22 = m[0][0] * m[1][1] - m[0][1] * m[1][0];
+         
+         return multiply(new double[][] { { n00, n01, n02 },
+                                          { n10, n11, n12 },
+                                          { n20, n21, n22 } },
+                         1.0/determinant);
+    }
+    
+    private static double[][] get4x4inverse(double[][] m)
+    {
+        double det = m[0][3]*m[1][2]*m[2][1]*m[3][0] - m[0][2]*m[1][3]*m[2][1]*m[3][0] -
+                     m[0][3]*m[1][1]*m[2][2]*m[3][0] + m[0][1]*m[1][3]*m[2][2]*m[3][0] +
+                     m[0][2]*m[1][1]*m[2][3]*m[3][0] - m[0][1]*m[1][2]*m[2][3]*m[3][0] -
+                     m[0][3]*m[1][2]*m[2][0]*m[3][1] + m[0][2]*m[1][3]*m[2][0]*m[3][1] +
+                     m[0][3]*m[1][0]*m[2][2]*m[3][1] - m[0][0]*m[1][3]*m[2][2]*m[3][1] -
+                     m[0][2]*m[1][0]*m[2][3]*m[3][1] + m[0][0]*m[1][2]*m[2][3]*m[3][1] +
+                     m[0][3]*m[1][1]*m[2][0]*m[3][2] - m[0][1]*m[1][3]*m[2][0]*m[3][2] -
+                     m[0][3]*m[1][0]*m[2][1]*m[3][2] + m[0][0]*m[1][3]*m[2][1]*m[3][2] +
+                     m[0][1]*m[1][0]*m[2][3]*m[3][2] - m[0][0]*m[1][1]*m[2][3]*m[3][2] -
+                     m[0][2]*m[1][1]*m[2][0]*m[3][3] + m[0][1]*m[1][2]*m[2][0]*m[3][3] +
+                     m[0][2]*m[1][0]*m[2][1]*m[3][3] - m[0][0]*m[1][2]*m[2][1]*m[3][3] -
+                     m[0][1]*m[1][0]*m[2][2]*m[3][3] + m[0][0]*m[1][1]*m[2][2]*m[3][3];
+        if (det == 0)
+            throw new IllegalArgumentException("matrix is not invertible:\n"+matrixToString(m));
+        
+        // ew
+        double n00 = m[1][1]*m[2][2]*m[3][3] + m[1][2]*m[2][3]*m[3][1] + m[1][3]*m[2][1]*m[3][2] -
+                     m[1][1]*m[2][3]*m[3][2] - m[1][2]*m[2][1]*m[3][3] - m[1][3]*m[2][2]*m[3][1];
+        double n01 = m[0][1]*m[2][3]*m[3][2] + m[0][2]*m[2][1]*m[3][3] + m[0][3]*m[2][2]*m[3][1] -
+                     m[0][1]*m[2][2]*m[3][3] - m[0][2]*m[2][3]*m[3][1] - m[0][3]*m[2][1]*m[3][2];
+        double n02 = m[0][1]*m[1][2]*m[3][3] + m[0][2]*m[1][3]*m[3][1] + m[0][3]*m[1][1]*m[3][2] -
+                     m[0][1]*m[1][3]*m[3][2] - m[0][2]*m[1][1]*m[3][3] - m[0][3]*m[1][2]*m[3][1];
+        double n03 = m[0][1]*m[1][3]*m[2][2] + m[0][2]*m[1][1]*m[2][3] + m[0][3]*m[1][2]*m[2][1] -
+                     m[0][1]*m[1][2]*m[2][3] - m[0][2]*m[1][3]*m[2][1] - m[0][3]*m[1][1]*m[2][2];
+        
+        double n10 = m[1][0]*m[2][3]*m[3][2] + m[1][2]*m[2][0]*m[3][3] + m[1][3]*m[2][2]*m[3][0] -
+                     m[1][0]*m[2][2]*m[3][3] - m[1][2]*m[2][3]*m[3][0] - m[1][3]*m[2][0]*m[3][2];
+        double n11 = m[0][0]*m[2][2]*m[3][3] + m[0][2]*m[2][3]*m[3][0] + m[0][3]*m[2][0]*m[3][2] -
+                     m[0][0]*m[2][3]*m[3][2] - m[0][2]*m[2][0]*m[3][3] - m[0][3]*m[2][2]*m[3][0];
+        double n12 = m[0][0]*m[1][3]*m[3][2] + m[0][2]*m[1][0]*m[3][3] + m[0][3]*m[1][2]*m[3][0] -
+                     m[0][0]*m[1][2]*m[3][3] - m[0][2]*m[1][3]*m[3][0] - m[0][3]*m[1][0]*m[3][2];
+        double n13 = m[0][0]*m[1][2]*m[2][3] + m[0][2]*m[1][3]*m[2][0] + m[0][3]*m[1][0]*m[2][2] -
+                     m[0][0]*m[1][3]*m[2][2] - m[0][2]*m[1][0]*m[2][3] - m[0][3]*m[1][2]*m[2][0];
+
+        double n20 = m[1][0]*m[2][1]*m[3][3] + m[1][1]*m[2][3]*m[3][0] + m[1][3]*m[2][0]*m[3][1] -
+                     m[1][0]*m[2][3]*m[3][1] - m[1][1]*m[2][0]*m[3][3] - m[1][3]*m[2][1]*m[3][0];
+        double n21 = m[0][0]*m[2][3]*m[3][1] + m[0][1]*m[2][0]*m[3][3] + m[0][3]*m[2][1]*m[3][0] -
+                     m[0][0]*m[2][1]*m[3][3] - m[0][1]*m[2][3]*m[3][0] - m[0][3]*m[2][0]*m[3][1];
+        double n22 = m[0][0]*m[1][1]*m[3][3] + m[0][1]*m[1][3]*m[3][0] + m[0][3]*m[1][0]*m[3][1] -
+                     m[0][0]*m[1][3]*m[3][1] - m[0][1]*m[1][0]*m[3][3] - m[0][3]*m[1][1]*m[3][0];
+        double n23 = m[0][0]*m[1][3]*m[2][1] + m[0][1]*m[1][0]*m[2][3] + m[0][3]*m[1][1]*m[2][0] -
+                     m[0][0]*m[1][1]*m[2][3] - m[0][1]*m[1][3]*m[2][0] - m[0][3]*m[1][0]*m[2][1];
+        
+        double n30 = m[1][0]*m[2][2]*m[3][1] + m[1][1]*m[2][0]*m[3][2] + m[1][2]*m[2][1]*m[3][0] -
+                     m[1][0]*m[2][1]*m[3][2] - m[1][1]*m[2][2]*m[3][0] - m[1][2]*m[2][0]*m[3][1];
+        double n31 = m[0][0]*m[2][1]*m[3][2] + m[0][1]*m[2][2]*m[3][0] + m[0][2]*m[2][0]*m[3][1] -
+                     m[0][0]*m[2][2]*m[3][1] - m[0][1]*m[2][0]*m[3][2] - m[0][2]*m[2][1]*m[3][0];
+        double n32 = m[0][0]*m[1][2]*m[3][1] + m[0][1]*m[1][0]*m[3][2] + m[0][2]*m[1][1]*m[3][0] -
+                     m[0][0]*m[1][1]*m[3][2] - m[0][1]*m[1][2]*m[3][0] - m[0][2]*m[1][0]*m[3][1];
+        double n33 = m[0][0]*m[1][1]*m[2][2] + m[0][1]*m[1][2]*m[2][0] + m[0][2]*m[1][0]*m[2][1] -
+                     m[0][0]*m[1][2]*m[2][1] - m[0][1]*m[1][0]*m[2][2] - m[0][2]*m[1][1]*m[2][0];
+
+        return multiply(new double[][] { { n00, n01, n02, n03 },
+                                         { n10, n11, n12, n13 },
+                                         { n20, n21, n22, n23 },
+                                         { n30, n31, n32, n33 } },
+                        1.0/det);
     }
     
     public static double[][] transpose(double[][] m)
@@ -163,14 +284,17 @@ public class VectorMath
      */
     public static double[] multiply(double[][] m, double[] v)
     {
-        if (v.length != 4 || m.length != 4)
-            throw new IllegalArgumentException("array size is not 4");
+        if (!isSquare(m))
+            throw new IllegalArgumentException("matrix is not square");
         
-        double[] product = new double[4];
-        for (int i = 0; i < 4; i++)
+        if (m.length != v.length)
+            throw new IllegalArgumentException("dimension mismatch");
+        int d = m.length;
+        double[] product = new double[d];
+        for (int i = 0; i < d; i++)
         {
             product[i] = 0;
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < d; j++)
             {
                 product[i] += m[i][j] * v[j];
             }
@@ -187,14 +311,17 @@ public class VectorMath
      */
     public static double[] multiplyTranspose(double[][] m, double[] v)
     {
-        if (v.length != 4 || m.length != 4)
-            throw new IllegalArgumentException("array size is not 4");
+        if (!isSquare(m))
+            throw new IllegalArgumentException("matrix is not square");
         
-        double[] product = new double[4];
-        for (int i = 0; i < 4; i++)
+        if (m.length != v.length)
+            throw new IllegalArgumentException("dimension mismatch");
+        int d = m.length;
+        double[] product = new double[d];
+        for (int i = 0; i < d; i++)
         {
             product[i] = 0;
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < d; j++)
             {
                 product[i] += m[j][i] * v[j];
             }
@@ -203,19 +330,29 @@ public class VectorMath
         return product;
     }
     
+    /**
+     * Multiplies two square matrices.
+     * @param a
+     * @param b
+     * @return
+     */
     public static double[][] multiply(double[][] a, double[][] b)
     {
-        if (a.length != 4 || b.length != 4)
-            throw new IllegalArgumentException("array size is not 4");
+        if (!isSquare(a) || !isSquare(b))
+            throw new IllegalArgumentException("matrices are not square");
         
-        double[][] product = new double[4][4];
+        if (a.length != b.length)
+            throw new IllegalArgumentException("matrix sizes are not equal");
         
-        for (int i = 0; i < 4; i++)
+        int d = a.length;
+        double[][] product = new double[d][d];
+        
+        for (int i = 0; i < d; i++)
         {
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < d; j++)
             {
                 product[i][j] = 0;
-                for (int k = 0; k < 4; k++)
+                for (int k = 0; k < d; k++)
                 {
                     product[i][j] += a[i][k] * b[k][j];
                 }
@@ -223,5 +360,33 @@ public class VectorMath
         }
         
         return product;
+    }
+    
+    public static boolean isSquare(double[][] m)
+    {
+        int width = m.length;
+        for (int i = 0; i < width; i++)
+        {
+            if (m[i].length != width)
+                return false;
+        }
+        return true;
+    }
+    
+    public static String matrixToString(double[][] m)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < m.length; i++)
+        {
+            sb.append("[ ");
+            for (int j = 0; j < m[i].length; j++)
+            {
+                sb.append(String.format("%.2f", m[i][j]));
+                if (j != m[i].length-1)
+                    sb.append(", ");
+            }
+            sb.append(" ]\n");
+        }
+        return sb.toString();
     }
 }

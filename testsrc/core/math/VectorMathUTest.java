@@ -16,6 +16,7 @@ import test.RepeatRule.Repeat;
 public class VectorMathUTest
 {
     private static final double EPSILON = 1e-6;
+    private static final double EPSILON_LENIENT = 0.1;
     private static final Random random = new Random();
 
     @Rule
@@ -89,98 +90,214 @@ public class VectorMathUTest
     @Repeat(times = 20)
     public void matrixVectorMultiply()
     {
-        double[][] m = getRandomMatrix();
+        double[][] m = getRandom4x4Matrix();
         double[] v = getRandom4Vector();
         double[] product = VectorMath.multiply(m, v);
 
         for (int i = 0; i < 4; i++)
         {
             assertThat(product[i],
-                       is(closeTo(m[i][0] * v[0] +
-                                  m[i][1] * v[1] +
-                                  m[i][2] * v[2] +
-                                  m[i][3] * v[3], EPSILON)));
+                       is(closeTo(m[i][0] * v[0] + m[i][1] * v[1] + m[i][2] *
+                                  v[2] + m[i][3] * v[3], EPSILON)));
         }
     }
-    
+
     @Test
-    @Repeat(times=20)
+    @Repeat(times = 20)
     public void transposeMatrixVectorMultiply()
     {
-        double[][] m = getRandomMatrix();
+        double[][] m = getRandom4x4Matrix();
         double[] v = getRandom4Vector();
         double[] product = VectorMath.multiplyTranspose(m, v);
 
         for (int i = 0; i < 4; i++)
         {
             assertThat(product[i],
-                       is(closeTo(m[0][i] * v[0] +
-                                  m[1][i] * v[1] +
-                                  m[2][i] * v[2] +
-                                  m[3][i] * v[3], EPSILON)));
+                       is(closeTo(m[0][i] * v[0] + m[1][i] * v[1] + m[2][i] *
+                                  v[2] + m[3][i] * v[3], EPSILON)));
         }
     }
-    
+
     @Test
     @Repeat(times = 20)
     public void matrixMultiply()
     {
-        double[][] m1 = getRandomMatrix();
-        double[][] m2 = getRandomMatrix();
+        double[][] m1 = getRandom4x4Matrix();
+        double[][] m2 = getRandom4x4Matrix();
         double[][] product = VectorMath.multiply(m1, m2);
-        
+
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
             {
                 assertThat(product[i][j],
-                           is(closeTo(m1[i][0] * m2[0][j] +
-                                      m1[i][1] * m2[1][j] +
-                                      m1[i][2] * m2[2][j] +
+                           is(closeTo(m1[i][0] * m2[0][j] + m1[i][1] *
+                                      m2[1][j] + m1[i][2] * m2[2][j] +
                                       m1[i][3] * m2[3][j], EPSILON)));
             }
         }
     }
 
+    @Test
+    @Repeat(times = 20)
+    public void matrixInverse2x2()
+    {
+        double[][] m = getRandom2x2Matrix();
+        double[][] inv = VectorMath.inverse(m);
+        
+        double[][] minv = VectorMath.multiply(m, inv);
+        
+        try
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    if (i == j)
+                        assertThat(minv[i][j], 
+                                   is(closeTo(1, EPSILON_LENIENT)));
+                    else
+                        assertThat(minv[i][j],
+                                   is(closeTo(0, EPSILON_LENIENT)));
+                }
+            }
+        }
+        catch(AssertionError e)
+        {
+            System.out.println("no good!");
+            System.out.println(VectorMath.matrixToString(minv));
+            throw e;
+        }
+    }
+    
+    @Test
+    @Repeat(times = 20)
+    public void matrixInverse3x3()
+    {
+        double[][] m = getRandom3x3Matrix();
+        double[][] inv = VectorMath.inverse(m);
+        
+        double[][] minv = VectorMath.multiply(m, inv);
+
+        try
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (i == j)
+                        assertThat(minv[i][j], 
+                                   is(closeTo(1, EPSILON_LENIENT)));
+                    else
+                        assertThat(minv[i][j],
+                                   is(closeTo(0, EPSILON_LENIENT)));
+                }
+            }
+        }
+        catch(AssertionError e)
+        {
+            System.out.println("no good!");
+            System.out.println(VectorMath.matrixToString(minv));
+            throw e;
+        }
+    }
+    
+    @Test
+    @Repeat(times = 20)
+    public void matrixInverse4x4()
+    {
+        double[][] m = getRandom4x4Matrix();
+        double[][] inv = VectorMath.inverse(m);
+        
+        double[][] minv = VectorMath.multiply(m, inv);
+
+        try
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    if (i == j)
+                        assertThat(minv[i][j], 
+                                   is(closeTo(1, EPSILON_LENIENT)));
+                    else
+                        assertThat(minv[i][j],
+                                   is(closeTo(0, EPSILON_LENIENT)));
+                }
+            }
+        }
+        catch(AssertionError e)
+        {
+            System.out.println("no good!");
+            System.out.println(VectorMath.matrixToString(minv));
+            throw e;
+        }
+    }
+    
+    private static double[] getRandom2Vector()
+    {
+        return new double[] { getRandomDouble(),
+                              getRandomDouble() };
+    }
+
     private static double[] getRandom3Vector()
     {
         return new double[] { getRandomDouble(),
-                              getRandomDouble(),
-                              getRandomDouble() };
+                             getRandomDouble(),
+                             getRandomDouble() };
     }
 
     private static double[] getRandom4Vector()
     {
         return new double[] { getRandomDouble(),
-                              getRandomDouble(),
-                              getRandomDouble(),
-                              getRandomDouble() };
+                             getRandomDouble(),
+                             getRandomDouble(),
+                             getRandomDouble() };
     }
 
-    private static double[][] getRandomMatrix()
+    private static double[][] getRandom2x2Matrix()
+    {
+        return new double[][] { { getRandomDouble(), getRandomDouble() },
+                               { getRandomDouble(), getRandomDouble() } };
+    }
+
+    private static double[][] getRandom3x3Matrix()
     {
         return new double[][] { { getRandomDouble(),
-                                  getRandomDouble(),
-                                  getRandomDouble(),
-                                  getRandomDouble() },
-                                { getRandomDouble(),
-                                  getRandomDouble(),
-                                  getRandomDouble(),
-                                  getRandomDouble() },
-                                { getRandomDouble(),
-                                  getRandomDouble(),
-                                  getRandomDouble(),
-                                  getRandomDouble() },
-                                { getRandomDouble(),
-                                  getRandomDouble(),
-                                  getRandomDouble(),
-                                  getRandomDouble() } };
+                                 getRandomDouble(),
+                                 getRandomDouble() },
+                               { getRandomDouble(),
+                                getRandomDouble(),
+                                getRandomDouble() },
+                               { getRandomDouble(),
+                                getRandomDouble(),
+                                getRandomDouble() } };
+    }
+
+    private static double[][] getRandom4x4Matrix()
+    {
+        return new double[][] { { getRandomDouble(),
+                                 getRandomDouble(),
+                                 getRandomDouble(),
+                                 getRandomDouble() },
+                               { getRandomDouble(),
+                                getRandomDouble(),
+                                getRandomDouble(),
+                                getRandomDouble() },
+                               { getRandomDouble(),
+                                getRandomDouble(),
+                                getRandomDouble(),
+                                getRandomDouble() },
+                               { getRandomDouble(),
+                                getRandomDouble(),
+                                getRandomDouble(),
+                                getRandomDouble() } };
     }
 
     private static double getRandomDouble()
     {
-        if (random.nextInt(11) <= 1) // return 0 10% of the time
-            return 0;
+//        if (random.nextInt(11) <= 1) // return 0 10% of the time
+//            return 0;
         double mantissa = -10 + random.nextDouble() * 20; // (-10, 10)
         int exponent = random.nextInt(21) - 10; // (-10, 10)
         return mantissa * Math.pow(10.0, exponent);
