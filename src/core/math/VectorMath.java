@@ -131,7 +131,7 @@ public class VectorMath
     
     private static double[][] get2x2inverse(double[][] m)
     {
-        double determinant = m[0][0] * m[1][1] - m[0][1] * m[1][0];
+        double determinant = get2x2Determinant(m);
         if (determinant == 0)
             throw new IllegalArgumentException("matrix is not invertible:\n"+matrixToString(m));
         double inverseDeterminant = 1.0/determinant;
@@ -143,9 +143,7 @@ public class VectorMath
     
     private static double[][] get3x3inverse(double[][] m)
     {
-        double determinant = m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1]) -
-                             m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0]) +
-                             m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+        double determinant = get3x3Determinant(m);
         if (determinant == 0)
             throw new IllegalArgumentException("matrix is not invertible:\n"+matrixToString(m));
         
@@ -169,18 +167,7 @@ public class VectorMath
     
     private static double[][] get4x4inverse(double[][] m)
     {
-        double det = m[0][3]*m[1][2]*m[2][1]*m[3][0] - m[0][2]*m[1][3]*m[2][1]*m[3][0] -
-                     m[0][3]*m[1][1]*m[2][2]*m[3][0] + m[0][1]*m[1][3]*m[2][2]*m[3][0] +
-                     m[0][2]*m[1][1]*m[2][3]*m[3][0] - m[0][1]*m[1][2]*m[2][3]*m[3][0] -
-                     m[0][3]*m[1][2]*m[2][0]*m[3][1] + m[0][2]*m[1][3]*m[2][0]*m[3][1] +
-                     m[0][3]*m[1][0]*m[2][2]*m[3][1] - m[0][0]*m[1][3]*m[2][2]*m[3][1] -
-                     m[0][2]*m[1][0]*m[2][3]*m[3][1] + m[0][0]*m[1][2]*m[2][3]*m[3][1] +
-                     m[0][3]*m[1][1]*m[2][0]*m[3][2] - m[0][1]*m[1][3]*m[2][0]*m[3][2] -
-                     m[0][3]*m[1][0]*m[2][1]*m[3][2] + m[0][0]*m[1][3]*m[2][1]*m[3][2] +
-                     m[0][1]*m[1][0]*m[2][3]*m[3][2] - m[0][0]*m[1][1]*m[2][3]*m[3][2] -
-                     m[0][2]*m[1][1]*m[2][0]*m[3][3] + m[0][1]*m[1][2]*m[2][0]*m[3][3] +
-                     m[0][2]*m[1][0]*m[2][1]*m[3][3] - m[0][0]*m[1][2]*m[2][1]*m[3][3] -
-                     m[0][1]*m[1][0]*m[2][2]*m[3][3] + m[0][0]*m[1][1]*m[2][2]*m[3][3];
+        double det = get4x4Determinant(m);
         if (det == 0)
             throw new IllegalArgumentException("matrix is not invertible:\n"+matrixToString(m));
         
@@ -234,6 +221,34 @@ public class VectorMath
                                 { m[0][1], m[1][1], m[2][1], m[3][1] },
                                 { m[0][2], m[1][2], m[2][2], m[3][2] },
                                 { m[0][3], m[1][3], m[2][3], m[3][3] } };
+    }
+    
+    public static double get2x2Determinant(double[][] m)
+    {
+        return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+    }
+    
+    public static double get3x3Determinant(double[][] m)
+    {
+        return m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1]) -
+               m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0]) +
+               m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+    }
+    
+    public static double get4x4Determinant(double[][] m)
+    {
+        return m[0][3]*m[1][2]*m[2][1]*m[3][0] - m[0][2]*m[1][3]*m[2][1]*m[3][0] -
+               m[0][3]*m[1][1]*m[2][2]*m[3][0] + m[0][1]*m[1][3]*m[2][2]*m[3][0] +
+               m[0][2]*m[1][1]*m[2][3]*m[3][0] - m[0][1]*m[1][2]*m[2][3]*m[3][0] -
+               m[0][3]*m[1][2]*m[2][0]*m[3][1] + m[0][2]*m[1][3]*m[2][0]*m[3][1] +
+               m[0][3]*m[1][0]*m[2][2]*m[3][1] - m[0][0]*m[1][3]*m[2][2]*m[3][1] -
+               m[0][2]*m[1][0]*m[2][3]*m[3][1] + m[0][0]*m[1][2]*m[2][3]*m[3][1] +
+               m[0][3]*m[1][1]*m[2][0]*m[3][2] - m[0][1]*m[1][3]*m[2][0]*m[3][2] -
+               m[0][3]*m[1][0]*m[2][1]*m[3][2] + m[0][0]*m[1][3]*m[2][1]*m[3][2] +
+               m[0][1]*m[1][0]*m[2][3]*m[3][2] - m[0][0]*m[1][1]*m[2][3]*m[3][2] -
+               m[0][2]*m[1][1]*m[2][0]*m[3][3] + m[0][1]*m[1][2]*m[2][0]*m[3][3] +
+               m[0][2]*m[1][0]*m[2][1]*m[3][3] - m[0][0]*m[1][2]*m[2][1]*m[3][3] -
+               m[0][1]*m[1][0]*m[2][2]*m[3][3] + m[0][0]*m[1][1]*m[2][2]*m[3][3];
     }
     
     /*

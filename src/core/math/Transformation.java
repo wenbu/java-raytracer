@@ -145,6 +145,14 @@ public class Transformation
     }
     
     /**
+     * Returns true if this transformation flips the handedness of the coordinate system.
+     */
+    public boolean swapsHandedness()
+    {
+        return VectorMath.get3x3Determinant(matrix) < 0;
+    }
+    
+    /**
      * Transforms all eight corner vertices and computes a new BoundingBox
      * that contains them.
      */
