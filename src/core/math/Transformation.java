@@ -32,6 +32,25 @@ public class Transformation
         this.matrix = matrix;
         this.inverse = inverse;
     }
+    
+    public Transformation(Quaternion q)
+    {
+        double xx = q.x() * q.x(),
+               yy = q.y() * q.y(),
+               zz = q.z() * q.z();
+        double xy = q.x() * q.y(),
+               xz = q.x() * q.z(),
+               yz = q.y() * q.z();
+        double wx = q.x() * q.w(),
+               wy = q.y() * q.w(),
+               wz = q.z() * q.w();
+        
+        matrix = new double[][] { { 1 - 2*(yy+zz),     2*(xy+wz),     2*(xz-wy), 0 },
+                                  {     2*(xy-wz), 1 - 2*(xx+zz),     2*(yz+wx), 0 },
+                                  {     2*(xz+wy),     2*(yz-wx), 1 - 2*(xx+yy), 0 },
+                                  {             0,             0,             0, 1 } };
+        inverse = VectorMath.transpose(matrix);
+    }
 
     public static Transformation getTranslation(double x,
                                                        double y,
@@ -195,5 +214,10 @@ public class Transformation
     {
         return new Transformation(VectorMath.multiply(matrix, m2.matrix),
                                   VectorMath.multiply(m2.inverse, inverse));
+    }
+    
+    double[][] getMatrix()
+    {
+        return matrix;
     }
 }
