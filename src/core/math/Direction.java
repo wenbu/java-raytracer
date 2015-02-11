@@ -68,6 +68,30 @@ public class Direction extends Vector
     {
         return times(1.0 / scalar);
     }
+    
+    public Direction plusEquals(Direction other)
+    {
+        VectorMath.plusEquals(vector, other.vector);
+        return this;
+    }
+    
+    public Direction minusEquals(Direction other)
+    {
+        VectorMath.minusEquals(vector, other.vector);
+        return this;
+    }
+    
+    public Direction timesEquals(double scalar)
+    {
+        VectorMath.timesEquals(vector, scalar);
+        return this;
+    }
+    
+    public Direction divideEquals(double scalar)
+    {
+        VectorMath.divideEquals(vector, scalar);
+        return this;
+    }
 
     public double dot(Direction other)
     {
@@ -103,6 +127,16 @@ public class Direction extends Vector
         return x() * x() +
                y() * y() +
                z() * z();
+    }
+    
+    public Direction normalized()
+    {
+        return divide(length());
+    }
+    
+    public Direction normalize()
+    {
+        return divideEquals(length());
     }
 
     public String toString()

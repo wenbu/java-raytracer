@@ -291,6 +291,19 @@ public class VectorMath
         }
     }
     
+    public static void timesEquals(double[] v, double s)
+    {
+        for (int i = 0; i < v.length; i++)
+        {
+            v[i] *= s;
+        }
+    }
+    
+    public static void divideEquals(double[] v, double s)
+    {
+        timesEquals(v, 1.0/s);
+    }
+    
     /**
      * 
      * @param m a 4x4 matrix
