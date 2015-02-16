@@ -29,6 +29,20 @@ public class Quaternion
     }
     
     /**
+     * For testing purposes.
+     */
+    Quaternion(double[] vals)
+    {
+        this.v = new Direction(vals[0], vals[1], vals[2]);
+        this.w = vals[3];
+    }
+    
+    Quaternion(double x, double y, double z, double w)
+    {
+        this(new double[] {x, y, z, w});
+    }
+    
+    /**
      * Initialize a quaternion from a transformation. Adapted from pbrt.
      */
     public Quaternion(Transformation t)
@@ -60,7 +74,7 @@ public class Quaternion
             int j = next[i];
             int k = next[j];
             
-            double s = Math.sqrt(m[i][i] - (m[j][j] + m[k][k])) + 1.0;
+            double s = Math.sqrt((m[i][i] - (m[j][j] + m[k][k])) + 1.0);
             q[i] = s * 0.5;
             if (s != 0.0)
                 s = 0.5 / s;
@@ -76,12 +90,14 @@ public class Quaternion
     {
         double cosTheta = q1.dot(q2);
         if ( cosTheta > 0.99995)
+        {
             return q1.times(1.0-t).plus(q2.times(t));
+        }
         else
         {
             double theta = Math.acos(cosTheta);
             double thetap = theta * t;
-            Quaternion qperp = q2.minus(q1.times(theta)).normalize();
+            Quaternion qperp = q2.minus(q1.times(cosTheta)).normalize();
             return q1.times(Math.cos(thetap)).plus(qperp.times(Math.sin(thetap)));
         }
     }
@@ -141,12 +157,17 @@ public class Quaternion
     
     public Quaternion normalized()
     {
-        return divide(Math.sqrt(this.dot(this)));
+        return divide(Math.sqrt(magnitude()));
     }
     
     public Quaternion normalize()
     {
-        return divideEquals(Math.sqrt(this.dot(this)));
+        return divideEquals(Math.sqrt(magnitude()));
+    }
+    
+    public double magnitude()
+    {
+        return this.dot(this);
     }
     
     public Transformation getTransformation()
@@ -172,5 +193,11 @@ public class Quaternion
     public double w()
     {
         return w;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return String.format("Quaternion[<%f, %f, %f>, %f]", x(), y(), z(), w);
     }
 }
