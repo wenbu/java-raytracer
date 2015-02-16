@@ -2,16 +2,13 @@ package main;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import sampler.Sampler;
-import sampler.impl.GridSuperSampler;
 import sampler.impl.RandomSuperSampler;
 import scene.Scene;
 import scene.lights.Light;
 import scene.lights.impl.DirectionalLight;
 import scene.materials.Material;
-import scene.materials.impl.DebugMaterial;
 import scene.materials.impl.PhongMaterial;
 import scene.primitives.Primitive;
 import scene.primitives.impl.Sphere;
@@ -57,7 +54,6 @@ public class Main
                                                Colors.WHITE,
                                                Colors.BLACK,
                                                50);
-        // Material material1 = new DebugMaterial(Colors.MAGENTA);
         Sphere sphere1 = new Sphere(new Point(0, 0, -20), 3, material1);
 
         Material material2 = new PhongMaterial(Colors.GRAY10,
@@ -65,7 +61,6 @@ public class Main
                                                Colors.WHITE,
                                                Colors.BLACK,
                                                50);
-        // Material material2 = new DebugMaterial(Colors.YELLOW);
         Sphere sphere2 = new Sphere(new Point(-2, 2, -15), 1, material2);
 
         Material material3 = new PhongMaterial(Colors.GRAY10,
@@ -73,7 +68,6 @@ public class Main
                                                Colors.WHITE,
                                                Colors.BLACK,
                                                50);
-        // Material material3 = new DebugMaterial(Colors.CYAN);
         Sphere sphere3 = new Sphere(new Point(-2, -2, -15), 1, material3);
 
         Material material4 = new PhongMaterial(Colors.GRAY10,
@@ -85,12 +79,6 @@ public class Main
                                           new Point(1, 4, -20),
                                           new Point(6, -1, -20),
                                           material4);
-        // material4 = new DebugMaterial(Colors.RED);
-        // Triangle triangle1 = new Triangle(new Point(3, 3, -20),
-        // new Point(3, 0, -20),
-        // new Point(0, 0, -20),
-        // material4,
-        // true);
         primitives.add(sphere1);
         primitives.add(sphere2);
         primitives.add(sphere3);

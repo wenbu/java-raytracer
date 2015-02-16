@@ -10,8 +10,6 @@ import scene.primitives.Primitive;
 public class Triangle implements Primitive
 {
     private final Point v1;
-    private final Point v2;
-    private final Point v3;
     private final Direction normal;
     private final Material material;
 
@@ -35,8 +33,6 @@ public class Triangle implements Primitive
                     boolean doubleSided)
     {
         this.v1 = v1;
-        this.v2 = v2;
-        this.v3 = v3;
         this.material = material;
 
         e1 = v2.minus(v1);

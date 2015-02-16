@@ -12,7 +12,6 @@ import core.colors.Color;
 import core.colors.Colors;
 import core.math.Direction;
 import core.math.Point;
-import core.math.VectorMath;
 
 public class PhongMaterial implements Material
 {

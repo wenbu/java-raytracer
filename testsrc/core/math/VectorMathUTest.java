@@ -230,12 +230,6 @@ public class VectorMathUTest
             throw e;
         }
     }
-    
-    private static double[] getRandom2Vector()
-    {
-        return new double[] { getRandomDouble(),
-                              getRandomDouble() };
-    }
 
     private static double[] getRandom3Vector()
     {

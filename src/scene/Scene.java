@@ -1,12 +1,9 @@
 package scene;
 
 import film.Film;
-import film.impl.SimpleFilm;
 import film.impl.ToneMappingFilm;
 
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +12,6 @@ import camera.Camera;
 import raytracer.Raytracer;
 import raytracer.impl.SimpleRaytracer;
 import sampler.Sampler;
-import sampler.impl.MidpointSampler;
 import scene.lights.Light;
 import scene.primitives.Primitive;
 import core.Pixel;
