@@ -4,8 +4,9 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-
-import java.util.Random;
+import static test.TestUtils.getRandomDouble;
+import static test.TestUtils.EPSILON;
+import static test.TestUtils.EPSILON_LENIENT;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,10 +16,6 @@ import test.RepeatRule.Repeat;
 
 public class VectorMathUTest
 {
-    private static final double EPSILON = 1e-6;
-    private static final double EPSILON_LENIENT = 0.1;
-    private static final Random random = new Random();
-
     @Rule
     public RepeatRule repeatRule = new RepeatRule();
 
@@ -292,14 +289,5 @@ public class VectorMathUTest
                                 getRandomDouble(),
                                 getRandomDouble(),
                                 getRandomDouble() } };
-    }
-
-    private static double getRandomDouble()
-    {
-//        if (random.nextInt(11) <= 1) // return 0 10% of the time
-//            return 0;
-        double mantissa = -10 + random.nextDouble() * 20; // (-10, 10)
-        int exponent = random.nextInt(21) - 10; // (-10, 10)
-        return mantissa * Math.pow(10.0, exponent);
     }
 }
