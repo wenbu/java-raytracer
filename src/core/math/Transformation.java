@@ -220,4 +220,10 @@ public class Transformation
     {
         return matrix;
     }
+    
+    @Override
+    public String toString()
+    {
+        return VectorMath.matrixToString(matrix);
+    }
 }
