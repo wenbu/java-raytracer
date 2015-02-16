@@ -66,7 +66,7 @@ public class Direction extends Vector
 
     public Direction divide(double scalar)
     {
-        return times(1.0 / scalar);
+        return new Direction(VectorMath.divide(vector, scalar));
     }
     
     public Direction plusEquals(Direction other)

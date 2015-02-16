@@ -98,7 +98,12 @@ public class VectorMath
     
     public static double[] divide(double[] v, double s)
     {
-        return multiply(v, 1.0/s);
+        double[] quotient = new double[v.length];
+        for (int i = 0; i < v.length; i++)
+        {
+            quotient[i] = v[i] / s;
+        }
+        return quotient;
     }
     
     public static double[][] multiply(double[][] m, double s)
@@ -301,7 +306,10 @@ public class VectorMath
     
     public static void divideEquals(double[] v, double s)
     {
-        timesEquals(v, 1.0/s);
+        for (int i = 0; i < v.length; i++)
+        {
+            v[i] /= s;
+        }
     }
     
     /**
