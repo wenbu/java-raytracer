@@ -37,8 +37,8 @@ public class Scene implements MetricsAware
     private final Raytracer raytracer;
     private final Film film;
     
-//    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    private final ExecutorService executor = Executors.newFixedThreadPool(1);
+    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//    private final ExecutorService executor = Executors.newFixedThreadPool(1);
     
     private long timeSpentRendering = 0L;
    
