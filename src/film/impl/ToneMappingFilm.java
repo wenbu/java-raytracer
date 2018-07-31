@@ -3,16 +3,23 @@ package film.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import metrics.MetricsAware;
 import core.colors.Color;
 
-public class ToneMappingFilm extends JFrameFilm
+public class ToneMappingFilm extends JFrameFilm implements MetricsAware
 {
+    private static final Logger logger = Logger.getLogger(ToneMappingFilm.class.getName());
+    
     private final PixelSampleData[][] colorSamples;
 
     private final List<Double> brightnessSamples;
 
     private final double BRIGHTNESS_CUTOFF = 0.75;
+    
+    private long timeSpentProcessing = 0L;
 
     public ToneMappingFilm(int imageX, int imageY)
     {
@@ -42,19 +49,13 @@ public class ToneMappingFilm extends JFrameFilm
     @Override
     public void imageComplete()
     {
+        long start = System.currentTimeMillis();
+        
         // scale colors
         double scaleFactor = 1;
-        System.out.println("size = "+brightnessSamples.size());
         if (brightnessSamples.size() > 0)
         {
-        	for (int i = 0; i < brightnessSamples.size(); i++)
-        	{
-        		if (brightnessSamples.get(i) == null) System.out.println(i+" lol");
-        	}
-        	long t1 = System.currentTimeMillis();
             Collections.sort(brightnessSamples);
-            long t2 = System.currentTimeMillis();
-            System.out.println("Took "+(t2-t1)+"ms to sort your stupid list");
             int sampleIndex = Math.min(brightnessSamples.size() - 1,
                                        (int) ( brightnessSamples.size() * BRIGHTNESS_CUTOFF ));
             double brightnessCutoff = brightnessSamples.get(sampleIndex);
@@ -75,5 +76,12 @@ public class ToneMappingFilm extends JFrameFilm
         }
 
         super.imageComplete();
+        timeSpentProcessing = System.currentTimeMillis() - start;
+    }
+
+    @Override
+    public void logMetrics()
+    {
+        logger.log(Level.INFO, "Spent " + timeSpentProcessing + " ms processing final image.");
     }
 }

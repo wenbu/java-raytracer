@@ -1,7 +1,12 @@
 package raytracer.impl;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import metrics.MetricsAware;
 import raytracer.Raytracer;
 import scene.lights.Light;
 import scene.materials.Material;
@@ -11,11 +16,18 @@ import core.Ray;
 import core.colors.Color;
 import core.colors.Colors;
 
-public class SimpleRaytracer implements Raytracer
+public class SimpleRaytracer implements Raytracer, MetricsAware
 {
+    private static final Logger logger = Logger.getLogger(SimpleRaytracer.class.getName());
+    
+    private final AtomicInteger numRaysTraced = new AtomicInteger(0);
+    private final AtomicInteger numOcclusionTests = new AtomicInteger(0);
+    private final AtomicLong timeSpentTracingRays = new AtomicLong(0);
+    private final AtomicLong timeSpentOnOcclusionTests = new AtomicLong(0);
+    
     private Set<Primitive> geometry;
     private Set<Light> lights;
-    
+
     // TODO: make configurable
     private static final int MAX_DEPTH = 4;
 
@@ -24,23 +36,35 @@ public class SimpleRaytracer implements Raytracer
         this.geometry = geometry;
         this.lights = lights;
     }
-    
+
     @Override
     public Color traceRay(Ray ray)
     {
-        if (ray.getDepth() >= MAX_DEPTH)
-            return Colors.BLACK;
-        
-        Intersection closestIntersection = getClosestIntersection(ray);
-
-        Color color = Colors.BLACK;
-        if (closestIntersection != null)
+        long start = System.currentTimeMillis();
+        try
         {
-            Material material = closestIntersection.getMaterial();
-
-            color = material.getColor(lights, closestIntersection, ray, this);
+            if (ray.getDepth() >= MAX_DEPTH)
+            {
+                return Colors.BLACK;
+            }
+    
+            Intersection closestIntersection = getClosestIntersection(ray);
+    
+            Color color = Colors.BLACK;
+            if (closestIntersection != null)
+            {
+                Material material = closestIntersection.getMaterial();
+    
+                color = material.getColor(lights, closestIntersection, ray, this);
+            }
+            return color;
         }
-        return color;
+        finally
+        {
+            long timeSpent = System.currentTimeMillis() - start;
+            numRaysTraced.incrementAndGet();
+            timeSpentTracingRays.addAndGet(timeSpent);
+        }
     }
 
     private Intersection getClosestIntersection(Ray ray)
@@ -70,27 +94,56 @@ public class SimpleRaytracer implements Raytracer
                 closestIntersection = intersection;
                 closestDistance = distance;
             }
-        }
+        };
+        
         return closestIntersection;
     }
 
     public boolean isOccluded(Ray ray)
     {
-    	for (Primitive geo : geometry)
-    	{
-    		Intersection intersection = geo.getIntersection(ray);
-    		
-    		if (intersection == null)
-    		{
-    			continue;
-    		}
-    		
-    		double distance = intersection.getDistance();
-    		
-    		if (distance < ray.getMinT() || distance > ray.getMaxT())
-    			continue;
-    		return true;
-    	}
-    	return false;
+        long start = System.currentTimeMillis();
+        
+        try
+        {
+            for (Primitive geo : geometry)
+            {
+                Intersection intersection = geo.getIntersection(ray);
+    
+                if (intersection == null)
+                {
+                    continue;
+                }
+    
+                double distance = intersection.getDistance();
+    
+                if (distance < ray.getMinT() || distance > ray.getMaxT())
+                    continue;
+                return true;
+            }
+            return false;
+        }
+        finally
+        {
+            long timeSpent = System.currentTimeMillis() - start;
+            numOcclusionTests.incrementAndGet();
+            timeSpentOnOcclusionTests.addAndGet(timeSpent);
+        }
+    }
+
+    @Override
+    public void logMetrics()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        sb.append("Number of rays traced: " + numRaysTraced.get() + "\n");
+        sb.append("Number of occlusion tests performed: " + numOcclusionTests.get() + "\n");
+        sb.append("\n");
+        sb.append("Time spent tracing rays: " + timeSpentTracingRays.get() + "ms\n");
+        sb.append("Time spent on occlusion tests: " + timeSpentOnOcclusionTests.get() + "ms\n");
+        sb.append("\n");
+        sb.append("Average time spent per ray traced: " + timeSpentTracingRays.get() / (double)numRaysTraced.get() + "ms\n");
+        sb.append("Average time spent per occlusion test: " + timeSpentOnOcclusionTests.get() / (double)numOcclusionTests.get() + "ms\n");
+        
+        logger.log(Level.INFO, sb.toString());
     }
 }

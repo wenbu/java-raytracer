@@ -1,28 +1,28 @@
 package scene;
 
-import film.Film;
-import film.impl.ToneMappingFilm;
-
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import camera.Camera;
+import metrics.MetricsAware;
 import raytracer.Raytracer;
-import raytracer.impl.SimpleRaytracer;
 import sampler.Sampler;
-import scene.lights.Light;
-import scene.primitives.Primitive;
+import camera.Camera;
 import core.Pixel;
 import core.Ray;
 import core.Sample;
 import core.colors.Color;
 import core.math.Direction;
 import core.math.Point;
+import film.Film;
 
-public class Scene
+public class Scene implements MetricsAware
 {
+    private static final Logger logger = Logger.getLogger(Scene.class.getName());
+    
     // (0,0) at LL
     private final Point imageLL;
 
@@ -37,8 +37,11 @@ public class Scene
     private final Raytracer raytracer;
     private final Film film;
     
-    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+//    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final ExecutorService executor = Executors.newFixedThreadPool(1);
     
+    private long timeSpentRendering = 0L;
+   
     public Scene(Point eyePosition,
                  Point imageUL,
                  Point imageUR,
@@ -47,8 +50,8 @@ public class Scene
                  int outputX,
                  int outputY,
                  Sampler sampler,
-                 Set<Primitive> geometry,
-                 Set<Light> lights)
+                 Raytracer raytracer,
+                 Film film)
     {
         this.camera = new Camera(eyePosition);
         this.sampler = sampler;
@@ -61,12 +64,14 @@ public class Scene
         dx = (imageLR.minus(imageLL)).times(1.0 / outputX);
         dy = (imageUL.minus(imageLL)).times(1.0 / outputY);
         
-        raytracer = new SimpleRaytracer(geometry, lights);
-        film = new ToneMappingFilm(outputX, outputY);
+        this.raytracer = raytracer;
+        this.film = film;
     }
 
     public void render()
     {
+        long start = System.currentTimeMillis();
+        
         for (int x = 0; x < outputX; x++)
         {
             for (int y = 0; y < outputY; y++)
@@ -92,6 +97,11 @@ public class Scene
 			System.out.println("interrupted");
 			e.printStackTrace();
 		}
+        finally
+        {
+            timeSpentRendering = System.currentTimeMillis() - start;
+        }
+
         film.imageComplete();
     }
     
@@ -131,5 +141,11 @@ public class Scene
         Point pixelUR = pixelLL.plus(dx).plus(dy);
 
         return new Pixel(pixelUL, pixelUR, pixelLL, pixelLR);
+    }
+
+    @Override
+    public void logMetrics()
+    {
+        logger.log(Level.INFO, "Time spent rendering: " + timeSpentRendering + "ms");
     }
 }

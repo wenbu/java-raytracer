@@ -3,6 +3,8 @@ package main;
 import java.util.HashSet;
 import java.util.Set;
 
+import metrics.MetricsManager;
+import raytracer.impl.SimpleRaytracer;
 import sampler.Sampler;
 import sampler.impl.RandomSuperSampler;
 import scene.Scene;
@@ -17,32 +19,43 @@ import core.colors.Color;
 import core.colors.Colors;
 import core.math.Direction;
 import core.math.Point;
+import film.impl.ToneMappingFilm;
 
 public class Main
 {
     public static void main(String[] args)
     {
-//        Sampler sampler = new GridSuperSampler(8, 8);
-    	Sampler sampler = new RandomSuperSampler(4);
+        // Sampler sampler = new GridSuperSampler(8, 8);
+        Sampler sampler = new RandomSuperSampler(4);
 
+        int outputX = 1200;
+        int outputY = 1200;
+        
         Set<Primitive> geo = getGeometry();
         Set<Light> lights = getLights();
+        SimpleRaytracer raytracer = new SimpleRaytracer(geo, lights);
+        ToneMappingFilm film = new ToneMappingFilm(outputX, outputY);
 
+        MetricsManager metricsManager = new MetricsManager();
+        
         Scene scene = new Scene(new Point(0, 0, 0),
                                 new Point(-1, 1, -3),
                                 new Point(1, 1, -3),
                                 new Point(-1, -1, -3),
                                 new Point(1, -1, -3),
-                                500,
-                                500,
+                                1200,
+                                1200,
                                 sampler,
-                                geo,
-                                lights);
+                                raytracer,
+                                film);
+        
+        metricsManager.registerMetricsAwareEntities(raytracer, film, scene);
         long timeA = System.currentTimeMillis();
         scene.render();
         long timeB = System.currentTimeMillis();
 
         System.out.println("Rendered in " + ( timeB - timeA ) + "ms.");
+        metricsManager.logMetrics();
     }
 
     private static Set<Primitive> getGeometry()
@@ -94,11 +107,15 @@ public class Main
         Light light1 = new DirectionalLight(Direction.getNormalizedDirection(1,
                                                                              -1,
                                                                              -1),
-                                            Colors.WHITE, 8, 0.0436);
+                                            Colors.WHITE,
+                                            8,
+                                            0.0436);
         Light light2 = new DirectionalLight(Direction.getNormalizedDirection(1,
                                                                              1,
                                                                              -1),
-                                            new Color(0.1, 0.1, 1), 8, 0.0436);
+                                            new Color(0.1, 0.1, 1),
+                                            8,
+                                            0.0436);
 
         lights.add(light1);
         lights.add(light2);
