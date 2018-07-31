@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 import core.colors.Color;
 import core.colors.Colors;
@@ -64,6 +65,7 @@ public abstract class JFrameFilm implements Film
         frame.add(label);
         frame.pack();
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     private Image getImageFromArray()
