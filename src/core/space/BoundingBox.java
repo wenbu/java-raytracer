@@ -1,9 +1,11 @@
 package core.space;
 
+import core.Ray;
 import core.math.Direction;
 import core.math.MathUtilities;
 import core.math.Point;
 import core.math.VectorMath;
+import core.tuple.Pair;
 
 public class BoundingBox
 {
@@ -180,5 +182,55 @@ public class BoundingBox
     public Point getMaxPoint()
     {
         return maxPoint;
+    }
+    
+    /**
+     * Perform an intersection test against the specified ray.
+     * 
+     * @param ray
+     * @return a pair (t0, t1) containing the intersection's parametric range,
+     *         or null if there is no intersection.
+     */
+    public Pair<Double, Double> intersect(Ray ray)
+    {
+        double t0 = 0;
+        double t1 = ray.getMaxT();
+        
+        for (int i = 0; i < 3; i++)
+        {
+            double inverseRayDirection = 1/ray.getDirection().get(i);
+            double tNear = (minPoint.get(i) - ray.getOrigin().get(i)) * inverseRayDirection;
+            double tFar = (maxPoint.get(i) - ray.getOrigin().get(i)) * inverseRayDirection;
+            
+            if (tNear > tFar)
+            {
+                double temp = tNear;
+                tNear = tFar;
+                tFar = temp;
+            }
+            
+            t0 = tNear > t0 ? tNear : t0;
+            t1 = tFar < t1 ? tFar : t1;
+            
+            if (t0 > t1)
+            {
+                return null;
+            }
+        }
+        
+        return new Pair<>(t0, t1);
+    }
+    
+    /**
+     * Perform an intersection test, with some precomputed values.
+     * @param ray
+     * @param inverseDirection 1/ray.direction
+     * @param dirIsNegative 1 if direction is negative in that axis, 0 otherwise
+     * @return
+     */
+    public Pair<Double, Double> intersect(Ray ray, Direction inverseDirection, int[] dirIsNegative)
+    {
+        // TODO
+        return null;
     }
 }

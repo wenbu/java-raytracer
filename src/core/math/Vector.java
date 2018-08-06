@@ -47,5 +47,19 @@ public abstract class Vector
         return vector[2];
     }
     
+    public double get(int index)
+    {
+        switch (index)
+        {
+            case 0:
+            case 1:
+            case 2:
+                return vector[index];
+            default:
+                throw new IllegalArgumentException("Index " + index +
+                                                   " is out of range. Valid values: (0,2)");
+        }
+    }
+    
     protected abstract double[] getHomogeneousForm();
 }
