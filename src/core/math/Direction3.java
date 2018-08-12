@@ -71,25 +71,29 @@ public class Direction3 extends Vector3
     
     public Direction3 plusEquals(Direction3 other)
     {
-        VectorMath.plusEquals(vector, other.vector);
+        VectorMath.plusEquals(vector, other.getVector());
+        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Direction3 minusEquals(Direction3 other)
     {
-        VectorMath.minusEquals(vector, other.vector);
+        VectorMath.minusEquals(vector, other.getVector());
+        VectorMath.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Direction3 timesEquals(double scalar)
     {
         VectorMath.timesEquals(vector, scalar);
+        VectorMath.timesEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
     
     public Direction3 divideEquals(double scalar)
     {
         VectorMath.divideEquals(vector, scalar);
+        VectorMath.divideEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
 

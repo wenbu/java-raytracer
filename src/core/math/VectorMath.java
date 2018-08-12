@@ -283,6 +283,24 @@ public class VectorMath
         }
     }
     
+    public static void plusEquals(double[] v1, double[] v2, int maxIndex)
+    {
+        if (v1.length < maxIndex + 1)
+        {
+            throw new IllegalArgumentException("maxIndex is too large for v1.");
+        }
+        
+        if (v2.length < maxIndex + 1)
+        {
+            throw new IllegalArgumentException("maxIndex is too large for v2.");
+        }
+        
+        for (int i = 0; i < maxIndex; i++)
+        {
+            v1[i] += v2[i];
+        }
+    }
+    
     /**
      * Component-wise addition of v2 to v1.
      * The length of v2 must be at least that of v1.
@@ -301,6 +319,24 @@ public class VectorMath
         }
     }
     
+    public static void minusEquals(double[] v1, double[] v2, int maxIndex)
+    {
+        if (v1.length < maxIndex + 1)
+        {
+            throw new IllegalArgumentException("maxIndex is too large for v1.");
+        }
+        
+        if (v2.length < maxIndex + 1)
+        {
+            throw new IllegalArgumentException("maxIndex is too large for v2.");
+        }
+        
+        for (int i = 0; i < maxIndex; i++)
+        {
+            v1[i] -= v2[i];
+        }
+    }
+    
     public static void timesEquals(double[] v, double s)
     {
         for (int i = 0; i < v.length; i++)
@@ -309,9 +345,35 @@ public class VectorMath
         }
     }
     
+    public static void timesEquals(double[] v, double s, int maxIndex)
+    {
+        if (v.length < maxIndex + 1)
+        {
+            throw new IllegalArgumentException("maxIndex is too large for v.");
+        }
+        
+        for (int i = 0; i < maxIndex; i++)
+        {
+            v[i] *= s;
+        }
+    }
+    
     public static void divideEquals(double[] v, double s)
     {
         for (int i = 0; i < v.length; i++)
+        {
+            v[i] /= s;
+        }
+    }
+    
+    public static void divideEquals(double[] v, double s, int maxIndex)
+    {
+        if (v.length < maxIndex + 1)
+        {
+            throw new IllegalArgumentException("maxIndex is too large for v.");
+        }
+        
+        for (int i = 0; i < maxIndex; i++)
         {
             v[i] /= s;
         }

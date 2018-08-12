@@ -2,6 +2,8 @@ package core.math;
 
 public abstract class Vector2
 {
+    protected static final int MAX_INDEX = 1;
+    
     protected final double[] vector;
     
     protected Vector2()

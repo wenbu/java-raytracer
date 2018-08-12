@@ -18,6 +18,11 @@ public class Point2 extends Vector2
         this(p.x(), p.y());
     }
     
+    public Point2(Point3 p)
+    {
+        this(p.x(), p.y());
+    }
+    
     Point2(double[] vector)
     {
         super(vector);
@@ -31,9 +36,8 @@ public class Point2 extends Vector2
     
     public void plusEquals(Direction2 other)
     {
-        vector[0] += other.x();
-        vector[1] += other.y();
-        // XXX update homogeneous?
+        VectorMath.plusEquals(vector, other.getVector());
+        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
     }
     
     public Direction2 minus(Point2 other)

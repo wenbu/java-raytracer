@@ -3,6 +3,8 @@ package core.math;
 
 public abstract class Vector3
 {
+    protected static final int MAX_INDEX = 2;
+    
     protected final double[] vector;
     
     protected Vector3()

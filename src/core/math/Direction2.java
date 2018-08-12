@@ -68,24 +68,28 @@ public class Direction2 extends Vector2
     public Direction2 plusEquals(Direction2 other)
     {
         VectorMath.plusEquals(vector, other.getVector());
+        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Direction2 minusEquals(Direction2 other)
     {
         VectorMath.minusEquals(vector, other.getVector());
+        VectorMath.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Direction2 timesEquals(double scalar)
     {
         VectorMath.timesEquals(vector, scalar);
+        VectorMath.timesEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
     
     public Direction2 divideEquals(double scalar)
     {
         VectorMath.divideEquals(vector, scalar);
+        VectorMath.divideEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
     

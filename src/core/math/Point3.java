@@ -8,6 +8,7 @@ public class Point3 extends Vector3
     public static final Point3 NEGATIVE_INFINITY = new Point3(Double.NEGATIVE_INFINITY,
                                                             Double.NEGATIVE_INFINITY,
                                                             Double.NEGATIVE_INFINITY);
+    
     private double[] homogeneous;
 
     public Point3(double x, double y, double z)
@@ -32,12 +33,11 @@ public class Point3 extends Vector3
         return new Point3(VectorMath.add(vector, other.getVector()));
     }
     
-    public void plusEquals(Direction3 other)
+    public Point3 plusEquals(Direction3 other)
     {
-        vector[0] += other.x();
-        vector[1] += other.y();
-        vector[2] += other.z();
-        // XXX update homogeneous?
+        VectorMath.plusEquals(vector, other.getVector());
+        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        return this;
     }
 
     public Direction3 minus(Point3 other)
