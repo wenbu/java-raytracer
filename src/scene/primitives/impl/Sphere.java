@@ -4,16 +4,16 @@ import scene.materials.Material;
 import scene.primitives.Primitive;
 import core.Intersection;
 import core.Ray;
-import core.math.Direction;
-import core.math.Point;
+import core.math.Direction3;
+import core.math.Point3;
 
 public class Sphere implements Primitive
 {
-    private final Point center;
+    private final Point3 center;
     private final double radius;
     private final Material material;
 
-    public Sphere(Point center, double radius, Material material)
+    public Sphere(Point3 center, double radius, Material material)
     {
         this.center = center;
         this.radius = radius;
@@ -23,10 +23,10 @@ public class Sphere implements Primitive
     @Override
     public Intersection getIntersection(Ray ray)
     {
-        Point rayOrigin = ray.getOrigin();
-        Direction rayDirection = ray.getDirection();
+        Point3 rayOrigin = ray.getOrigin();
+        Direction3 rayDirection = ray.getDirection();
 
-        Direction positionDifference = rayOrigin.minus(center);
+        Direction3 positionDifference = rayOrigin.minus(center);
 
         double a = rayDirection.dot(rayDirection);
         double b = rayDirection.times(2).dot(positionDifference);
@@ -45,9 +45,9 @@ public class Sphere implements Primitive
 
         double closer = t1 < t2 ? t1 : t2;
 
-        Point intersectionPoint = rayOrigin.plus(rayDirection.times(closer));
+        Point3 intersectionPoint = rayOrigin.plus(rayDirection.times(closer));
 
-        Direction normal = Direction.getNormalizedDirection(intersectionPoint.minus(center));
+        Direction3 normal = Direction3.getNormalizedDirection(intersectionPoint.minus(center));
 
         return new Intersection(closer, intersectionPoint, normal, material);
     }

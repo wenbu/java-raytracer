@@ -17,8 +17,8 @@ import scene.primitives.impl.Sphere;
 import scene.primitives.impl.Triangle;
 import core.colors.Color;
 import core.colors.Colors;
-import core.math.Direction;
-import core.math.Point;
+import core.math.Direction3;
+import core.math.Point3;
 import film.impl.ToneMappingFilm;
 
 public class Main
@@ -38,11 +38,11 @@ public class Main
 
         MetricsManager metricsManager = new MetricsManager();
         
-        Scene scene = new Scene(new Point(0, 0, 0),
-                                new Point(-1, 1, -3),
-                                new Point(1, 1, -3),
-                                new Point(-1, -1, -3),
-                                new Point(1, -1, -3),
+        Scene scene = new Scene(new Point3(0, 0, 0),
+                                new Point3(-1, 1, -3),
+                                new Point3(1, 1, -3),
+                                new Point3(-1, -1, -3),
+                                new Point3(1, -1, -3),
                                 1200,
                                 1200,
                                 sampler,
@@ -67,30 +67,30 @@ public class Main
                                                Colors.WHITE,
                                                Colors.BLACK,
                                                50);
-        Sphere sphere1 = new Sphere(new Point(0, 0, -20), 3, material1);
+        Sphere sphere1 = new Sphere(new Point3(0, 0, -20), 3, material1);
 
         Material material2 = new PhongMaterial(Colors.GRAY10,
                                                Colors.YELLOW,
                                                Colors.WHITE,
                                                Colors.BLACK,
                                                50);
-        Sphere sphere2 = new Sphere(new Point(-2, 2, -15), 1, material2);
+        Sphere sphere2 = new Sphere(new Point3(-2, 2, -15), 1, material2);
 
         Material material3 = new PhongMaterial(Colors.GRAY10,
                                                Colors.CYAN,
                                                Colors.WHITE,
                                                Colors.BLACK,
                                                50);
-        Sphere sphere3 = new Sphere(new Point(-2, -2, -15), 1, material3);
+        Sphere sphere3 = new Sphere(new Point3(-2, -2, -15), 1, material3);
 
         Material material4 = new PhongMaterial(Colors.GRAY10,
                                                Colors.GRAY10,
                                                Colors.WHITE,
                                                Colors.GRAY50,
                                                50);
-        Triangle triangle1 = new Triangle(new Point(5, 5, -17),
-                                          new Point(1, 4, -20),
-                                          new Point(6, -1, -20),
+        Triangle triangle1 = new Triangle(new Point3(5, 5, -17),
+                                          new Point3(1, 4, -20),
+                                          new Point3(6, -1, -20),
                                           material4);
         primitives.add(sphere1);
         primitives.add(sphere2);
@@ -104,13 +104,13 @@ public class Main
     {
         Set<Light> lights = new HashSet<>();
 
-        Light light1 = new DirectionalLight(Direction.getNormalizedDirection(1,
+        Light light1 = new DirectionalLight(Direction3.getNormalizedDirection(1,
                                                                              -1,
                                                                              -1),
                                             Colors.WHITE,
                                             8,
                                             0.0436);
-        Light light2 = new DirectionalLight(Direction.getNormalizedDirection(1,
+        Light light2 = new DirectionalLight(Direction3.getNormalizedDirection(1,
                                                                              1,
                                                                              -1),
                                             new Color(0.1, 0.1, 1),

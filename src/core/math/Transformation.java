@@ -108,7 +108,7 @@ public class Transformation
         // the inverse of a rotation matrix is its transpose
     }
     
-    public static Transformation getRotation(Direction rotationAxis, double rotationAngle)
+    public static Transformation getRotation(Direction3 rotationAxis, double rotationAngle)
     {
         return getRotation(rotationAxis.x(),
                            rotationAxis.y(),
@@ -116,11 +116,11 @@ public class Transformation
                            rotationAngle);
     }
     
-    public static Transformation getLookAt(Point position, Point target, Direction up)
+    public static Transformation getLookAt(Point3 position, Point3 target, Direction3 up)
     {
-        Direction direction = Direction.getNormalizedDirection(position, target);
-        Direction left = Direction.getNormalizedDirection(Direction.getNormalizedDirection(up).cross(direction));
-        Direction newUp = direction.cross(left);
+        Direction3 direction = Direction3.getNormalizedDirection(position, target);
+        Direction3 left = Direction3.getNormalizedDirection(Direction3.getNormalizedDirection(up).cross(direction));
+        Direction3 newUp = direction.cross(left);
         
         double[][] matrix = new double[][] { { left.x(), newUp.x(), direction.x(), position.x() },
                                              { left.y(), newUp.y(), direction.y(), position.y() },
@@ -130,7 +130,7 @@ public class Transformation
         return new Transformation(VectorMath.inverse(matrix), matrix);
     }
 
-    public Point transform(Point other)
+    public Point3 transform(Point3 other)
     {
         double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
         
@@ -138,23 +138,23 @@ public class Transformation
         // need epsilon?
         if(v[3] != 1.0) v = VectorMath.divide(v, v[3]);
         
-        return new Point(v);
+        return new Point3(v);
     }
     
-    public Direction transform(Direction other)
+    public Direction3 transform(Direction3 other)
     {
-        return new Direction(VectorMath.multiply(matrix, other.getHomogeneousForm()));
+        return new Direction3(VectorMath.multiply(matrix, other.getHomogeneousForm()));
     }
     
-    public Normal transform(Normal other)
+    public Normal3 transform(Normal3 other)
     {
-        return new Normal(VectorMath.multiplyTranspose(inverse, other.getHomogeneousForm()));
+        return new Normal3(VectorMath.multiplyTranspose(inverse, other.getHomogeneousForm()));
     }
     
     public Ray transform(Ray other)
     {
-        Point newOrigin = transform(other.getOrigin());
-        Direction newDirection = transform(other.getDirection());
+        Point3 newOrigin = transform(other.getOrigin());
+        Direction3 newDirection = transform(other.getDirection());
         
         return new Ray(newOrigin,
                        newDirection,

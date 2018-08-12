@@ -1,57 +1,58 @@
 package core.math;
 
-public class Point extends Vector
+public class Point3 extends Vector3
 {
-    public static final Point POSITIVE_INFINITY = new Point(Double.POSITIVE_INFINITY,
+    public static final Point3 POSITIVE_INFINITY = new Point3(Double.POSITIVE_INFINITY,
                                                             Double.POSITIVE_INFINITY,
                                                             Double.POSITIVE_INFINITY);
-    public static final Point NEGATIVE_INFINITY = new Point(Double.NEGATIVE_INFINITY,
+    public static final Point3 NEGATIVE_INFINITY = new Point3(Double.NEGATIVE_INFINITY,
                                                             Double.NEGATIVE_INFINITY,
                                                             Double.NEGATIVE_INFINITY);
     private double[] homogeneous;
 
-    public Point(double x, double y, double z)
+    public Point3(double x, double y, double z)
     {
         super(x, y, z);
         homogeneous = new double[] { x, y, z, 1 };
     }
     
-    public Point(Point p)
+    public Point3(Point3 p)
     {
         this(p.x(), p.y(), p.z());
     }
 
-    Point(double[] vector)
+    Point3(double[] vector)
     {
         super(vector);
         homogeneous = new double[] { vector[0], vector[1], vector[2], 1 };
     }
 
-    public Point plus(Vector other)
+    public Point3 plus(Vector3 other)
     {
-        return new Point(VectorMath.add(vector, other.getVector()));
+        return new Point3(VectorMath.add(vector, other.getVector()));
     }
     
-    public void plusEquals(Direction other)
+    public void plusEquals(Direction3 other)
     {
         vector[0] += other.x();
         vector[1] += other.y();
         vector[2] += other.z();
+        // XXX update homogeneous?
     }
 
-    public Direction minus(Point other)
+    public Direction3 minus(Point3 other)
     {
-        return new Direction(VectorMath.subtract(vector, other.getVector()));
+        return new Direction3(VectorMath.subtract(vector, other.getVector()));
     }
     
-    public Point times(double scalar)
+    public Point3 times(double scalar)
     {
-        return new Point(vector[0] * scalar,
+        return new Point3(vector[0] * scalar,
                          vector[1] * scalar,
                          vector[2] * scalar);
     }
     
-    public double distanceTo(Point other)
+    public double distanceTo(Point3 other)
     {
         double[] v = VectorMath.subtract(vector, other.vector);
         return VectorMath.getLength(v[0], v[1], v[2]);

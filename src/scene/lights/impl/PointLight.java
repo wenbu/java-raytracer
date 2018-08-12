@@ -7,19 +7,19 @@ import scene.lights.Light;
 import core.Intersection;
 import core.Ray;
 import core.colors.Color;
-import core.math.Point;
+import core.math.Point3;
 
 public class PointLight extends Light
 {
-    private final Point position;
+    private final Point3 position;
     
-    public PointLight(Point position, Color color)
+    public PointLight(Point3 position, Color color)
     {
         super(color);
         this.position = position;
     }
     
-    public PointLight(Point position, Color ambientColor, Color diffuseColor, Color specularColor)
+    public PointLight(Point3 position, Color ambientColor, Color diffuseColor, Color specularColor)
     {
         super(ambientColor, diffuseColor, specularColor);
         this.position = position;
@@ -29,7 +29,7 @@ public class PointLight extends Light
     public Set<Ray> getLightRay(Intersection intersection)
     {
         Set<Ray> lightRays = new HashSet<>();
-        Point origin = intersection.getPosition();
+        Point3 origin = intersection.getPosition();
         lightRays.add(new Ray(origin, position));
         return lightRays;
     }

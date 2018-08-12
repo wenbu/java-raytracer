@@ -15,8 +15,8 @@ import core.Pixel;
 import core.Ray;
 import core.Sample;
 import core.colors.Color;
-import core.math.Direction;
-import core.math.Point;
+import core.math.Direction3;
+import core.math.Point3;
 import film.Film;
 
 public class Scene implements MetricsAware
@@ -24,13 +24,13 @@ public class Scene implements MetricsAware
     private static final Logger logger = Logger.getLogger(Scene.class.getName());
     
     // (0,0) at LL
-    private final Point imageLL;
+    private final Point3 imageLL;
 
     private final int outputX;
     private final int outputY;
 
-    private final Direction dx;
-    private final Direction dy;
+    private final Direction3 dx;
+    private final Direction3 dy;
 
     private final Sampler sampler;
     private final Camera camera;
@@ -42,11 +42,11 @@ public class Scene implements MetricsAware
     
     private long timeSpentRendering = 0L;
    
-    public Scene(Point eyePosition,
-                 Point imageUL,
-                 Point imageUR,
-                 Point imageLL,
-                 Point imageLR,
+    public Scene(Point3 eyePosition,
+                 Point3 imageUL,
+                 Point3 imageUR,
+                 Point3 imageLL,
+                 Point3 imageLR,
                  int outputX,
                  int outputY,
                  Sampler sampler,
@@ -135,10 +135,10 @@ public class Scene implements MetricsAware
         double x = pixelX;
         double y = pixelY;
 
-        Point pixelLL = imageLL.plus(dx.times(x)).plus(dy.times(y));
-        Point pixelLR = pixelLL.plus(dx);
-        Point pixelUL = pixelLL.plus(dy);
-        Point pixelUR = pixelLL.plus(dx).plus(dy);
+        Point3 pixelLL = imageLL.plus(dx.times(x)).plus(dy.times(y));
+        Point3 pixelLR = pixelLL.plus(dx);
+        Point3 pixelUL = pixelLL.plus(dy);
+        Point3 pixelUR = pixelLL.plus(dx).plus(dy);
 
         return new Pixel(pixelUL, pixelUR, pixelLL, pixelLR);
     }

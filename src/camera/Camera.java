@@ -2,20 +2,20 @@ package camera;
 
 import core.Ray;
 import core.Sample;
-import core.math.Point;
+import core.math.Point3;
 
 public class Camera
 {
-    private final Point position;
+    private final Point3 position;
     
-    public Camera(Point position)
+    public Camera(Point3 position)
     {
         this.position = position;
     }
     
     public Ray getRay(Sample sample)
     {
-        Point samplePosition = sample.getWorldPosition();
+        Point3 samplePosition = sample.getWorldPosition();
         
         return new Ray(position, samplePosition);
     }

@@ -2,7 +2,7 @@ package core.math;
 
 public class Quaternion
 {
-    private final Direction v;
+    private final Direction3 v;
     private double w;
 
     /**
@@ -10,7 +10,7 @@ public class Quaternion
      */
     public Quaternion()
     {
-        this.v = new Direction(0, 0, 0);
+        this.v = new Direction3(0, 0, 0);
         this.w = 1;
     }
 
@@ -22,7 +22,7 @@ public class Quaternion
      * @param w
      *            Real component.
      */
-    public Quaternion(Direction v, double w)
+    public Quaternion(Direction3 v, double w)
     {
         this.v = v;
         this.w = w;
@@ -33,7 +33,7 @@ public class Quaternion
      */
     Quaternion(double[] vals)
     {
-        this.v = new Direction(vals[0], vals[1], vals[2]);
+        this.v = new Direction3(vals[0], vals[1], vals[2]);
         this.w = vals[3];
     }
     
@@ -59,7 +59,7 @@ public class Quaternion
             double x = (m[2][1] - m[1][2]) * s;
             double y = (m[0][2] - m[2][0]) * s;
             double z = (m[1][0] - m[0][1]) * s;
-            v = new Direction(x, y, z);
+            v = new Direction3(x, y, z);
         }
         else
         {
@@ -81,7 +81,7 @@ public class Quaternion
             q[j] = (m[j][i] + m[i][j]) * s;
             q[k] = (m[k][i] + m[i][k]) * s;
             
-            v = new Direction(q[0], q[1], q[2]);
+            v = new Direction3(q[0], q[1], q[2]);
             w = (m[k][j] - m[j][k]) * s;
         }
     }

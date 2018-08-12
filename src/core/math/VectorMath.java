@@ -3,6 +3,11 @@ package core.math;
 
 public class VectorMath
 {
+    static double getLength(double x, double y)
+    {
+        return Math.sqrt(x * x + y * y);
+    }
+    
     static double getLength(double x, double y, double z)
     {
         return Math.sqrt(x * x + y * y + z * z);

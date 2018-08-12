@@ -1,15 +1,15 @@
 package core;
 
-import core.math.Direction;
-import core.math.Point;
+import core.math.Direction3;
+import core.math.Point3;
 
 public class Ray
 {
     // configurable?
     private static final double EPSILON = 1e-5;
 
-    private final Point origin;
-    private final Direction direction;
+    private final Point3 origin;
+    private final Direction3 direction;
 
     // Minimum t value that is relevant for this Ray.
     private final double minT;
@@ -19,18 +19,18 @@ public class Ray
 
     private final int depth;
 
-    public Ray(Point origin, Direction direction)
+    public Ray(Point3 origin, Direction3 direction)
     {
         this(origin, direction, EPSILON, Double.MAX_VALUE, 0);
     }
 
-    public Ray(Point origin, Point destination)
+    public Ray(Point3 origin, Point3 destination)
     {
         this(origin, destination, EPSILON, Double.MAX_VALUE, 0);
     }
 
-    public Ray(Point origin,
-               Direction direction,
+    public Ray(Point3 origin,
+               Direction3 direction,
                Ray parent,
                double minT,
                double maxT)
@@ -38,8 +38,8 @@ public class Ray
         this(origin, direction, minT, maxT, parent.getDepth() + 1);
     }
 
-    public Ray(Point origin,
-               Direction direction,
+    public Ray(Point3 origin,
+               Direction3 direction,
                double minT,
                double maxT,
                int depth)
@@ -51,25 +51,25 @@ public class Ray
         this.depth = depth;
     }
 
-    public Ray(Point origin,
-               Point destination,
+    public Ray(Point3 origin,
+               Point3 destination,
                double minT,
                double maxT,
                int depth)
     {
         this.origin = origin;
-        this.direction = Direction.getNormalizedDirection(origin, destination);
+        this.direction = Direction3.getNormalizedDirection(origin, destination);
         this.minT = minT;
         this.maxT = maxT;
         this.depth = depth;
     }
 
-    public Point getOrigin()
+    public Point3 getOrigin()
     {
         return origin;
     }
 
-    public Direction getDirection()
+    public Direction3 getDirection()
     {
         return direction;
     }
@@ -78,7 +78,7 @@ public class Ray
      * @param t
      * @return the Point at origin + t * direction
      */
-    public Point pointAt(double t)
+    public Point3 pointAt(double t)
     {
         return origin.plus(direction.times(t));
     }

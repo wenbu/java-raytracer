@@ -5,8 +5,8 @@ import java.util.Set;
 
 import core.Pixel;
 import core.Sample;
-import core.math.Direction;
-import core.math.Point;
+import core.math.Direction3;
+import core.math.Point3;
 import sampler.Sampler;
 
 public class GridSuperSampler implements Sampler
@@ -25,12 +25,12 @@ public class GridSuperSampler implements Sampler
     {
         Set<Sample> samples = new HashSet<>();
 
-        Point pixelLL = pixel.getPixelLL();
-        Point pixelUL = pixel.getPixelUL();
-        Point pixelLR = pixel.getPixelLR();
+        Point3 pixelLL = pixel.getPixelLL();
+        Point3 pixelUL = pixel.getPixelUL();
+        Point3 pixelLR = pixel.getPixelLR();
 
-        Direction dx = pixelLR.minus(pixelLL);
-        Direction dy = pixelUL.minus(pixelLL);
+        Direction3 dx = pixelLR.minus(pixelLL);
+        Direction3 dy = pixelUL.minus(pixelLL);
 
         double distanceFromEdgeX = 1.0 / ( 2.0 * numSamplesX );
         double distanceFromEdgeY = 1.0 / ( 2.0 * numSamplesY );

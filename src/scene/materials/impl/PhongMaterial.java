@@ -10,8 +10,8 @@ import core.Intersection;
 import core.Ray;
 import core.colors.Color;
 import core.colors.Colors;
-import core.math.Direction;
-import core.math.Point;
+import core.math.Direction3;
+import core.math.Point3;
 
 public class PhongMaterial implements Material
 {
@@ -52,7 +52,7 @@ public class PhongMaterial implements Material
                 if (raytracer.isOccluded(lightRay))
                     continue;
 
-                Direction surfaceNormal = intersection.getNormal();
+                Direction3 surfaceNormal = intersection.getNormal();
 
                 color.add(getAmbientTerm(light.getAmbientColor()));
                 color.add(getDiffuseTerm(lightRay,
@@ -79,12 +79,12 @@ public class PhongMaterial implements Material
     }
 
     private Color getDiffuseTerm(Ray lightRay,
-                                 Direction normal,
+                                 Direction3 normal,
                                  Color lightColor)
     {
         if (diffuseColor.equals(Colors.BLACK))
             return Colors.BLACK;
-        Direction lightDirection = lightRay.getDirection();
+        Direction3 lightDirection = lightRay.getDirection();
         double dotProduct = lightDirection.dot(normal);
 
         if (dotProduct < 0)
@@ -94,7 +94,7 @@ public class PhongMaterial implements Material
     }
 
     private Color getSpecularTerm(Ray lightRay,
-                                  Direction normal,
+                                  Direction3 normal,
                                   Ray cameraRay,
                                   Color lightColor)
     {
@@ -102,9 +102,9 @@ public class PhongMaterial implements Material
             return Colors.BLACK;
         // cameraRay is the ray from the camera into the scene; to get the one
         // we want we need to reverse it
-        Direction cameraDirection = cameraRay.getDirection().opposite();
-        Direction lightDirection = lightRay.getDirection();
-        Direction reflectedLightDirection = getReflectionVector(lightDirection,
+        Direction3 cameraDirection = cameraRay.getDirection().opposite();
+        Direction3 lightDirection = lightRay.getDirection();
+        Direction3 reflectedLightDirection = getReflectionVector(lightDirection,
                                                                 normal);
         double dotProduct = reflectedLightDirection.dot(cameraDirection);
         double diffuseDotProduct = lightDirection.dot(normal);
@@ -117,14 +117,14 @@ public class PhongMaterial implements Material
     }
 
     private Color getReflectionTerm(Ray cameraRay,
-                                    Point point,
-                                    Direction normal,
+                                    Point3 point,
+                                    Direction3 normal,
                                     Raytracer raytracer)
     {
         if (reflectionColor.equals(Colors.BLACK))
             return Colors.BLACK;
-        Direction cameraDirection = cameraRay.getDirection();
-        Direction reflectedCameraDirection = getReflectionVector(cameraDirection,
+        Direction3 cameraDirection = cameraRay.getDirection();
+        Direction3 reflectedCameraDirection = getReflectionVector(cameraDirection,
                                                                  normal).opposite();
         Ray reflectedRay = new Ray(point, reflectedCameraDirection,
                                    cameraRay, 1e-5, Double.MAX_VALUE);
@@ -137,7 +137,7 @@ public class PhongMaterial implements Material
      * @param normal
      * @return v reflected about normal
      */
-    private Direction getReflectionVector(Direction v, Direction normal)
+    private Direction3 getReflectionVector(Direction3 v, Direction3 normal)
     {
         return normal.times(2 * v.dot(normal)).minus(v);
     }

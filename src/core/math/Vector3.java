@@ -1,16 +1,16 @@
 package core.math;
 
 
-public abstract class Vector
+public abstract class Vector3
 {
     protected final double[] vector;
     
-    protected Vector()
+    protected Vector3()
     {
         this.vector = new double[3];
     }
     
-    protected Vector(double[] vector)
+    protected Vector3(double[] vector)
     {
         this();
         for (int i = 0; i < 3; i++)
@@ -19,7 +19,7 @@ public abstract class Vector
         }
     }
     
-    protected Vector(double x, double y, double z)
+    protected Vector3(double x, double y, double z)
     {
         this();
         this.vector[0] = x;

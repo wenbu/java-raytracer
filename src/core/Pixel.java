@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import core.colors.Color;
-import core.math.Point;
+import core.math.Point3;
 
 /**
  * A Pixel represents a pixel in the image. It is defined by four corner points
@@ -13,17 +13,17 @@ import core.math.Point;
  */
 public class Pixel
 {
-    private final Point pixelUL;
-    private final Point pixelUR;
-    private final Point pixelLL;
-    private final Point pixelLR;
+    private final Point3 pixelUL;
+    private final Point3 pixelUR;
+    private final Point3 pixelLL;
+    private final Point3 pixelLR;
 
     private final Set<Color> samples;
 
-    public Pixel(Point pixelUL,
-            Point pixelUR,
-            Point pixelLL,
-            Point pixelLR)
+    public Pixel(Point3 pixelUL,
+            Point3 pixelUR,
+            Point3 pixelLL,
+            Point3 pixelLR)
     {
         this.pixelUL = pixelUL;
         this.pixelUR = pixelUR;
@@ -43,22 +43,22 @@ public class Pixel
         this.samples.addAll(samples);
     }
 
-    public Point getPixelUL()
+    public Point3 getPixelUL()
     {
         return pixelUL;
     }
 
-    public Point getPixelUR()
+    public Point3 getPixelUR()
     {
         return pixelUR;
     }
 
-    public Point getPixelLL()
+    public Point3 getPixelLL()
     {
         return pixelLL;
     }
 
-    public Point getPixelLR()
+    public Point3 getPixelLR()
     {
         return pixelLR;
     }
