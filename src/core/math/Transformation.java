@@ -2,6 +2,8 @@ package core.math;
 
 import core.Ray;
 import core.space.BoundingBox;
+import scene.interactions.impl.SurfaceInteraction;
+import scene.interactions.impl.SurfaceInteraction.ShadingGeometry;
 
 
 public class Transformation
@@ -208,6 +210,44 @@ public class Transformation
         }
         
         return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+    
+    public SurfaceInteraction transform(SurfaceInteraction other)
+    {
+        // TODO
+        Point3 transformedP = null;
+        Direction3 transformedError = null;
+        
+        Direction3 transformedWo = this.transform(other.getWo()).normalize();
+        Normal3 transformedN = this.transform(other.getN()).normalize();
+        Direction3 transformedDpdu = this.transform(other.getDpdu());
+        Direction3 transformedDpdv = this.transform(other.getDpdv());
+        Normal3 transformedDndu = this.transform(other.getDndu());
+        Normal3 transformedDndv = this.transform(other.getDndv());
+        
+        ShadingGeometry shadingGeo = other.getShadingGeometry();
+        Normal3 transformedShadingN = this.transform(shadingGeo.getN()).normalize();
+        Direction3 transformedShadingDpdu = this.transform(shadingGeo.getDpdu());
+        Direction3 transformedShadingDpdv = this.transform(shadingGeo.getDpdv());
+        Normal3 transformedShadingDndu = this.transform(shadingGeo.getDndu());
+        Normal3 transformedShadingDndv = this.transform(shadingGeo.getDndv());
+
+        return new SurfaceInteraction(transformedP,
+                                      transformedError,
+                                      other.getUv(),
+                                      transformedWo,
+                                      transformedN,
+                                      transformedDpdu,
+                                      transformedDpdv,
+                                      transformedDndu,
+                                      transformedDndv,
+                                      other.getT(),
+                                      other.getShape(),
+                                      transformedShadingN,
+                                      transformedShadingDndu,
+                                      transformedShadingDndv,
+                                      transformedShadingDpdu,
+                                      transformedShadingDpdv);
     }
     
     public Transformation compose(Transformation m2)
