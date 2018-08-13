@@ -21,16 +21,16 @@ public class Normal3 extends Vector3
         homogeneous = new double[] {vector[0], vector[1], vector[2], 0};
     }
     
-    public static Normal3 getNormalizedNormal(Normal3 normal)
+    public static Normal3 getNormalizedNormal(Vector3 v)
     {
-        double x = normal.x();
-        double y = normal.y();
-        double z = normal.z();
+        double x = v.x();
+        double y = v.y();
+        double z = v.z();
         
         return getNormalizedNormal(x, y, z);
     }
     
-    public static Normal3 getNormalizedNormal(double x, double y, double z)
+    private static Normal3 getNormalizedNormal(double x, double y, double z)
     {
         double length = VectorMath.getLength(x, y, z);
         return new Normal3(x / length, y / length, z / length);
@@ -43,6 +43,11 @@ public class Normal3 extends Vector3
      * direction
      */
     public static Normal3 faceForward(Normal3 normal, Direction3 direction)
+    {
+        return (normal.dot(direction) < 0.0) ? normal.opposite() : normal;
+    }
+    
+    public static Normal3 faceForward(Normal3 normal, Normal3 direction)
     {
         return (normal.dot(direction) < 0.0) ? normal.opposite() : normal;
     }
@@ -72,6 +77,34 @@ public class Normal3 extends Vector3
         return times(1.0 / scalar);
     }
     
+    public Normal3 plusEquals(Normal3 other)
+    {
+        VectorMath.plusEquals(vector, other.getVector());
+        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        return this;
+    }
+    
+    public Normal3 minusEquals(Normal3 other)
+    {
+        VectorMath.minusEquals(vector, other.getVector());
+        VectorMath.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        return this;
+    }
+    
+    public Normal3 timesEquals(double scalar)
+    {
+        VectorMath.timesEquals(vector, scalar);
+        VectorMath.timesEquals(homogeneous, scalar, MAX_INDEX);
+        return this;
+    }
+    
+    public Normal3 divideEquals(double scalar)
+    {
+        VectorMath.divideEquals(vector, scalar);
+        VectorMath.divideEquals(homogeneous, scalar, MAX_INDEX);
+        return this;
+    }
+    
     public double dot(Direction3 other)
     {
         return VectorMath.dotProduct(vector, other.vector);
@@ -92,6 +125,16 @@ public class Normal3 extends Vector3
         return x() * x() +
                y() * y() +
                z() * z();
+    }
+    
+    public Normal3 normalized()
+    {
+        return divide(length());
+    }
+    
+    public Normal3 normalize()
+    {
+        return divideEquals(length());
     }
 
     public String toString()
