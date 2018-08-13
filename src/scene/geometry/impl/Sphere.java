@@ -1,4 +1,4 @@
-package scene.shapes.impl;
+package scene.geometry.impl;
 
 import static core.math.MathUtilities.clamp;
 import static core.math.MathUtilities.quadratic;
@@ -12,8 +12,8 @@ import core.math.Transformation;
 import core.space.BoundingBox;
 import core.tuple.Pair;
 import core.tuple.Triple;
+import scene.geometry.Shape;
 import scene.interactions.impl.SurfaceInteraction;
-import scene.shapes.Shape;
 
 public class Sphere extends Shape
 {

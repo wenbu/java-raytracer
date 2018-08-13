@@ -1,4 +1,4 @@
-package scene.shapes;
+package scene.geometry;
 
 import core.Ray;
 import core.math.Transformation;

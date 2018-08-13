@@ -4,8 +4,8 @@ import core.math.Direction3;
 import core.math.Normal3;
 import core.math.Point2;
 import core.math.Point3;
+import scene.geometry.Shape;
 import scene.interactions.Interaction;
-import scene.shapes.Shape;
 
 public class SurfaceInteraction extends Interaction
 {
