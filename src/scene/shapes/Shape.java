@@ -65,5 +65,5 @@ public abstract class Shape
         return intersect(ray, testAlpha) != null;
     }
     
-    public abstract boolean surfaceArea();
+    public abstract double surfaceArea();
 }
