@@ -11,12 +11,19 @@ public class Ray
     private final Point3 origin;
     private final Direction3 direction;
 
+    private double tMax;
+    private final double time;
+    // private final Medium medium;
+    
     // Minimum t value that is relevant for this Ray.
+    @Deprecated
     private final double minT;
 
     // Maximum t value that is relevant for this Ray.
+    @Deprecated
     private final double maxT;
 
+    @Deprecated
     private final int depth;
 
     public Ray(Point3 origin, Direction3 direction)
@@ -49,6 +56,9 @@ public class Ray
         this.minT = minT;
         this.maxT = maxT;
         this.depth = depth;
+        
+        this.tMax = maxT;
+        this.time = 0;
     }
 
     public Ray(Point3 origin,
@@ -62,6 +72,9 @@ public class Ray
         this.minT = minT;
         this.maxT = maxT;
         this.depth = depth;
+        
+        this.tMax = maxT;
+        this.time = 0;
     }
 
     public Point3 getOrigin()
@@ -82,17 +95,35 @@ public class Ray
     {
         return origin.plus(direction.times(t));
     }
+    
+    public double getTime()
+    {
+        return time;
+    }
+    
+    public void setTMax(double tMax)
+    {
+        this.tMax = tMax;
+    }
+    
+    public double getTMax()
+    {
+        return tMax;
+    }
 
+    @Deprecated
     public double getMinT()
     {
         return minT;
     }
 
+    @Deprecated
     public double getMaxT()
     {
         return maxT;
     }
 
+    @Deprecated
     public int getDepth()
     {
         return depth;
