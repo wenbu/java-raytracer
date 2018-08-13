@@ -50,6 +50,29 @@ public class BoundingBox
         minPoint = new Point3(minX, minY, minZ);
         maxPoint = new Point3(maxX, maxY, maxZ);
     }
+    
+    public Point3 get(int index)
+    {
+        if (index == 0)
+        {
+            return minPoint;
+        }
+        else if (index == 1)
+        {
+            return maxPoint;
+        }
+        else
+        {
+            throw new IllegalArgumentException("Index passed to get out of range. Valid values: 0, 1");
+        }
+    }
+    
+    public Point3 corner(int corner)
+    {
+        return new Point3(get(corner & 1).x(),
+                          get(((corner & 2) != 0) ? 1 : 0).y(),
+                          get(((corner & 4) != 0) ? 1 : 0).z());
+    }
 
     /**
      * Given a Point, return a new minimal BoundingBox that contains this one's
@@ -228,9 +251,46 @@ public class BoundingBox
      * @param dirIsNegative 1 if direction is negative in that axis, 0 otherwise
      * @return
      */
-    public Pair<Double, Double> intersect(Ray ray, Direction3 inverseDirection, int[] dirIsNegative)
+    public boolean intersect(Ray ray, Direction3 inverseDirection, int[] dirIsNegative)
     {
-        // TODO
-        return null;
+        double tMin =  (get(    dirIsNegative[0]).x() - ray.getOrigin().x()) * inverseDirection.x();
+        double tMax =  (get(1 - dirIsNegative[0]).x() - ray.getOrigin().x()) * inverseDirection.x();
+        double tyMin = (get(    dirIsNegative[1]).y() - ray.getOrigin().y()) * inverseDirection.y();
+        double tyMax = (get(1 - dirIsNegative[1]).y() - ray.getOrigin().y()) * inverseDirection.y();
+        
+        if (tMin > tyMax || tyMin > tMax)
+        {
+            return false;
+        }
+        
+        if (tyMin > tMin)
+        {
+            tMin = tyMin;
+        }
+        
+        if (tyMax < tMax)
+        {
+            tMax = tyMax;
+        }
+        
+        double tzMin = (get(    dirIsNegative[2]).z() - ray.getOrigin().z()) * inverseDirection.z();
+        double tzMax = (get(1 - dirIsNegative[2]).z() - ray.getOrigin().z()) * inverseDirection.z();
+        
+        if (tMin > tzMax || tzMin > tMax)
+        {
+            return false;
+        }
+        
+        if (tzMin > tMin)
+        {
+            tMin = tzMin;
+        }
+        
+        if (tzMax < tMax)
+        {
+            tMax = tzMax;
+        }
+        
+        return (tMin < ray.getMaxT()) && (tMax > 0);
     }
 }
