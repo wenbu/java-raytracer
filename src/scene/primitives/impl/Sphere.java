@@ -7,6 +7,7 @@ import core.Ray;
 import core.math.Direction3;
 import core.math.Point3;
 
+@Deprecated
 public class Sphere implements Primitive
 {
     private final Point3 center;

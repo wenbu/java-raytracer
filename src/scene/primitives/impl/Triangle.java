@@ -7,6 +7,7 @@ import core.math.Point3;
 import scene.materials.Material;
 import scene.primitives.Primitive;
 
+@Deprecated
 public class Triangle implements Primitive
 {
     private final Point3 v1;
