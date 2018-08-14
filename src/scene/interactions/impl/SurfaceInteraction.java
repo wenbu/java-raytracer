@@ -6,6 +6,7 @@ import core.math.Point2;
 import core.math.Point3;
 import scene.geometry.Shape;
 import scene.interactions.Interaction;
+import scene.primitives.Primitive;
 
 public class SurfaceInteraction extends Interaction
 {
@@ -14,6 +15,9 @@ public class SurfaceInteraction extends Interaction
     private final Normal3 dndu, dndv;
     private final Shape shape;
     private final ShadingGeometry shadingGeometry;
+    private Primitive primitive = null;
+    // private BSDF bsdf = null;
+    // private BSSRDF bssrdf = null;
 
     public SurfaceInteraction(Point3 p, Direction3 error, Point2 uv, Direction3 wo, Direction3 dpdu, Direction3 dpdv,
             Normal3 dndu, Normal3 dndv, double t, Shape shape)
@@ -104,6 +108,16 @@ public class SurfaceInteraction extends Interaction
         shadingGeometry.setDpdv(dpdvs);
         shadingGeometry.setDndu(dndus);
         shadingGeometry.setDndv(dndvs);
+    }
+    
+    public void setPrimitive(Primitive primitive)
+    {
+        this.primitive = primitive;
+    }
+    
+    public Primitive getPrimitive()
+    {
+        return primitive;
     }
     
     private boolean shouldReverseNormal()

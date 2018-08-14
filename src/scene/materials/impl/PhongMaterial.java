@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import raytracer.Raytracer;
+import scene.interactions.impl.SurfaceInteraction;
 import scene.lights.Light;
 import scene.materials.Material;
 import core.Intersection;
@@ -11,6 +12,7 @@ import core.Ray;
 import core.colors.Color;
 import core.colors.Colors;
 import core.math.Direction3;
+import core.math.Normal3;
 import core.math.Point3;
 
 public class PhongMaterial implements Material
@@ -36,7 +38,7 @@ public class PhongMaterial implements Material
 
     @Override
     public Color getColor(Set<Light> lights,
-                          Intersection intersection,
+                          SurfaceInteraction intersection,
                           Ray cameraRay,
                           Raytracer raytracer)
     {
@@ -52,7 +54,8 @@ public class PhongMaterial implements Material
                 if (raytracer.isOccluded(lightRay))
                     continue;
 
-                Direction3 surfaceNormal = intersection.getNormal();
+                // XXX dumb
+                Direction3 surfaceNormal = new Direction3(intersection.getN());
 
                 color.add(getAmbientTerm(light.getAmbientColor()));
                 color.add(getDiffuseTerm(lightRay,
@@ -63,7 +66,7 @@ public class PhongMaterial implements Material
                                           cameraRay,
                                           light.getSpecularColor()));
                 color.add(getReflectionTerm(cameraRay,
-                                            intersection.getPosition(),
+                                            intersection.getP(),
                                             surfaceNormal,
                                             raytracer));
             }

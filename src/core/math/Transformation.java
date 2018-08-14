@@ -214,8 +214,8 @@ public class Transformation
     
     public SurfaceInteraction transform(SurfaceInteraction other)
     {
+        Point3 transformedP = this.transform(other.getP());
         // TODO
-        Point3 transformedP = null;
         Direction3 transformedError = null;
         
         Direction3 transformedWo = this.transform(other.getWo()).normalize();

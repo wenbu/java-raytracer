@@ -3,11 +3,11 @@ package scene.lights.impl;
 import java.util.HashSet;
 import java.util.Set;
 
-import scene.lights.Light;
-import core.Intersection;
 import core.Ray;
 import core.colors.Color;
 import core.math.Point3;
+import scene.interactions.impl.SurfaceInteraction;
+import scene.lights.Light;
 
 public class PointLight extends Light
 {
@@ -26,10 +26,10 @@ public class PointLight extends Light
     }
     
     @Override
-    public Set<Ray> getLightRay(Intersection intersection)
+    public Set<Ray> getLightRay(SurfaceInteraction intersection)
     {
         Set<Ray> lightRays = new HashSet<>();
-        Point3 origin = intersection.getPosition();
+        Point3 origin = intersection.getP();
         lightRays.add(new Ray(origin, position));
         return lightRays;
     }

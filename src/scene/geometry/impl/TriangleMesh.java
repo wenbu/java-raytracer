@@ -31,10 +31,10 @@ public class TriangleMesh
         this.vertexIndices = new ArrayList<>(numTriangles * 3);
         for (int i = 0; i < vertexIndices.length; i++)
         {
-            vertexIndices[i] = i;
+            this.vertexIndices.add(i);
         }
         
-        p = new Point3[numTriangles];
+        p = new Point3[numVertices];
         for (int i = 0; i < numVertices; i++)
         {
             p[i] = objectToWorld.transform(P[i]);

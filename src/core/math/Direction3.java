@@ -97,7 +97,7 @@ public class Direction3 extends Vector3
         return this;
     }
 
-    public double dot(Direction3 other)
+    public double dot(Vector3 other)
     {
         return VectorMath.dotProduct(vector, other.vector);
     }

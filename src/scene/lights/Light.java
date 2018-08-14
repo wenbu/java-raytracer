@@ -2,10 +2,10 @@ package scene.lights;
 
 import java.util.Set;
 
-import core.Intersection;
 import core.Ray;
 import core.colors.Color;
 import core.colors.Colors;
+import scene.interactions.impl.SurfaceInteraction;
 
 public abstract class Light
 {
@@ -32,7 +32,7 @@ public abstract class Light
      * @return a Ray from the intersection point towards the light source. This
      *         Ray is in worldspace.
      */
-    public abstract Set<Ray> getLightRay(Intersection intersection);
+    public abstract Set<Ray> getLightRay(SurfaceInteraction intersection);
 
     public Color getAmbientColor()
     {

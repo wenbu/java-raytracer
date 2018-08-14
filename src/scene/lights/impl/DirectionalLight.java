@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import scene.interactions.impl.SurfaceInteraction;
 import scene.lights.Light;
 import core.Intersection;
 import core.Ray;
@@ -46,19 +47,19 @@ public class DirectionalLight extends Light
 	}
 
 	@Override
-	public Set<Ray> getLightRay(Intersection intersection)
+	public Set<Ray> getLightRay(SurfaceInteraction intersection)
 	{
 		Set<Ray> lightRays = new HashSet<>();
 
 		if (numRays == 1)
 		{
-			Point3 origin = intersection.getPosition();
+			Point3 origin = intersection.getP();
 			lightRays.add(new Ray(origin, direction.opposite()));
 		}
 		else
 		{
 			// i think this works
-			Direction3 surfaceNormal = intersection.getNormal();
+			Direction3 surfaceNormal = new Direction3(intersection.getN());
 			Direction3 surfaceTangent = Direction3.getNormalizedDirection(
 					surfaceNormal.z(), 0, -surfaceNormal.x());
 			for (int i = 0; i < numRays; i++)
@@ -71,8 +72,7 @@ public class DirectionalLight extends Light
 				Direction3 rayDirection = Transformation.getRotation(
 						rotationAxis, random.nextDouble() * lightAngle).transform(
 						this.direction.opposite());
-				lightRays
-						.add(new Ray(intersection.getPosition(), rayDirection));
+				lightRays.add(new Ray(intersection.getP(), rayDirection));
 			}
 		}
 		return lightRays;

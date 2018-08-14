@@ -73,6 +73,10 @@ public class Triangle extends Shape
         Point3 p2 = mesh.getPoint(pointIndex + 2);
         
         var isect = doIntersectionTest(new Triple<>(p0, p1, p2), ray);
+        if (isect == null)
+        {
+            return null;
+        }
         var barycentricCoordinates = isect.getFirst();
         double b0 = barycentricCoordinates.getFirst();
         double b1 = barycentricCoordinates.getSecond();

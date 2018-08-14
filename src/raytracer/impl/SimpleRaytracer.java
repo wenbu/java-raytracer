@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import metrics.MetricsAware;
 import raytracer.Raytracer;
+import scene.interactions.impl.SurfaceInteraction;
 import scene.lights.Light;
 import scene.materials.Material;
 import scene.primitives.Primitive;
@@ -48,12 +49,12 @@ public class SimpleRaytracer implements Raytracer, MetricsAware
                 return Colors.BLACK;
             }
     
-            Intersection closestIntersection = getClosestIntersection(ray);
+            SurfaceInteraction closestIntersection = getClosestIntersection(ray);
     
             Color color = Colors.BLACK;
             if (closestIntersection != null)
             {
-                Material material = closestIntersection.getMaterial();
+                Material material = closestIntersection.getPrimitive().getMaterial();
     
                 color = material.getColor(lights, closestIntersection, ray, this);
             }
@@ -67,26 +68,26 @@ public class SimpleRaytracer implements Raytracer, MetricsAware
         }
     }
 
-    private Intersection getClosestIntersection(Ray ray)
+    private SurfaceInteraction getClosestIntersection(Ray ray)
     {
         return getClosestIntersection(ray, 0);
     }
 
-    private Intersection getClosestIntersection(Ray ray, double minT)
+    private SurfaceInteraction getClosestIntersection(Ray ray, double minT)
     {
-        Intersection closestIntersection = null;
+        SurfaceInteraction closestIntersection = null;
         double closestDistance = Double.MAX_VALUE;
 
         for (Primitive geo : geometry)
         {
-            Intersection intersection = geo.getIntersection(ray);
-
+            SurfaceInteraction intersection = geo.intersect(ray);
+            
             if (intersection == null)
             {
                 continue;
             }
 
-            double distance = intersection.getDistance();
+            double distance = intersection.getT();
             if (distance < minT)
                 continue;
             if (distance < closestDistance)
@@ -107,14 +108,14 @@ public class SimpleRaytracer implements Raytracer, MetricsAware
         {
             for (Primitive geo : geometry)
             {
-                Intersection intersection = geo.getIntersection(ray);
+                SurfaceInteraction intersection = geo.intersect(ray);
     
                 if (intersection == null)
                 {
                     continue;
                 }
     
-                double distance = intersection.getDistance();
+                double distance = intersection.getT();
     
                 if (distance < ray.getMinT() || distance > ray.getMaxT())
                     continue;

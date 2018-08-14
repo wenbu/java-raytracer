@@ -2,10 +2,10 @@ package scene.materials.impl;
 
 import java.util.Set;
 
-import core.Intersection;
 import core.Ray;
 import core.colors.Color;
 import raytracer.Raytracer;
+import scene.interactions.impl.SurfaceInteraction;
 import scene.lights.Light;
 import scene.materials.Material;
 
@@ -20,7 +20,7 @@ public class DebugMaterial implements Material
 
     @Override
     public Color getColor(Set<Light> lights,
-                          Intersection intersection,
+                          SurfaceInteraction intersection,
                           Ray cameraRay,
                           Raytracer raytracer)
     {
