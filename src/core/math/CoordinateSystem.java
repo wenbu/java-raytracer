@@ -16,9 +16,9 @@ public class CoordinateSystem
         this.v3 = v3;
     }
     
-    public CoordinateSystem(Direction3 v)
+    public CoordinateSystem(Vector3 v)
     {
-        v1 = v;
+        v1 = new Direction3(v);
         
         if (abs(v.x()) > abs(v.y()))
         {

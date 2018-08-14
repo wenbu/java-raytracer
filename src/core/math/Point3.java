@@ -45,6 +45,11 @@ public class Point3 extends Vector3
         return new Direction3(VectorMath.subtract(vector, other.getVector()));
     }
     
+    public Point3 minus(Direction3 other)
+    {
+        return new Point3(VectorMath.subtract(vector, other.getVector()));
+    }
+    
     public Point3 times(double scalar)
     {
         return new Point3(vector[0] * scalar,
@@ -56,6 +61,11 @@ public class Point3 extends Vector3
     {
         double[] v = VectorMath.subtract(vector, other.vector);
         return VectorMath.getLength(v[0], v[1], v[2]);
+    }
+    
+    public Point3 permute(int x, int y, int z)
+    {
+        return new Point3(VectorMath.permute(vector, x, y, z));
     }
 
     @Override

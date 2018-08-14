@@ -111,6 +111,26 @@ public class VectorMath
         return quotient;
     }
     
+    public static double[] abs(double[] v)
+    {
+        double[] abs = new double[v.length];
+        for (int i = 0; i < v.length; i++)
+        {
+            abs[i] = Math.abs(v[i]);
+        }
+        return abs;
+    }
+    
+    public static double[] permute(double[] v, int x, int y, int z)
+    {
+        if (v.length != 3)
+        {
+            throw new IllegalArgumentException("length is not 3");
+        }
+        
+        return new double[] { v[x], v[y], v[z] };
+    }
+    
     public static double[][] multiply(double[][] m, double s)
     {
         double[][] product = new double[m.length][];

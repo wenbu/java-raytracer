@@ -41,6 +41,11 @@ public abstract class Interaction
     {
         return wo;
     }
+    
+    public void setN(Normal3 n)
+    {
+        this.n = n;
+    }
 
     public Normal3 getN()
     {

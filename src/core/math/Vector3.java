@@ -78,5 +78,10 @@ public abstract class Vector3
         }
     }
     
+    public int maxDimension()
+    {
+        return (x() > y()) ? ((x() > z()) ? 0 : 2) : ((y() > z()) ? 1 : 2);
+    }
+    
     protected abstract double[] getHomogeneousForm();
 }

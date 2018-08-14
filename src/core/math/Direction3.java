@@ -10,9 +10,9 @@ public class Direction3 extends Vector3
         homogeneous = new double[] {x, y, z, 0};
     }
     
-    public Direction3(Normal3 normal)
+    public Direction3(Vector3 vector)
     {
-        this(normal.vector);
+        this(vector.vector);
     }
 
     Direction3(double[] vector)
@@ -107,7 +107,7 @@ public class Direction3 extends Vector3
         return VectorMath.dotProduct(vector, other.vector);
     }
 
-    public Direction3 cross(Direction3 other)
+    public Direction3 cross(Vector3 other)
     {
         double x1 = vector[0];
         double y1 = vector[1];
@@ -119,6 +119,16 @@ public class Direction3 extends Vector3
         return new Direction3(y1 * z2 - z1 * y2,
                              z1 * x2 - x1 * z2,
                              x1 * y2 - y1 * x2);
+    }
+    
+    public Direction3 abs()
+    {
+        return new Direction3(VectorMath.abs(vector));
+    }
+    
+    public Direction3 permute(int x, int y, int z)
+    {
+        return new Direction3(VectorMath.permute(vector, x, y, z));
     }
 
     public double length()
