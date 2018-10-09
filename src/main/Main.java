@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import camera.Camera;
-import camera.PerspectiveCamera;
+import camera.impl.PerspectiveCamera;
 import core.colors.Colors;
 import core.colors.RGBSpectrum;
 import core.math.Direction2;
@@ -16,9 +16,9 @@ import core.math.Point3;
 import core.math.Transformation;
 import core.space.BoundingBox2;
 import film.Film;
-import film.filter.BoxFilter;
+import film.filter.impl.BoxFilter;
 import integrator.Integrator;
-import integrator.WhittedIntegrator;
+import integrator.impl.WhittedIntegrator;
 import sampler.Sampler;
 import sampler.impl.StratifiedSampler;
 import scene.Scene;
@@ -32,7 +32,7 @@ import scene.medium.Medium.MediumInterface;
 import scene.primitives.Primitive;
 import scene.primitives.impl.GeometricPrimitive;
 import scene.primitives.impl.SimpleAggregate;
-import texture.ConstantTexture;
+import texture.impl.ConstantTexture;
 
 public class Main
 {

@@ -1,5 +1,7 @@
 package core.math;
 
+import utilities.VectorUtilities;
+
 public class Normal2 extends Vector2
 {
     private double[] homogeneous;
@@ -31,28 +33,28 @@ public class Normal2 extends Vector2
     
     public static Normal2 getNormalizedNormal(double x, double y)
     {
-        double length = VectorMath.getLength(x, y);
+        double length = VectorUtilities.getLength(x, y);
         return new Normal2(x / length, y / length);
     }
     
     public Normal2 opposite()
     {
-        return new Normal2(VectorMath.opposite(vector));
+        return new Normal2(VectorUtilities.opposite(vector));
     }
     
     public Normal2 plus(Normal2 other)
     {
-        return new Normal2(VectorMath.add(vector, other.getVector()));
+        return new Normal2(VectorUtilities.add(vector, other.getVector()));
     }
     
     public Normal2 minus(Normal2 other)
     {
-        return new Normal2(VectorMath.subtract(vector, other.getVector()));
+        return new Normal2(VectorUtilities.subtract(vector, other.getVector()));
     }
 
     public Normal2 times(double scalar)
     {
-        return new Normal2(VectorMath.multiply(vector, scalar));
+        return new Normal2(VectorUtilities.multiply(vector, scalar));
     }
 
     public Normal2 divide(double scalar)
@@ -62,12 +64,12 @@ public class Normal2 extends Vector2
     
     public double dot(Direction2 other)
     {
-        return VectorMath.dotProduct(vector, other.getVector());
+        return VectorUtilities.dotProduct(vector, other.getVector());
     }
     
     public double dot(Normal2 other)
     {
-        return VectorMath.dotProduct(vector, other.getVector());
+        return VectorUtilities.dotProduct(vector, other.getVector());
     }
     
     public double length()

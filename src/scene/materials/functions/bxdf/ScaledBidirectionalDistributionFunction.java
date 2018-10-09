@@ -1,4 +1,4 @@
-package scene.materials.functions;
+package scene.materials.functions.bxdf;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -9,6 +9,7 @@ import core.math.Point2;
 import core.tuple.Pair;
 import core.tuple.Quadruple;
 import core.tuple.Triple;
+import scene.materials.functions.AbstractBidirectionalDistributionFunction;
 
 public class ScaledBidirectionalDistributionFunction extends AbstractBidirectionalDistributionFunction
 {
@@ -17,7 +18,7 @@ public class ScaledBidirectionalDistributionFunction extends AbstractBidirection
 
     public ScaledBidirectionalDistributionFunction(AbstractBidirectionalDistributionFunction bxdf, RGBSpectrum scale)
     {
-        super(bxdf.type);
+        super(bxdf.getType());
         this.bxdf = bxdf;
         this.scale = scale;
     }

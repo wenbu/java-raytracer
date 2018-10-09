@@ -1,5 +1,7 @@
 package core.math;
 
+import utilities.VectorUtilities;
+
 public class Direction3 extends Vector3
 {
     private double[] homogeneous;
@@ -37,7 +39,7 @@ public class Direction3 extends Vector3
 
     public static Direction3 getNormalizedDirection(double x, double y, double z)
     {
-        double length = VectorMath.getLength(x, y, z);
+        double length = VectorUtilities.getLength(x, y, z);
         return new Direction3(x / length, y / length, z / length);
     }
 
@@ -51,65 +53,65 @@ public class Direction3 extends Vector3
 
     public Direction3 opposite()
     {
-        return new Direction3(VectorMath.opposite(vector));
+        return new Direction3(VectorUtilities.opposite(vector));
     }
 
     public Direction3 plus(Direction3 other)
     {
-        return new Direction3(VectorMath.add(vector, other.getVector()));
+        return new Direction3(VectorUtilities.add(vector, other.getVector()));
     }
     
     public Direction3 plus(Normal3 other)
     {
-        return new Direction3(VectorMath.add(vector, other.getVector()));
+        return new Direction3(VectorUtilities.add(vector, other.getVector()));
     }
 
     public Direction3 minus(Direction3 other)
     {
-        return new Direction3(VectorMath.subtract(vector, other.getVector()));
+        return new Direction3(VectorUtilities.subtract(vector, other.getVector()));
     }
 
     public Direction3 times(double scalar)
     {
-        return new Direction3(VectorMath.multiply(vector, scalar));
+        return new Direction3(VectorUtilities.multiply(vector, scalar));
     }
 
     public Direction3 divide(double scalar)
     {
-        return new Direction3(VectorMath.divide(vector, scalar));
+        return new Direction3(VectorUtilities.divide(vector, scalar));
     }
     
     public Direction3 plusEquals(Direction3 other)
     {
-        VectorMath.plusEquals(vector, other.getVector());
-        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        VectorUtilities.plusEquals(vector, other.getVector());
+        VectorUtilities.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Direction3 minusEquals(Direction3 other)
     {
-        VectorMath.minusEquals(vector, other.getVector());
-        VectorMath.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        VectorUtilities.minusEquals(vector, other.getVector());
+        VectorUtilities.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Direction3 timesEquals(double scalar)
     {
-        VectorMath.timesEquals(vector, scalar);
-        VectorMath.timesEquals(homogeneous, scalar, MAX_INDEX);
+        VectorUtilities.timesEquals(vector, scalar);
+        VectorUtilities.timesEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
     
     public Direction3 divideEquals(double scalar)
     {
-        VectorMath.divideEquals(vector, scalar);
-        VectorMath.divideEquals(homogeneous, scalar, MAX_INDEX);
+        VectorUtilities.divideEquals(vector, scalar);
+        VectorUtilities.divideEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
 
     public double dot(Vector3 other)
     {
-        return VectorMath.dotProduct(vector, other.vector);
+        return VectorUtilities.dotProduct(vector, other.vector);
     }
     
     public double absDot(Vector3 other)
@@ -133,12 +135,12 @@ public class Direction3 extends Vector3
     
     public Direction3 abs()
     {
-        return new Direction3(VectorMath.abs(vector));
+        return new Direction3(VectorUtilities.abs(vector));
     }
     
     public Direction3 permute(int x, int y, int z)
     {
-        return new Direction3(VectorMath.permute(vector, x, y, z));
+        return new Direction3(VectorUtilities.permute(vector, x, y, z));
     }
 
     public double length()

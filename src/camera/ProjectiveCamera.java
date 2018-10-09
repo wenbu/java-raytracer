@@ -6,7 +6,6 @@ import core.math.Transformation;
 import core.space.BoundingBox2;
 import core.tuple.Pair;
 import film.Film;
-import sample.CameraSample;
 import scene.medium.Medium;
 
 public abstract class ProjectiveCamera extends Camera

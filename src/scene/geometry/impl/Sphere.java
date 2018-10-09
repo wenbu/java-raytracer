@@ -1,17 +1,17 @@
 package scene.geometry.impl;
 
-import static core.math.MathUtilities.clamp;
-import static core.math.MathUtilities.quadratic;
+import static utilities.MathUtilities.clamp;
+import static utilities.MathUtilities.quadratic;
 
 import core.Ray;
 import core.math.Direction3;
-import core.math.MathUtilities;
-import core.math.MathUtilities.eDouble;
+import utilities.MathUtilities;
+import utilities.MathUtilities.eDouble;
 import core.math.Normal3;
 import core.math.Point2;
 import core.math.Point3;
 import core.math.Transformation;
-import core.space.BoundingBox;
+import core.space.BoundingBox3;
 import core.tuple.Pair;
 import core.tuple.Triple;
 import scene.geometry.Shape;
@@ -47,10 +47,10 @@ public class Sphere extends Shape
     }
 
     @Override
-    public BoundingBox objectBound()
+    public BoundingBox3 objectBound()
     {
         // TODO: can compute tighter bound if phiMax < 3pi/2
-        return new BoundingBox(new Point3(-radius, -radius, zMin),
+        return new BoundingBox3(new Point3(-radius, -radius, zMin),
                                new Point3( radius,  radius, zMax));
     }
 

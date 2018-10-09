@@ -1,7 +1,6 @@
 package utilities;
 
 import core.colors.RGBSpectrum;
-import core.math.MathUtilities;
 
 public class ReflectionUtilities
 {

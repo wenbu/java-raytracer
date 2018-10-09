@@ -1,10 +1,9 @@
 package scene.primitives.impl;
 
-import java.util.Random;
 import java.util.Set;
 
 import core.Ray;
-import core.space.BoundingBox;
+import core.space.BoundingBox3;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.materials.Material;
 import scene.materials.TransportMode;
@@ -13,12 +12,12 @@ import scene.primitives.Primitive;
 public class SimpleAggregate implements Primitive
 {
     private final Set<Primitive> primitives;
-    private BoundingBox worldBound;
+    private BoundingBox3 worldBound;
 
     public SimpleAggregate(Set<Primitive> primitives)
     {
         this.primitives = primitives;
-        worldBound = new BoundingBox();
+        worldBound = new BoundingBox3();
         for (Primitive primitive : primitives)
         {
             worldBound = worldBound.union(primitive.worldBound());
@@ -26,7 +25,7 @@ public class SimpleAggregate implements Primitive
     }
 
     @Override
-    public BoundingBox worldBound()
+    public BoundingBox3 worldBound()
     {
         return worldBound;
     }

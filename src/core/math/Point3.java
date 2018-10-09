@@ -1,5 +1,7 @@
 package core.math;
 
+import utilities.VectorUtilities;
+
 public class Point3 extends Vector3
 {
     public static final Point3 POSITIVE_INFINITY = new Point3(Double.POSITIVE_INFINITY,
@@ -35,24 +37,24 @@ public class Point3 extends Vector3
 
     public Point3 plus(Vector3 other)
     {
-        return new Point3(VectorMath.add(vector, other.getVector()));
+        return new Point3(VectorUtilities.add(vector, other.getVector()));
     }
     
     public Point3 plusEquals(Direction3 other)
     {
-        VectorMath.plusEquals(vector, other.getVector());
-        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        VectorUtilities.plusEquals(vector, other.getVector());
+        VectorUtilities.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
 
     public Direction3 minus(Point3 other)
     {
-        return new Direction3(VectorMath.subtract(vector, other.getVector()));
+        return new Direction3(VectorUtilities.subtract(vector, other.getVector()));
     }
     
     public Point3 minus(Direction3 other)
     {
-        return new Point3(VectorMath.subtract(vector, other.getVector()));
+        return new Point3(VectorUtilities.subtract(vector, other.getVector()));
     }
     
     public Point3 times(double scalar)
@@ -71,13 +73,13 @@ public class Point3 extends Vector3
     
     public double distanceTo(Point3 other)
     {
-        double[] v = VectorMath.subtract(vector, other.vector);
-        return VectorMath.getLength(v[0], v[1], v[2]);
+        double[] v = VectorUtilities.subtract(vector, other.vector);
+        return VectorUtilities.getLength(v[0], v[1], v[2]);
     }
     
     public Point3 permute(int x, int y, int z)
     {
-        return new Point3(VectorMath.permute(vector, x, y, z));
+        return new Point3(VectorUtilities.permute(vector, x, y, z));
     }
 
     @Override

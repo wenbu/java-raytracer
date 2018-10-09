@@ -1,4 +1,4 @@
-package scene.materials.functions;
+package scene.materials.functions.bxdf;
 
 import java.util.EnumSet;
 
@@ -7,6 +7,9 @@ import core.math.Direction3;
 import core.math.Point2;
 import core.tuple.Quadruple;
 import scene.materials.TransportMode;
+import scene.materials.functions.AbstractBidirectionalDistributionFunction;
+import scene.materials.functions.Fresnel;
+import scene.materials.functions.fresnel.FresnelDielectric;
 
 public class FresnelSpecular extends AbstractBidirectionalDistributionFunction
 {

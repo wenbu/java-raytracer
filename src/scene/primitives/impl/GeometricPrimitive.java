@@ -1,7 +1,7 @@
 package scene.primitives.impl;
 
 import core.Ray;
-import core.space.BoundingBox;
+import core.space.BoundingBox3;
 import scene.geometry.Shape;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.materials.Material;
@@ -24,7 +24,7 @@ public class GeometricPrimitive implements Primitive
     }
 
     @Override
-    public BoundingBox worldBound()
+    public BoundingBox3 worldBound()
     {
         return shape.worldBound();
     }

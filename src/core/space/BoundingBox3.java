@@ -2,12 +2,12 @@ package core.space;
 
 import core.Ray;
 import core.math.Direction3;
-import core.math.MathUtilities;
+import utilities.MathUtilities;
 import core.math.Point3;
-import core.math.VectorMath;
+import utilities.VectorUtilities;
 import core.tuple.Pair;
 
-public class BoundingBox
+public class BoundingBox3
 {
     private final Point3 minPoint;
     private final Point3 maxPoint;
@@ -17,19 +17,19 @@ public class BoundingBox
         X, Y, Z
     }
 
-    public BoundingBox()
+    public BoundingBox3()
     {
         minPoint = new Point3(Point3.POSITIVE_INFINITY);
         maxPoint = new Point3(Point3.NEGATIVE_INFINITY);
     }
 
-    public BoundingBox(Point3 p)
+    public BoundingBox3(Point3 p)
     {
         minPoint = p;
         maxPoint = p;
     }
 
-    public BoundingBox(Point3 p1, Point3 p2)
+    public BoundingBox3(Point3 p1, Point3 p2)
     {
         minPoint = new Point3(Math.min(p1.x(), p2.x()),
                              Math.min(p1.y(), p2.y()),
@@ -40,12 +40,12 @@ public class BoundingBox
                              Math.max(p1.z(), p2.z()));
     }
 
-    public BoundingBox(double minX,
-                       double minY,
-                       double minZ,
-                       double maxX,
-                       double maxY,
-                       double maxZ)
+    public BoundingBox3(double minX,
+                        double minY,
+                        double minZ,
+                        double maxX,
+                        double maxY,
+                        double maxZ)
     {
         minPoint = new Point3(minX, minY, minZ);
         maxPoint = new Point3(maxX, maxY, maxZ);
@@ -75,29 +75,29 @@ public class BoundingBox
     }
 
     /**
-     * Given a Point, return a new minimal BoundingBox that contains this one's
+     * Given a Point, return a new minimal BoundingBox3 that contains this one's
      * space as well as the Point.
      */
-    public BoundingBox union(Point3 p)
+    public BoundingBox3 union(Point3 p)
     {
         return union(minPoint, maxPoint, p, p);
     }
 
     /**
-     * Given another BoundingBox, return a new minimal BoundingBox that contains
+     * Given another BoundingBox3, return a new minimal BoundingBox3 that contains
      * the union of their volumes.
      */
-    public BoundingBox union(BoundingBox other)
+    public BoundingBox3 union(BoundingBox3 other)
     {
         return union(minPoint, maxPoint, other.minPoint, other.maxPoint);
     }
 
-    static BoundingBox union(Point3 minPoint1,
-                             Point3 maxPoint1,
-                             Point3 minPoint2,
-                             Point3 maxPoint2)
+    static BoundingBox3 union(Point3 minPoint1,
+                              Point3 maxPoint1,
+                              Point3 minPoint2,
+                              Point3 maxPoint2)
     {
-        return new BoundingBox(Math.min(minPoint1.x(), minPoint2.x()),
+        return new BoundingBox3(Math.min(minPoint1.x(), minPoint2.x()),
                                Math.min(minPoint1.y(), minPoint2.y()),
                                Math.min(minPoint1.z(), minPoint2.z()),
                                Math.max(maxPoint1.x(), maxPoint2.x()),
@@ -105,7 +105,7 @@ public class BoundingBox
                                Math.max(maxPoint1.z(), maxPoint2.z()));
     }
 
-    public boolean overlaps(BoundingBox other)
+    public boolean overlaps(BoundingBox3 other)
     {
         boolean xOverlaps = ( maxPoint.x() >= other.minPoint.x() ) &&
                             ( minPoint.x() <= other.maxPoint.x() );
@@ -127,8 +127,8 @@ public class BoundingBox
     public void expand(double delta)
     {
         Direction3 deltaVector = new Direction3(delta, delta, delta);
-        VectorMath.minusEquals(minPoint.getVector(), deltaVector.getVector());
-        VectorMath.plusEquals(maxPoint.getVector(), deltaVector.getVector());
+        VectorUtilities.minusEquals(minPoint.getVector(), deltaVector.getVector());
+        VectorUtilities.plusEquals(maxPoint.getVector(), deltaVector.getVector());
     }
 
     public double surfaceArea()

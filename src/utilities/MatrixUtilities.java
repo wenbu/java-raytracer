@@ -1,8 +1,8 @@
-package core.math;
+package utilities;
 
 import core.tuple.Pair;
 
-public class MatrixMath
+public class MatrixUtilities
 {
     public static Pair<Double, Double> solveLinearSystem2x2(double a[][], double b[])
     {
@@ -19,7 +19,7 @@ public class MatrixMath
             throw new IllegalArgumentException("b.length = 2" + b.length + "; must be 2");
         }
         
-        double determinant = VectorMath.get2x2Determinant(a);
+        double determinant = VectorUtilities.get2x2Determinant(a);
         if (Math.abs(determinant) < 1e-10)
         {
             return null;

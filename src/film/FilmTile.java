@@ -1,4 +1,4 @@
-package film.impl;
+package film;
 
 import java.util.ArrayList;
 import java.util.List;

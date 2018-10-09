@@ -1,6 +1,6 @@
 package core.colors;
 
-import core.math.MathUtilities;
+import utilities.MathUtilities;
 
 public class RGBSpectrum extends CoefficientSpectrum
 {

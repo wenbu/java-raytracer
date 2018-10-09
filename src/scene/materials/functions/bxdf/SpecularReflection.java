@@ -1,4 +1,4 @@
-package scene.materials.functions;
+package scene.materials.functions.bxdf;
 
 import static scene.materials.functions.BidirectionalScatteringDistributionFunction.absCosTheta;
 import static scene.materials.functions.BidirectionalScatteringDistributionFunction.cosTheta;
@@ -9,6 +9,8 @@ import core.colors.RGBSpectrum;
 import core.math.Direction3;
 import core.math.Point2;
 import core.tuple.Quadruple;
+import scene.materials.functions.AbstractBidirectionalDistributionFunction;
+import scene.materials.functions.Fresnel;
 
 public class SpecularReflection extends AbstractBidirectionalDistributionFunction
 {

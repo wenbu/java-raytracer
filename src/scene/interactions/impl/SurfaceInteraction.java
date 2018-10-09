@@ -1,9 +1,8 @@
 package scene.interactions.impl;
 
-import core.Ray;
 import core.RayDifferential;
 import core.math.Direction3;
-import core.math.MatrixMath;
+import utilities.MatrixUtilities;
 import core.math.Normal3;
 import core.math.Point2;
 import core.math.Point3;
@@ -109,7 +108,7 @@ public class SurfaceInteraction extends Interaction
             double[] Bx = { px.get(dim[0]) - p.get(dim[0]), px.get(dim[1]) - p.get(dim[1]) };
             double[] By = { py.get(dim[0]) - p.get(dim[0]), py.get(dim[1]) - p.get(dim[1]) };
             
-            var solutionX = MatrixMath.solveLinearSystem2x2(A, Bx);
+            var solutionX = MatrixUtilities.solveLinearSystem2x2(A, Bx);
             if (solutionX == null)
             {
                 dudx = 0;
@@ -120,7 +119,7 @@ public class SurfaceInteraction extends Interaction
                 dudx = solutionX.getFirst();
                 dvdx = solutionX.getSecond();
             }
-            var solutionY = MatrixMath.solveLinearSystem2x2(A, By);
+            var solutionY = MatrixUtilities.solveLinearSystem2x2(A, By);
             if (solutionY == null)
             {
                 dudy = 0;

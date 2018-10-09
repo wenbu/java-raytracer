@@ -1,4 +1,4 @@
-package core.math;
+package utilities;
 
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
@@ -14,7 +14,7 @@ import org.junit.Test;
 import test.RepeatRule;
 import test.RepeatRule.Repeat;
 
-public class VectorMathUTest
+public class VectorUtilitiesUTest
 {
     @Rule
     public RepeatRule repeatRule = new RepeatRule();
@@ -25,7 +25,7 @@ public class VectorMathUTest
     {
         double[] v1 = getRandom3Vector();
         double[] v2 = getRandom3Vector();
-        double[] sum = VectorMath.add(v1, v2);
+        double[] sum = VectorUtilities.add(v1, v2);
 
         assertThat(sum[0], is(equalTo(v1[0] + v2[0])));
         assertThat(sum[1], is(equalTo(v1[1] + v2[1])));
@@ -38,7 +38,7 @@ public class VectorMathUTest
     {
         double[] v1 = getRandom3Vector();
         double[] v2 = getRandom3Vector();
-        double[] difference = VectorMath.subtract(v1, v2);
+        double[] difference = VectorUtilities.subtract(v1, v2);
 
         assertThat(difference[0], is(equalTo(v1[0] - v2[0])));
         assertThat(difference[1], is(equalTo(v1[1] - v2[1])));
@@ -51,7 +51,7 @@ public class VectorMathUTest
     {
         double[] v = getRandom3Vector();
         double s = getRandomDouble();
-        double[] product = VectorMath.multiply(v, s);
+        double[] product = VectorUtilities.multiply(v, s);
 
         assertThat(product[0], is(closeTo(v[0] * s, EPSILON)));
         assertThat(product[1], is(closeTo(v[1] * s, EPSILON)));
@@ -64,7 +64,7 @@ public class VectorMathUTest
     {
         double[] v = getRandom3Vector();
         double s = 27.02;
-        double[] quotient = VectorMath.divide(v, s);
+        double[] quotient = VectorUtilities.divide(v, s);
 
         assertThat(quotient[0], is(closeTo(v[0] / s, EPSILON)));
         assertThat(quotient[1], is(closeTo(v[1] / s, EPSILON)));
@@ -76,7 +76,7 @@ public class VectorMathUTest
     public void opposite()
     {
         double[] v = getRandom3Vector();
-        double[] opposite = VectorMath.opposite(v);
+        double[] opposite = VectorUtilities.opposite(v);
 
         assertThat(opposite[0], is(equalTo(-v[0])));
         assertThat(opposite[1], is(equalTo(-v[1])));
@@ -89,7 +89,7 @@ public class VectorMathUTest
     {
         double[][] m = getRandom4x4Matrix();
         double[] v = getRandom4Vector();
-        double[] product = VectorMath.multiply(m, v);
+        double[] product = VectorUtilities.multiply(m, v);
 
         for (int i = 0; i < 4; i++)
         {
@@ -105,7 +105,7 @@ public class VectorMathUTest
     {
         double[][] m = getRandom4x4Matrix();
         double[] v = getRandom4Vector();
-        double[] product = VectorMath.multiplyTranspose(m, v);
+        double[] product = VectorUtilities.multiplyTranspose(m, v);
 
         for (int i = 0; i < 4; i++)
         {
@@ -121,7 +121,7 @@ public class VectorMathUTest
     {
         double[][] m1 = getRandom4x4Matrix();
         double[][] m2 = getRandom4x4Matrix();
-        double[][] product = VectorMath.multiply(m1, m2);
+        double[][] product = VectorUtilities.multiply(m1, m2);
 
         for (int i = 0; i < 4; i++)
         {
@@ -140,9 +140,9 @@ public class VectorMathUTest
     public void matrixInverse2x2()
     {
         double[][] m = getRandom2x2Matrix();
-        double[][] inv = VectorMath.inverse(m);
+        double[][] inv = VectorUtilities.inverse(m);
         
-        double[][] minv = VectorMath.multiply(m, inv);
+        double[][] minv = VectorUtilities.multiply(m, inv);
         
         try
         {
@@ -162,7 +162,7 @@ public class VectorMathUTest
         catch(AssertionError e)
         {
             System.out.println("no good!");
-            System.out.println(VectorMath.matrixToString(minv));
+            System.out.println(VectorUtilities.matrixToString(minv));
             throw e;
         }
     }
@@ -172,9 +172,9 @@ public class VectorMathUTest
     public void matrixInverse3x3()
     {
         double[][] m = getRandom3x3Matrix();
-        double[][] inv = VectorMath.inverse(m);
+        double[][] inv = VectorUtilities.inverse(m);
         
-        double[][] minv = VectorMath.multiply(m, inv);
+        double[][] minv = VectorUtilities.multiply(m, inv);
 
         try
         {
@@ -194,7 +194,7 @@ public class VectorMathUTest
         catch(AssertionError e)
         {
             System.out.println("no good!");
-            System.out.println(VectorMath.matrixToString(minv));
+            System.out.println(VectorUtilities.matrixToString(minv));
             throw e;
         }
     }
@@ -204,9 +204,9 @@ public class VectorMathUTest
     public void matrixInverse4x4()
     {
         double[][] m = getRandom4x4Matrix();
-        double[][] inv = VectorMath.inverse(m);
+        double[][] inv = VectorUtilities.inverse(m);
         
-        double[][] minv = VectorMath.multiply(m, inv);
+        double[][] minv = VectorUtilities.multiply(m, inv);
 
         try
         {
@@ -226,7 +226,7 @@ public class VectorMathUTest
         catch(AssertionError e)
         {
             System.out.println("no good!");
-            System.out.println(VectorMath.matrixToString(minv));
+            System.out.println(VectorUtilities.matrixToString(minv));
             throw e;
         }
     }

@@ -6,7 +6,7 @@ import java.util.List;
 
 import core.colors.RGBSpectrum;
 import core.math.Direction3;
-import core.math.MathUtilities;
+import utilities.MathUtilities;
 import core.math.Normal3;
 import core.math.Point2;
 import core.math.Vector3;

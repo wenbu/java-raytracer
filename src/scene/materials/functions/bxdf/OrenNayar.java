@@ -1,6 +1,6 @@
-package scene.materials.functions;
+package scene.materials.functions.bxdf;
 
-import static core.math.MathUtilities.INV_PI;
+import static utilities.MathUtilities.INV_PI;
 import static scene.materials.functions.BidirectionalScatteringDistributionFunction.absCosTheta;
 import static scene.materials.functions.BidirectionalScatteringDistributionFunction.cosPhi;
 import static scene.materials.functions.BidirectionalScatteringDistributionFunction.sinPhi;
@@ -10,6 +10,7 @@ import java.util.EnumSet;
 
 import core.colors.RGBSpectrum;
 import core.math.Direction3;
+import scene.materials.functions.AbstractBidirectionalDistributionFunction;
 
 public class OrenNayar extends AbstractBidirectionalDistributionFunction
 {

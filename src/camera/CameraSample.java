@@ -1,4 +1,4 @@
-package sample;
+package camera;
 
 import core.math.Point2;
 

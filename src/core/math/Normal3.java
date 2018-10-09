@@ -1,5 +1,7 @@
 package core.math;
 
+import utilities.VectorUtilities;
+
 public class Normal3 extends Vector3
 {
     private double[] homogeneous;
@@ -32,7 +34,7 @@ public class Normal3 extends Vector3
     
     private static Normal3 getNormalizedNormal(double x, double y, double z)
     {
-        double length = VectorMath.getLength(x, y, z);
+        double length = VectorUtilities.getLength(x, y, z);
         return new Normal3(x / length, y / length, z / length);
     }
     
@@ -54,22 +56,22 @@ public class Normal3 extends Vector3
     
     public Normal3 opposite()
     {
-        return new Normal3(VectorMath.opposite(vector));
+        return new Normal3(VectorUtilities.opposite(vector));
     }
     
     public Normal3 plus(Normal3 other)
     {
-        return new Normal3(VectorMath.add(vector, other.getVector()));
+        return new Normal3(VectorUtilities.add(vector, other.getVector()));
     }
 
     public Normal3 minus(Normal3 other)
     {
-        return new Normal3(VectorMath.subtract(vector, other.getVector()));
+        return new Normal3(VectorUtilities.subtract(vector, other.getVector()));
     }
 
     public Normal3 times(double scalar)
     {
-        return new Normal3(VectorMath.multiply(vector, scalar));
+        return new Normal3(VectorUtilities.multiply(vector, scalar));
     }
 
     public Normal3 divide(double scalar)
@@ -79,40 +81,40 @@ public class Normal3 extends Vector3
     
     public Normal3 plusEquals(Normal3 other)
     {
-        VectorMath.plusEquals(vector, other.getVector());
-        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        VectorUtilities.plusEquals(vector, other.getVector());
+        VectorUtilities.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Normal3 minusEquals(Normal3 other)
     {
-        VectorMath.minusEquals(vector, other.getVector());
-        VectorMath.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        VectorUtilities.minusEquals(vector, other.getVector());
+        VectorUtilities.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Normal3 timesEquals(double scalar)
     {
-        VectorMath.timesEquals(vector, scalar);
-        VectorMath.timesEquals(homogeneous, scalar, MAX_INDEX);
+        VectorUtilities.timesEquals(vector, scalar);
+        VectorUtilities.timesEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
     
     public Normal3 divideEquals(double scalar)
     {
-        VectorMath.divideEquals(vector, scalar);
-        VectorMath.divideEquals(homogeneous, scalar, MAX_INDEX);
+        VectorUtilities.divideEquals(vector, scalar);
+        VectorUtilities.divideEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
     
     public double dot(Direction3 other)
     {
-        return VectorMath.dotProduct(vector, other.vector);
+        return VectorUtilities.dotProduct(vector, other.vector);
     }
     
     public double dot(Normal3 other)
     {
-        return VectorMath.dotProduct(vector, other.vector);
+        return VectorUtilities.dotProduct(vector, other.vector);
     }
     
     public double length()
@@ -139,7 +141,7 @@ public class Normal3 extends Vector3
     
     public Normal3 abs()
     {
-        return new Normal3(VectorMath.abs(vector));
+        return new Normal3(VectorUtilities.abs(vector));
     }
 
     public String toString()

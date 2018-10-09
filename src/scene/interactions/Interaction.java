@@ -4,7 +4,7 @@ import core.Ray;
 import core.math.Direction3;
 import core.math.Normal3;
 import core.math.Point3;
-import core.space.GeometryUtilities;
+import utilities.GeometryUtilities;
 import scene.medium.Medium;
 import scene.medium.Medium.MediumInterface;
 

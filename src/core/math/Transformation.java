@@ -1,14 +1,13 @@
 package core.math;
 
-import java.util.Arrays;
-
 import core.Ray;
 import core.RayDifferential;
-import core.space.BoundingBox;
+import core.space.BoundingBox3;
 import core.tuple.Pair;
 import core.tuple.Triple;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.interactions.impl.SurfaceInteraction.ShadingGeometry;
+import utilities.VectorUtilities;
 
 
 public class Transformation
@@ -25,14 +24,14 @@ public class Transformation
 
     public Transformation()
     {
-        matrix = VectorMath.copy(IDENTITY_ARRAY);
-        inverse = VectorMath.copy(IDENTITY_ARRAY);
+        matrix = VectorUtilities.copy(IDENTITY_ARRAY);
+        inverse = VectorUtilities.copy(IDENTITY_ARRAY);
     }
 
     public Transformation(double[][] matrix)
     {
         this.matrix = matrix;
-        inverse = VectorMath.inverse(matrix);
+        inverse = VectorUtilities.inverse(matrix);
     }
     
     public Transformation(double[][] matrix, double[][] inverse)
@@ -57,7 +56,7 @@ public class Transformation
                                   {     2*(xy-wz), 1 - 2*(xx+zz),     2*(yz+wx), 0 },
                                   {     2*(xz+wy),     2*(yz-wx), 1 - 2*(xx+yy), 0 },
                                   {             0,             0,             0, 1 } };
-        inverse = VectorMath.transpose(matrix);
+        inverse = VectorUtilities.transpose(matrix);
     }
     
     public Transformation inverse()
@@ -122,7 +121,7 @@ public class Transformation
                                              { mzx, mzy, mzz, 0 },
                                              { 0,   0,   0,   1 } };
 
-        return new Transformation(matrix, VectorMath.transpose(matrix));
+        return new Transformation(matrix, VectorUtilities.transpose(matrix));
         // the inverse of a rotation matrix is its transpose
     }
     
@@ -146,76 +145,76 @@ public class Transformation
                                              { left.z(), newUp.z(), direction.z(), position.z() },
                                              {        0,         0,             0,            1 } };
         
-        return new Transformation(VectorMath.inverse(matrix), matrix);
+        return new Transformation(VectorUtilities.inverse(matrix), matrix);
     }
 
     public Point3 transform(Point3 other)
     {
-        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
+        double[] v = VectorUtilities.multiply(matrix, other.getHomogeneousForm());
         
         // ensure w = 1
         // need epsilon?
-        if(v[3] != 1.0) v = VectorMath.divide(v, v[3]);
+        if(v[3] != 1.0) v = VectorUtilities.divide(v, v[3]);
         
         return new Point3(v);
     }
     
     public Pair<Point3, Direction3> transformWithError(Point3 other)
     {
-        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
-        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm());
-        if(v[3] != 1.0) v = VectorMath.divide(v, v[3]);
+        double[] v = VectorUtilities.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorUtilities.getMultiplyError(matrix, other.getHomogeneousForm());
+        if(v[3] != 1.0) v = VectorUtilities.divide(v, v[3]);
         
         return new Pair<>(new Point3(v), new Direction3(error));
     }
     
     public Pair<Point3, Direction3> transformWithError(Point3 other, Direction3 existingError)
     {
-        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
-        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
-        if(v[3] != 1.0) v = VectorMath.divide(v, v[3]);
+        double[] v = VectorUtilities.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorUtilities.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
+        if(v[3] != 1.0) v = VectorUtilities.divide(v, v[3]);
         
         return new Pair<>(new Point3(v), new Direction3(error));
     }
     
     public Direction3 transform(Direction3 other)
     {
-        return new Direction3(VectorMath.multiply(matrix, other.getHomogeneousForm()));
+        return new Direction3(VectorUtilities.multiply(matrix, other.getHomogeneousForm()));
     }
     
     public Pair<Direction3, Direction3> transformWithError(Direction3 other)
     {
-        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
-        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm());
+        double[] v = VectorUtilities.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorUtilities.getMultiplyError(matrix, other.getHomogeneousForm());
         
         return new Pair<>(new Direction3(v), new Direction3(error));
     }
     
     public Pair<Direction3, Direction3> transformWithError(Direction3 other, Direction3 existingError)
     {
-        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
-        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
+        double[] v = VectorUtilities.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorUtilities.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
         
         return new Pair<>(new Direction3(v), new Direction3(error));
     }
     
     public Normal3 transform(Normal3 other)
     {
-        return new Normal3(VectorMath.multiplyTranspose(inverse, other.getHomogeneousForm()));
+        return new Normal3(VectorUtilities.multiplyTranspose(inverse, other.getHomogeneousForm()));
     }
     
     public Pair<Normal3, Direction3> transformWithError(Normal3 other)
     {
-        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
-        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm());
+        double[] v = VectorUtilities.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorUtilities.getMultiplyError(matrix, other.getHomogeneousForm());
         
         return new Pair<>(new Normal3(v), new Direction3(error));
     }
     
     public Pair<Normal3, Direction3> transformWithError(Normal3 other, Direction3 existingError)
     {
-        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
-        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
+        double[] v = VectorUtilities.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorUtilities.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
         
         return new Pair<>(new Normal3(v), new Direction3(error));
     }
@@ -313,28 +312,28 @@ public class Transformation
      */
     public boolean swapsHandedness()
     {
-        return VectorMath.get3x3Determinant(matrix) < 0;
+        return VectorUtilities.get3x3Determinant(matrix) < 0;
     }
     
     /**
-     * Transforms all eight corner vertices and computes a new BoundingBox
+     * Transforms all eight corner vertices and computes a new BoundingBox3
      * that contains them.
      */
-    public BoundingBox transform(BoundingBox other)
+    public BoundingBox3 transform(BoundingBox3 other)
     {
         double[] min = other.getMinPoint().getVector();
         double[] max = other.getMaxPoint().getVector();
         
         double[][] transformed = new double[8][];
         
-        transformed[0] = VectorMath.multiply(matrix, new double[] { min[0], min[1], min[2], 1 });
-        transformed[1] = VectorMath.multiply(matrix, new double[] { min[0], min[1], max[2], 1 });
-        transformed[2] = VectorMath.multiply(matrix, new double[] { min[0], max[1], min[2], 1 });
-        transformed[3] = VectorMath.multiply(matrix, new double[] { min[0], max[1], max[2], 1 });
-        transformed[4] = VectorMath.multiply(matrix, new double[] { max[0], min[1], min[2], 1 });
-        transformed[5] = VectorMath.multiply(matrix, new double[] { max[0], min[1], max[2], 1 });
-        transformed[6] = VectorMath.multiply(matrix, new double[] { max[0], max[1], min[2], 1 });
-        transformed[7] = VectorMath.multiply(matrix, new double[] { max[0], max[1], max[2], 1 });
+        transformed[0] = VectorUtilities.multiply(matrix, new double[] { min[0], min[1], min[2], 1 });
+        transformed[1] = VectorUtilities.multiply(matrix, new double[] { min[0], min[1], max[2], 1 });
+        transformed[2] = VectorUtilities.multiply(matrix, new double[] { min[0], max[1], min[2], 1 });
+        transformed[3] = VectorUtilities.multiply(matrix, new double[] { min[0], max[1], max[2], 1 });
+        transformed[4] = VectorUtilities.multiply(matrix, new double[] { max[0], min[1], min[2], 1 });
+        transformed[5] = VectorUtilities.multiply(matrix, new double[] { max[0], min[1], max[2], 1 });
+        transformed[6] = VectorUtilities.multiply(matrix, new double[] { max[0], max[1], min[2], 1 });
+        transformed[7] = VectorUtilities.multiply(matrix, new double[] { max[0], max[1], max[2], 1 });
         
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
@@ -352,7 +351,7 @@ public class Transformation
             if (v[2] > maxZ) maxZ = v[2];
         }
         
-        return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+        return new BoundingBox3(minX, minY, minZ, maxX, maxY, maxZ);
     }
     
     public SurfaceInteraction transform(SurfaceInteraction other)
@@ -394,8 +393,8 @@ public class Transformation
     
     public Transformation compose(Transformation m2)
     {
-        return new Transformation(VectorMath.multiply(matrix, m2.matrix),
-                                  VectorMath.multiply(m2.inverse, inverse));
+        return new Transformation(VectorUtilities.multiply(matrix, m2.matrix),
+                                  VectorUtilities.multiply(m2.inverse, inverse));
     }
     
     double[][] getMatrix()
@@ -406,6 +405,6 @@ public class Transformation
     @Override
     public String toString()
     {
-        return VectorMath.matrixToString(matrix);
+        return VectorUtilities.matrixToString(matrix);
     }
 }

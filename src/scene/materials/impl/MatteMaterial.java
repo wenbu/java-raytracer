@@ -1,13 +1,13 @@
 package scene.materials.impl;
 
 import core.colors.RGBSpectrum;
-import core.math.MathUtilities;
+import utilities.MathUtilities;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.materials.Material;
 import scene.materials.TransportMode;
 import scene.materials.functions.BidirectionalScatteringDistributionFunction;
-import scene.materials.functions.LambertianReflection;
-import scene.materials.functions.OrenNayar;
+import scene.materials.functions.bxdf.LambertianReflection;
+import scene.materials.functions.bxdf.OrenNayar;
 import texture.Texture;
 
 public class MatteMaterial implements Material

@@ -1,6 +1,7 @@
-package scene.materials.functions;
+package scene.materials.functions.fresnel;
 
 import core.colors.RGBSpectrum;
+import scene.materials.functions.Fresnel;
 import utilities.ReflectionUtilities;
 
 public class FresnelDielectric implements Fresnel

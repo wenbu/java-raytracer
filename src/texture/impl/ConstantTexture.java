@@ -1,6 +1,7 @@
-package texture;
+package texture.impl;
 
 import scene.interactions.impl.SurfaceInteraction;
+import texture.Texture;
 
 public class ConstantTexture<T> implements Texture<T>
 {

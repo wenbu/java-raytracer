@@ -1,6 +1,6 @@
 package utilities;
 
-import static core.math.MathUtilities.*;
+import static utilities.MathUtilities.*;
 
 import java.util.List;
 import java.util.Random;

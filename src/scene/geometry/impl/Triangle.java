@@ -8,12 +8,12 @@ import core.Ray;
 import core.math.CoordinateSystem;
 import core.math.Direction2;
 import core.math.Direction3;
-import core.math.MathUtilities;
+import core.space.BoundingBox3;
+import utilities.MathUtilities;
 import core.math.Normal3;
 import core.math.Point2;
 import core.math.Point3;
 import core.math.Transformation;
-import core.space.BoundingBox;
 import core.tuple.Pair;
 import core.tuple.Triple;
 import scene.geometry.Shape;
@@ -46,24 +46,24 @@ public class Triangle extends Shape
     }
 
     @Override
-    public BoundingBox objectBound()
+    public BoundingBox3 objectBound()
     {
         Point3 p0 = mesh.getPoint(pointIndex);
         Point3 p1 = mesh.getPoint(pointIndex + 1);
         Point3 p2 = mesh.getPoint(pointIndex + 2);
 
-        return new BoundingBox(worldToObject.transform(p0),
+        return new BoundingBox3(worldToObject.transform(p0),
                                worldToObject.transform(p1)).union(worldToObject.transform(p2));
     }
     
     @Override
-    public BoundingBox worldBound()
+    public BoundingBox3 worldBound()
     {
         Point3 p0 = mesh.getPoint(pointIndex);
         Point3 p1 = mesh.getPoint(pointIndex + 1);
         Point3 p2 = mesh.getPoint(pointIndex + 2);
         
-        return new BoundingBox(p0, p1).union(p2);
+        return new BoundingBox3(p0, p1).union(p2);
     }
 
     @Override

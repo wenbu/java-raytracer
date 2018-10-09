@@ -1,19 +1,21 @@
-package core.math;
+package utilities;
 
 
-public class VectorMath
+import utilities.MathUtilities;
+
+public class VectorUtilities
 {
-    static double getLength(double x, double y)
+    public static double getLength(double x, double y)
     {
         return Math.sqrt(x * x + y * y);
     }
     
-    static double getLength(double x, double y, double z)
+    public static double getLength(double x, double y, double z)
     {
         return Math.sqrt(x * x + y * y + z * z);
     }
 
-    static double dotProduct(double[] v1, double[] v2)
+    public static double dotProduct(double[] v1, double[] v2)
     {
         if (v1.length != 3 || v2.length != 3)
             throw new IllegalArgumentException("array size is not 3");
@@ -37,7 +39,7 @@ public class VectorMath
         return copy;
     }
 
-    static double[][] copy(double[][] m)
+    public static double[][] copy(double[][] m)
     {
         double[][] copy = new double[m.length][];
         for (int i = 0; i < m.length; i++)

@@ -1,4 +1,4 @@
-package core.math;
+package utilities;
 
 import core.tuple.Pair;
 

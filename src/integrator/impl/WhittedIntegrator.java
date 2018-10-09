@@ -1,10 +1,11 @@
-package integrator;
+package integrator.impl;
 
 import camera.Camera;
 import core.RayDifferential;
 import core.colors.RGBSpectrum;
 import core.math.Direction3;
 import core.math.Normal3;
+import integrator.SamplerIntegrator;
 import sampler.Sampler;
 import scene.Scene;
 import scene.interactions.impl.SurfaceInteraction;

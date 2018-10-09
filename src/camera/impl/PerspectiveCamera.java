@@ -1,16 +1,17 @@
-package camera;
+package camera.impl;
 
+import camera.ProjectiveCamera;
 import core.Ray;
 import core.RayDifferential;
 import core.math.Direction3;
-import core.math.MathUtilities;
+import utilities.MathUtilities;
 import core.math.Point2;
 import core.math.Point3;
 import core.math.Transformation;
 import core.space.BoundingBox2;
 import core.tuple.Pair;
 import film.Film;
-import sample.CameraSample;
+import camera.CameraSample;
 import scene.medium.Medium;
 
 public class PerspectiveCamera extends ProjectiveCamera

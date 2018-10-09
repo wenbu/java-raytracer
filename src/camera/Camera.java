@@ -2,13 +2,10 @@ package camera;
 
 import core.Ray;
 import core.RayDifferential;
-import core.Sample;
 import core.math.Point2;
-import core.math.Point3;
 import core.math.Transformation;
 import core.tuple.Pair;
 import film.Film;
-import sample.CameraSample;
 import scene.medium.Medium;
 
 public abstract class Camera

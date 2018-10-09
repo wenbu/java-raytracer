@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import core.math.Point2;
-import sample.CameraSample;
+import camera.CameraSample;
 
 public abstract class Sampler
 {

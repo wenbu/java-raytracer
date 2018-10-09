@@ -1,14 +1,14 @@
 package scene.primitives;
 
 import core.Ray;
-import core.space.BoundingBox;
+import core.space.BoundingBox3;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.materials.Material;
 import scene.materials.TransportMode;
 
 public interface Primitive
 {
-    BoundingBox worldBound();
+    BoundingBox3 worldBound();
     SurfaceInteraction intersect(Ray ray);
     boolean intersectP(Ray ray);
     // AreaLight getAreaLight();

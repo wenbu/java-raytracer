@@ -1,36 +1,23 @@
 package scene;
 
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import metrics.MetricsAware;
+import core.space.BoundingBox3;
 import sampler.Sampler;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.lights.Light;
 import scene.primitives.Primitive;
-import camera.Camera;
-import core.Pixel;
 import core.Ray;
-import core.Sample;
 import core.colors.RGBSpectrum;
-import core.math.Direction3;
-import core.math.Point3;
-import core.space.BoundingBox;
-import core.tuple.Pair;
-import film.Film;
 
-public class Scene //implements MetricsAware
+public class Scene
 {
     private static final Logger logger = Logger.getLogger(Scene.class.getName());
 
     private Primitive aggregate;
     private List<Light> lights;
-    private BoundingBox worldBound;
+    private BoundingBox3 worldBound;
     
     public Scene(Primitive aggregate, List<Light> lights)
     {
@@ -44,7 +31,7 @@ public class Scene //implements MetricsAware
         }
     }
     
-    public BoundingBox worldBound()
+    public BoundingBox3 worldBound()
     {
         return worldBound;
     }

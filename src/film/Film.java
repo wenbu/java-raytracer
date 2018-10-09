@@ -14,12 +14,11 @@ import javax.swing.WindowConstants;
 import core.colors.RGBSpectrum;
 import core.concurrency.AtomicDouble;
 import core.math.Direction2;
-import core.math.MathUtilities;
+import utilities.MathUtilities;
 import core.math.Point2;
 import core.space.BoundingBox2;
 import film.filter.Filter;
-import film.impl.FilmTile;
-import film.impl.FilmTile.FilmTilePixel;
+import film.FilmTile.FilmTilePixel;
 
 public class Film
 {

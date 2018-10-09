@@ -2,7 +2,7 @@ package scene.geometry;
 
 import core.Ray;
 import core.math.Transformation;
-import core.space.BoundingBox;
+import core.space.BoundingBox3;
 import core.tuple.Pair;
 import scene.interactions.impl.SurfaceInteraction;
 
@@ -32,14 +32,14 @@ public abstract class Shape
     }
     
     /**
-     * @return BoundingBox in this Shape's object space.
+     * @return BoundingBox3 in this Shape's object space.
      */
-    public abstract BoundingBox objectBound();
+    public abstract BoundingBox3 objectBound();
     
     /**
-     * @return BoundingBox in world space.
+     * @return BoundingBox3 in world space.
      */
-    public BoundingBox worldBound()
+    public BoundingBox3 worldBound()
     {
         return objectToWorld.transform(objectBound());
     }

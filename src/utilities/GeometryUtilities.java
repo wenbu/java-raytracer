@@ -1,4 +1,4 @@
-package core.space;
+package utilities;
 
 import core.math.Direction3;
 import core.math.Normal3;

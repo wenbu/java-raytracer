@@ -1,5 +1,7 @@
 package core.math;
 
+import utilities.VectorUtilities;
+
 public class Direction2 extends Vector2
 {
     private double[] homogeneous;
@@ -31,7 +33,7 @@ public class Direction2 extends Vector2
     
     public static Direction2 getNormalizedDirection(double x, double y)
     {
-        double length = VectorMath.getLength(x, y);
+        double length = VectorUtilities.getLength(x, y);
         return new Direction2(x / length, y / length);
     }
     
@@ -42,65 +44,65 @@ public class Direction2 extends Vector2
     
     public Direction2 opposite()
     {
-        return new Direction2(VectorMath.opposite(vector));
+        return new Direction2(VectorUtilities.opposite(vector));
     }
     
     public Direction2 plus(Direction2 other)
     {
-        return new Direction2(VectorMath.add(vector, other.getVector()));
+        return new Direction2(VectorUtilities.add(vector, other.getVector()));
     }
     
     public Direction2 minus(Direction2 other)
     {
-        return new Direction2(VectorMath.subtract(vector, other.getVector()));
+        return new Direction2(VectorUtilities.subtract(vector, other.getVector()));
     }
     
     public Direction2 times(double scalar)
     {
-        return new Direction2(VectorMath.multiply(vector, scalar));
+        return new Direction2(VectorUtilities.multiply(vector, scalar));
     }
     
     public Direction2 divide(double scalar)
     {
-        return new Direction2(VectorMath.divide(vector, scalar));
+        return new Direction2(VectorUtilities.divide(vector, scalar));
     }
 
     public Direction2 plusEquals(Direction2 other)
     {
-        VectorMath.plusEquals(vector, other.getVector());
-        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        VectorUtilities.plusEquals(vector, other.getVector());
+        VectorUtilities.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Direction2 minusEquals(Direction2 other)
     {
-        VectorMath.minusEquals(vector, other.getVector());
-        VectorMath.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        VectorUtilities.minusEquals(vector, other.getVector());
+        VectorUtilities.minusEquals(homogeneous, other.getVector(), MAX_INDEX);
         return this;
     }
     
     public Direction2 timesEquals(double scalar)
     {
-        VectorMath.timesEquals(vector, scalar);
-        VectorMath.timesEquals(homogeneous, scalar, MAX_INDEX);
+        VectorUtilities.timesEquals(vector, scalar);
+        VectorUtilities.timesEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
     
     public Direction2 divideEquals(double scalar)
     {
-        VectorMath.divideEquals(vector, scalar);
-        VectorMath.divideEquals(homogeneous, scalar, MAX_INDEX);
+        VectorUtilities.divideEquals(vector, scalar);
+        VectorUtilities.divideEquals(homogeneous, scalar, MAX_INDEX);
         return this;
     }
     
     public double dot(Direction2 other)
     {
-        return VectorMath.dotProduct(vector, other.getVector());
+        return VectorUtilities.dotProduct(vector, other.getVector());
     }
     
     public double dot(Normal2 other)
     {
-        return VectorMath.dotProduct(vector, other.getVector());
+        return VectorUtilities.dotProduct(vector, other.getVector());
     }
     
     public double length()

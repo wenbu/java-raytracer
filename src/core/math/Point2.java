@@ -1,5 +1,7 @@
 package core.math;
 
+import utilities.VectorUtilities;
+
 public class Point2 extends Vector2
 {
     public static final Point2 POSITIVE_INFINITY = new Point2(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -31,23 +33,23 @@ public class Point2 extends Vector2
     
     public Point2 plus(Vector2 other)
     {
-        return new Point2(VectorMath.add(vector, other.getVector()));
+        return new Point2(VectorUtilities.add(vector, other.getVector()));
     }
     
     public void plusEquals(Direction2 other)
     {
-        VectorMath.plusEquals(vector, other.getVector());
-        VectorMath.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
+        VectorUtilities.plusEquals(vector, other.getVector());
+        VectorUtilities.plusEquals(homogeneous, other.getVector(), MAX_INDEX);
     }
     
     public Direction2 minus(Point2 other)
     {
-        return new Direction2(VectorMath.subtract(vector, other.getVector()));
+        return new Direction2(VectorUtilities.subtract(vector, other.getVector()));
     }
     
     public Point2 minus(Direction2 other)
     {
-        return new Point2(VectorMath.subtract(vector, other.getVector()));
+        return new Point2(VectorUtilities.subtract(vector, other.getVector()));
     }
     
     public Point2 times(double scalar)
@@ -68,8 +70,8 @@ public class Point2 extends Vector2
     
     public double distanceTo(Point2 other)
     {
-        double[] v = VectorMath.subtract(vector, other.getVector());
-        return VectorMath.getLength(v[0], v[1]);
+        double[] v = VectorUtilities.subtract(vector, other.getVector());
+        return VectorUtilities.getLength(v[0], v[1]);
     }
     
     public static Point2 max(Point2 p1, Point2 p2)
