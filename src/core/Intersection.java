@@ -3,6 +3,7 @@ package core;
 import scene.materials.Material;
 import core.math.Direction3;
 import core.math.Point3;
+import core.space.GeometryUtilities;
 
 /**
  * An Intersection stores data related to a ray intersection.

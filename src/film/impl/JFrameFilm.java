@@ -11,11 +11,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
-import core.colors.Color;
+import core.colors.RGBSpectrum;
 import core.colors.Colors;
+import core.math.Direction2;
+import core.math.Point2;
+import core.space.BoundingBox2;
 import film.Film;
 
-public abstract class JFrameFilm implements Film
+public abstract class JFrameFilm extends Film
 {
     protected final int imageX;
     protected final int imageY;
@@ -23,14 +26,20 @@ public abstract class JFrameFilm implements Film
     protected final static int NUM_BANDS = 3;
     protected final int[] image;
     
-    protected JFrameFilm(int imageX, int imageY)
+    protected JFrameFilm(Point2 resolution)
     {
-        this.imageX = imageX;
-        this.imageY = imageY;
+        super(resolution,
+              new BoundingBox2(0, 0, resolution.x(), resolution.y()),
+              null,
+              new Direction2(resolution.x(), resolution.y()).length(),
+              "",
+              1);
+        this.imageX = (int) resolution.x();
+        this.imageY = (int) resolution.y();
 
         image = new int[imageX * imageY * NUM_BANDS];
     }
-    
+    /*
     protected void addSample(int x, int y, int r, int g, int b)
     {
         int rowLength = imageX * NUM_BANDS;
@@ -106,4 +115,5 @@ public abstract class JFrameFilm implements Film
             else return Colors.BLACK;
         }
     }
+    */
 }

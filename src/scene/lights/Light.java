@@ -1,52 +1,121 @@
 package scene.lights;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 import core.Ray;
-import core.colors.Color;
+import core.RayDifferential;
+import core.colors.RGBSpectrum;
 import core.colors.Colors;
+import core.math.Direction3;
+import core.math.Point2;
+import core.math.Transformation;
+import core.tuple.Quadruple;
+import sampler.Sampler;
+import scene.Scene;
+import scene.interactions.Interaction;
 import scene.interactions.impl.SurfaceInteraction;
+import scene.medium.Medium.MediumInterface;
 
 public abstract class Light
 {
-    protected final Color ambientColor;
-    protected final Color diffuseColor;
-    protected final Color specularColor;
-
-    protected Light(Color color)
+    public enum LightType
     {
-        ambientColor = Colors.BLACK;
-        diffuseColor = color;
-        specularColor = color;
+        DELTA_POSITION, DELTA_DIRECTION, AREA, INFINITE
     }
-
-    protected Light(Color ambientColor, Color diffuseColor, Color specularColor)
+    
+    private final EnumSet<LightType> lightType;
+    private final Transformation lightToWorld;
+    private final Transformation worldToLight;
+    private final int numSamples;
+    protected final MediumInterface mediumInterface;
+    
+    public Light(EnumSet<LightType> lightType, Transformation lightToWorld, MediumInterface mediumInterface)
     {
-        this.ambientColor = ambientColor;
-        this.diffuseColor = diffuseColor;
-        this.specularColor = specularColor;
+        this(lightType, lightToWorld, 1, mediumInterface);
     }
-
+    
+    public Light(EnumSet<LightType> lightType, Transformation lightToWorld, int numSamples, MediumInterface mediumInterface)
+    {
+        this.lightType = lightType;
+        this.lightToWorld = lightToWorld;
+        this.worldToLight = lightToWorld.inverse();
+        this.numSamples = Math.max(1, numSamples);
+        this.mediumInterface = mediumInterface;
+    }
+    
+    public boolean isDeltaLight()
+    {
+        return lightType.contains(LightType.DELTA_POSITION) || lightType.contains(LightType.DELTA_DIRECTION);
+    }
+    
+    public abstract Quadruple<RGBSpectrum, Direction3, Double, VisibilityTester> sampleRadiance(Interaction ref, Point2 u);
+    public abstract RGBSpectrum power();
+    public void preprocess(Scene scene)
+    {
+        
+    }
+    
     /**
-     * @param intersection
-     * @return a Ray from the intersection point towards the light source. This
-     *         Ray is in worldspace.
+     * Return radiance due to rays that don't hit any geometry. (i.e. that escape the scene)
+     * Default implementation returns no radiance.
      */
-    public abstract Set<Ray> getLightRay(SurfaceInteraction intersection);
-
-    public Color getAmbientColor()
+    public RGBSpectrum emittedRadiance(RayDifferential ray)
     {
-        return ambientColor;
+        return new RGBSpectrum(0);
     }
-
-    public Color getDiffuseColor()
+    
+    public static class VisibilityTester
     {
-        return diffuseColor;
+        private final Interaction p0;
+        private final Interaction p1;
+        
+        public VisibilityTester(Interaction p0, Interaction p1)
+        {
+            this.p0 = p0;
+            this.p1 = p1;
+        }
+        
+        public Interaction p0()
+        {
+            return p0;
+        }
+        
+        public Interaction p1()
+        {
+            return p1;
+        }
+        
+        public boolean unoccluded(Scene scene)
+        {
+            return !scene.intersectP(p0.spawnRayTo(p1));
+        }
+        
+        public RGBSpectrum transmittance(Scene scene, Sampler sampler)
+        {
+            Ray ray = p0.spawnRayTo(p1);
+            RGBSpectrum transmittance = new RGBSpectrum(1, 1, 1);
+            while(true)
+            {
+                SurfaceInteraction isect = scene.intersect(ray);
+                // handle opaque surface
+                if (isect != null && isect.getPrimitive().getMaterial() != null)
+                {
+                    return new RGBSpectrum(0, 0, 0);
+                }
+                /* TODO
+                 * if (ray.getMedium() != null)
+                 * {
+                 *     transmittance = transmittance.times(ray.getMedium().transmittance(ray, sampler));
+                 * }
+                 */
+                if (isect == null)
+                {
+                    break;
+                }
+                ray = isect.spawnRayTo(p1);
+            }
+            return transmittance;
+        }
     }
-
-    public Color getSpecularColor()
-    {
-        return specularColor;
-    }
-
 }

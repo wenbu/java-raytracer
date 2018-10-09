@@ -1,5 +1,6 @@
 package scene;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,144 +9,86 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import metrics.MetricsAware;
-import raytracer.Raytracer;
 import sampler.Sampler;
+import scene.interactions.impl.SurfaceInteraction;
+import scene.lights.Light;
+import scene.primitives.Primitive;
 import camera.Camera;
 import core.Pixel;
 import core.Ray;
 import core.Sample;
-import core.colors.Color;
+import core.colors.RGBSpectrum;
 import core.math.Direction3;
 import core.math.Point3;
+import core.space.BoundingBox;
+import core.tuple.Pair;
 import film.Film;
 
-public class Scene implements MetricsAware
+public class Scene //implements MetricsAware
 {
     private static final Logger logger = Logger.getLogger(Scene.class.getName());
-    
-    // (0,0) at LL
-    private final Point3 imageLL;
 
-    private final int outputX;
-    private final int outputY;
-
-    private final Direction3 dx;
-    private final Direction3 dy;
-
-    private final Sampler sampler;
-    private final Camera camera;
-    private final Raytracer raytracer;
-    private final Film film;
+    private Primitive aggregate;
+    private List<Light> lights;
+    private BoundingBox worldBound;
     
-    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-//    private final ExecutorService executor = Executors.newFixedThreadPool(1);
-    
-    private long timeSpentRendering = 0L;
-   
-    public Scene(Point3 eyePosition,
-                 Point3 imageUL,
-                 Point3 imageUR,
-                 Point3 imageLL,
-                 Point3 imageLR,
-                 int outputX,
-                 int outputY,
-                 Sampler sampler,
-                 Raytracer raytracer,
-                 Film film)
+    public Scene(Primitive aggregate, List<Light> lights)
     {
-        this.camera = new Camera(eyePosition);
-        this.sampler = sampler;
+        this.aggregate = aggregate;
+        this.lights = lights;
+        this.worldBound = aggregate.worldBound();
         
-        this.imageLL = imageLL;
-
-        this.outputX = outputX;
-        this.outputY = outputY;
-
-        dx = (imageLR.minus(imageLL)).times(1.0 / outputX);
-        dy = (imageUL.minus(imageLL)).times(1.0 / outputY);
-        
-        this.raytracer = raytracer;
-        this.film = film;
-    }
-
-    public void render()
-    {
-        long start = System.currentTimeMillis();
-        
-        for (int x = 0; x < outputX; x++)
+        for (Light light : lights)
         {
-            for (int y = 0; y < outputY; y++)
-            {
-//                Pixel pixel = getPixel(x, y);
-//                Set<Sample> samples = sampler.getSamples(pixel);
-//                for (Sample sample : samples)
-//                {
-//                    Ray cameraRay = camera.getRay(sample); 
-//                    Color color = raytracer.traceRay(cameraRay);
-//                    film.registerSample(x, y, color);
-//                }
-            	executor.submit(new PixelRenderTask(x, y));
-            }
+            light.preprocess(this);
         }
-        executor.shutdown();
-        try
-		{
-			executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-		}
-		catch (InterruptedException e)
-		{
-			System.out.println("interrupted");
-			e.printStackTrace();
-		}
-        finally
-        {
-            timeSpentRendering = System.currentTimeMillis() - start;
-        }
-
-        film.imageComplete();
     }
     
-    private class PixelRenderTask implements Runnable
+    public BoundingBox worldBound()
     {
-    	private final int x;
-    	private final int y;
-    	
-    	public PixelRenderTask(int x, int y)
-    	{
-    		this.x = x;
-    		this.y = y;
-    	}
-    	
-		@Override
-		public void run()
-		{
-			Pixel pixel = getPixel(x, y);
-			Set<Sample> samples = sampler.getSamples(pixel);
-            for (Sample sample : samples)
+        return worldBound;
+    }
+    
+    public SurfaceInteraction intersect(Ray ray)
+    {
+        return aggregate.intersect(ray);
+    }
+    
+    public boolean intersectP(Ray ray)
+    {
+        return aggregate.intersectP(ray);
+    }
+    
+    public RGBSpectrum intersectTr(Ray ray, Sampler sampler, SurfaceInteraction surfaceInteraction)
+    {
+        // XXX This depends on intersect() properly updating tMax. Not sure if that's working.
+        RGBSpectrum transmittance = new RGBSpectrum(1, 1, 1);
+        
+        while(true)
+        {
+            SurfaceInteraction hitSurface = intersect(ray);
+            
+            // Accumulate beam transmittance for ray segment
+            if (ray.getMedium() != null)
             {
-                Ray cameraRay = camera.getRay(sample); 
-                Color color = raytracer.traceRay(cameraRay);
-                film.registerSample(x, y, color);
+                transmittance = transmittance.times(ray.getMedium().transmittance(ray, sampler));
             }
-		}
+            
+            // Initialize next ray segment or halt transmittance computation
+            if (hitSurface == null)
+            {
+                return null;
+            }
+            if (surfaceInteraction.getPrimitive().getMaterial() != null)
+            {
+                return transmittance;
+            }
+            ray = surfaceInteraction.spawnRay(ray.getDirection());
+        }
     }
-
-    private Pixel getPixel(int pixelX, int pixelY)
+    
+    public List<Light> getLights()
     {
-        double x = pixelX;
-        double y = pixelY;
-
-        Point3 pixelLL = imageLL.plus(dx.times(x)).plus(dy.times(y));
-        Point3 pixelLR = pixelLL.plus(dx);
-        Point3 pixelUL = pixelLL.plus(dy);
-        Point3 pixelUR = pixelLL.plus(dx).plus(dy);
-
-        return new Pixel(pixelUL, pixelUR, pixelLL, pixelLR);
-    }
-
-    @Override
-    public void logMetrics()
-    {
-        logger.log(Level.INFO, "Time spent rendering: " + timeSpentRendering + "ms");
+        return lights;
     }
 }

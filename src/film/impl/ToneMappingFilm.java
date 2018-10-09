@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import metrics.MetricsAware;
-import core.colors.Color;
-
+import core.colors.RGBSpectrum;
+/*
 public class ToneMappingFilm extends JFrameFilm implements MetricsAware
 {
     private static final Logger logger = Logger.getLogger(ToneMappingFilm.class.getName());
@@ -85,3 +85,4 @@ public class ToneMappingFilm extends JFrameFilm implements MetricsAware
         logger.log(Level.INFO, "Spent " + timeSpentProcessing + " ms processing final image.");
     }
 }
+*/

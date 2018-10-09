@@ -136,6 +136,11 @@ public class Normal3 extends Vector3
     {
         return divideEquals(length());
     }
+    
+    public Normal3 abs()
+    {
+        return new Normal3(VectorMath.abs(vector));
+    }
 
     public String toString()
     {

@@ -11,6 +11,11 @@ public class Point3 extends Vector3
     
     private double[] homogeneous;
 
+    public Point3()
+    {
+        this(0, 0, 0);
+    }
+    
     public Point3(double x, double y, double z)
     {
         super(x, y, z);
@@ -53,8 +58,15 @@ public class Point3 extends Vector3
     public Point3 times(double scalar)
     {
         return new Point3(vector[0] * scalar,
-                         vector[1] * scalar,
-                         vector[2] * scalar);
+                          vector[1] * scalar,
+                          vector[2] * scalar);
+    }
+    
+    public Point3 divideBy(double scalar)
+    {
+        return new Point3(vector[0] / scalar,
+                          vector[1] / scalar,
+                          vector[2] / scalar);
     }
     
     public double distanceTo(Point3 other)

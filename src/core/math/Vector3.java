@@ -83,5 +83,10 @@ public abstract class Vector3
         return (x() > y()) ? ((x() > z()) ? 0 : 2) : ((y() > z()) ? 1 : 2);
     }
     
+    public double maxComponent()
+    {
+        return Math.max(x(), Math.max(y(), z()));
+    }
+    
     protected abstract double[] getHomogeneousForm();
 }

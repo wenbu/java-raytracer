@@ -1,26 +1,32 @@
 package core.math;
 
+import java.util.Arrays;
+
 import core.Ray;
+import core.RayDifferential;
 import core.space.BoundingBox;
+import core.tuple.Pair;
+import core.tuple.Triple;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.interactions.impl.SurfaceInteraction.ShadingGeometry;
 
 
 public class Transformation
 {
-    public static final double[][] IDENTITY =
+    private static final double[][] IDENTITY_ARRAY =
             new double[][] { { 1,0,0,0 },
                              { 0,1,0,0 },
                              { 0,0,1,0 },
                              { 0,0,0,1 } };
-    
+    public static final Transformation IDENTITY = new Transformation(IDENTITY_ARRAY);
+
     private final double[][] matrix;
     private final double[][] inverse;
 
     public Transformation()
     {
-        matrix = VectorMath.copy(IDENTITY);
-        inverse = VectorMath.copy(IDENTITY);
+        matrix = VectorMath.copy(IDENTITY_ARRAY);
+        inverse = VectorMath.copy(IDENTITY_ARRAY);
     }
 
     public Transformation(double[][] matrix)
@@ -53,6 +59,11 @@ public class Transformation
                                   {             0,             0,             0, 1 } };
         inverse = VectorMath.transpose(matrix);
     }
+    
+    public Transformation inverse()
+    {
+        return new Transformation(inverse, matrix);
+    }
 
     public static Transformation getTranslation(double x,
                                                        double y,
@@ -69,6 +80,11 @@ public class Transformation
                                               { 0,0,0, 1 } };
         
         return new Transformation(matrix, inverse);
+    }
+    
+    public static Transformation getUniformScale(double scale)
+    {
+        return getScale(scale, scale, scale);
     }
     
     public static Transformation getScale(double x, double y, double z)
@@ -121,7 +137,8 @@ public class Transformation
     public static Transformation getLookAt(Point3 position, Point3 target, Direction3 up)
     {
         Direction3 direction = Direction3.getNormalizedDirection(position, target);
-        Direction3 left = Direction3.getNormalizedDirection(Direction3.getNormalizedDirection(up).cross(direction));
+        Direction3 left = Direction3.getNormalizedDirection(Direction3.getNormalizedDirection(up)
+                                                                      .cross(direction));
         Direction3 newUp = direction.cross(left);
         
         double[][] matrix = new double[][] { { left.x(), newUp.x(), direction.x(), position.x() },
@@ -143,9 +160,43 @@ public class Transformation
         return new Point3(v);
     }
     
+    public Pair<Point3, Direction3> transformWithError(Point3 other)
+    {
+        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm());
+        if(v[3] != 1.0) v = VectorMath.divide(v, v[3]);
+        
+        return new Pair<>(new Point3(v), new Direction3(error));
+    }
+    
+    public Pair<Point3, Direction3> transformWithError(Point3 other, Direction3 existingError)
+    {
+        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
+        if(v[3] != 1.0) v = VectorMath.divide(v, v[3]);
+        
+        return new Pair<>(new Point3(v), new Direction3(error));
+    }
+    
     public Direction3 transform(Direction3 other)
     {
         return new Direction3(VectorMath.multiply(matrix, other.getHomogeneousForm()));
+    }
+    
+    public Pair<Direction3, Direction3> transformWithError(Direction3 other)
+    {
+        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm());
+        
+        return new Pair<>(new Direction3(v), new Direction3(error));
+    }
+    
+    public Pair<Direction3, Direction3> transformWithError(Direction3 other, Direction3 existingError)
+    {
+        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
+        
+        return new Pair<>(new Direction3(v), new Direction3(error));
     }
     
     public Normal3 transform(Normal3 other)
@@ -153,16 +204,108 @@ public class Transformation
         return new Normal3(VectorMath.multiplyTranspose(inverse, other.getHomogeneousForm()));
     }
     
+    public Pair<Normal3, Direction3> transformWithError(Normal3 other)
+    {
+        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm());
+        
+        return new Pair<>(new Normal3(v), new Direction3(error));
+    }
+    
+    public Pair<Normal3, Direction3> transformWithError(Normal3 other, Direction3 existingError)
+    {
+        double[] v = VectorMath.multiply(matrix, other.getHomogeneousForm());
+        double[] error = VectorMath.getMultiplyError(matrix, other.getHomogeneousForm(), existingError.getHomogeneousForm());
+        
+        return new Pair<>(new Normal3(v), new Direction3(error));
+    }
+    
     public Ray transform(Ray other)
     {
-        Point3 newOrigin = transform(other.getOrigin());
+        var origin = transformWithError(other.getOrigin());
+        Point3 newOrigin = origin.getFirst();
+        Direction3 originError = origin.getSecond();
+        
         Direction3 newDirection = transform(other.getDirection());
+        
+        double lengthSquared = newDirection.lengthSquared();
+        double tMax = other.getTMax();
+        if (lengthSquared > 0)
+        {
+            double dt = newDirection.abs().dot(originError) / lengthSquared;
+            newOrigin = newOrigin.plus(newDirection.times(dt));
+            tMax -= dt;
+        }
         
         return new Ray(newOrigin,
                        newDirection,
-                       other.getMinT(),
-                       other.getMaxT(),
-                       other.getDepth());
+                       tMax,
+                       other.getTime(),
+                       other.getMedium());
+    }
+    
+    public RayDifferential transform(RayDifferential r)
+    {
+        Ray transformedRay = this.transform(new Ray(r));
+        RayDifferential ret = new RayDifferential(transformedRay);
+        ret.setHasDifferentials(r.hasDifferentials());
+        if (r.hasDifferentials())
+        {
+            ret.setRxOrigin(this.transform(r.getRxOrigin()));
+            ret.setRyOrigin(this.transform(r.getRyOrigin()));
+            ret.setRxDirection(this.transform(r.getRxDirection()));
+            ret.setRyDirection(this.transform(r.getRyDirection()));
+        }
+        return ret;
+    }
+    
+    public Triple<Ray, Direction3, Direction3> transformWithError(Ray ray)
+    {
+        var origin = transformWithError(ray.getOrigin());
+        Point3 newOrigin = origin.getFirst();
+        Direction3 originError = origin.getSecond();
+        
+        var direction = transformWithError(ray.getDirection());
+        Direction3 newDirection = direction.getFirst();
+        Direction3 directionError = direction.getSecond();
+
+        double lengthSquared = newDirection.lengthSquared();
+        double tMax = ray.getTMax();
+        if (lengthSquared > 0)
+        {
+            double dt = newDirection.abs().dot(originError) / lengthSquared;
+            newOrigin = newOrigin.plus(newDirection.times(dt));
+            tMax -= dt;
+        }
+        
+        Ray transformedRay = new Ray(newOrigin, newDirection, tMax, ray.getTime(), ray.getMedium());
+        
+        return new Triple<>(transformedRay, originError, directionError);
+    }
+    
+    public Triple<Ray, Direction3, Direction3> transformWithError(Ray ray, Direction3 existingOriginError,
+            Direction3 existingDirectionError)
+    {
+        var origin = transformWithError(ray.getOrigin(), existingOriginError);
+        Point3 newOrigin = origin.getFirst();
+        Direction3 newOriginError = origin.getSecond();
+        
+        var direction = transformWithError(ray.getDirection(), existingDirectionError);
+        Direction3 newDirection = direction.getFirst();
+        Direction3 newDirectionError = direction.getSecond();
+
+        double lengthSquared = newDirection.lengthSquared();
+        double tMax = ray.getTMax();
+        if (lengthSquared > 0)
+        {
+            double dt = newDirection.abs().dot(newOriginError) / lengthSquared;
+            newOrigin = newOrigin.plus(newDirection.times(dt));
+            tMax -= dt;
+        }
+        
+        Ray transformedRay = new Ray(newOrigin, newDirection, tMax, ray.getTime(), ray.getMedium());
+
+        return new Triple<>(transformedRay, newOriginError, newDirectionError);
     }
     
     /**
@@ -215,8 +358,7 @@ public class Transformation
     public SurfaceInteraction transform(SurfaceInteraction other)
     {
         Point3 transformedP = this.transform(other.getP());
-        // TODO
-        Direction3 transformedError = null;
+        Direction3 transformedError = this.transform(other.getError());
         
         Direction3 transformedWo = this.transform(other.getWo()).normalize();
         Normal3 transformedN = this.transform(other.getN()).normalize();

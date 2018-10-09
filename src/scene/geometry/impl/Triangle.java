@@ -8,6 +8,7 @@ import core.Ray;
 import core.math.CoordinateSystem;
 import core.math.Direction2;
 import core.math.Direction3;
+import core.math.MathUtilities;
 import core.math.Normal3;
 import core.math.Point2;
 import core.math.Point3;
@@ -92,8 +93,11 @@ public class Triangle extends Shape
         
         // TODO: alpha test
 
-        // TODO
-        Direction3 error = new Direction3(0, 0, 0);
+        double xAbsSum = Math.abs(b0 * p0.x()) + Math.abs(b1 * p1.x()) + Math.abs(b2 * p2.x());
+        double yAbsSum = Math.abs(b0 * p0.y()) + Math.abs(b1 * p1.y()) + Math.abs(b2 * p2.y());
+        double zAbsSum = Math.abs(b0 * p0.z()) + Math.abs(b1 * p1.z()) + Math.abs(b2 * p2.z());
+        Direction3 error = new Direction3(xAbsSum, yAbsSum, zAbsSum).times(MathUtilities.gamma(7));
+        
         SurfaceInteraction surfaceInteraction = new SurfaceInteraction(pHit,
                                                                        error,
                                                                        uvHit,
@@ -212,6 +216,22 @@ public class Triangle extends Shape
         double b1 = e1 * invDet;
         double b2 = e2 * invDet;
         double t = tScaled * invDet;
+        
+        // ensure, conservatively, that t > 0
+        double maxZt = new Direction3(p0t.z(), p1t.z(), p2t.z()).abs().maxComponent();
+        double deltaZ = MathUtilities.gamma(3) * maxZt;
+        double maxXt = new Direction3(p0t.x(), p1t.x(), p2t.x()).abs().maxComponent();
+        double maxYt = new Direction3(p0t.y(), p1t.y(), p2t.y()).abs().maxComponent();
+        double deltaX = MathUtilities.gamma(5) * (maxXt + maxZt);
+        double deltaY = MathUtilities.gamma(5) * (maxYt + maxZt);
+        double deltaE = 2 * (MathUtilities.gamma(2) * maxXt * maxYt + deltaY * maxXt + deltaX * maxYt);
+        double maxE = new Direction3(e0, e1, e2).abs().maxComponent();
+        double deltaT = 3 * (MathUtilities.gamma(3) * maxE * maxZt + deltaE * maxZt + deltaZ * maxE) * Math.abs(invDet);
+        if (t <= deltaT)
+        {
+            return null;
+        }
+        
         Triple<Double, Double, Double> barycentricCoordinates = new Triple<>(b0, b1, b2);
         return new Pair<>(barycentricCoordinates, t);
     }

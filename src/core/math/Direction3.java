@@ -4,6 +4,11 @@ public class Direction3 extends Vector3
 {
     private double[] homogeneous;
     
+    public Direction3()
+    {
+        this(0, 0, 0);
+    }
+    
     public Direction3(double x, double y, double z)
     {
         super(x, y, z);
@@ -50,6 +55,11 @@ public class Direction3 extends Vector3
     }
 
     public Direction3 plus(Direction3 other)
+    {
+        return new Direction3(VectorMath.add(vector, other.getVector()));
+    }
+    
+    public Direction3 plus(Normal3 other)
     {
         return new Direction3(VectorMath.add(vector, other.getVector()));
     }
@@ -102,9 +112,9 @@ public class Direction3 extends Vector3
         return VectorMath.dotProduct(vector, other.vector);
     }
     
-    public double dot(Normal3 other)
+    public double absDot(Vector3 other)
     {
-        return VectorMath.dotProduct(vector, other.vector);
+        return Math.abs(dot(other));
     }
 
     public Direction3 cross(Vector3 other)

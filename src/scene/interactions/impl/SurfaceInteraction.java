@@ -1,11 +1,16 @@
 package scene.interactions.impl;
 
+import core.Ray;
+import core.RayDifferential;
 import core.math.Direction3;
+import core.math.MatrixMath;
 import core.math.Normal3;
 import core.math.Point2;
 import core.math.Point3;
 import scene.geometry.Shape;
 import scene.interactions.Interaction;
+import scene.materials.TransportMode;
+import scene.materials.functions.BidirectionalScatteringDistributionFunction;
 import scene.primitives.Primitive;
 
 public class SurfaceInteraction extends Interaction
@@ -16,13 +21,16 @@ public class SurfaceInteraction extends Interaction
     private final Shape shape;
     private final ShadingGeometry shadingGeometry;
     private Primitive primitive = null;
-    // private BSDF bsdf = null;
+    private BidirectionalScatteringDistributionFunction bsdf = null;
+    
+    private Direction3 dpdx, dpdy;
+    private double dudx, dudy, dvdx, dvdy;
     // private BSSRDF bssrdf = null;
 
     public SurfaceInteraction(Point3 p, Direction3 error, Point2 uv, Direction3 wo, Direction3 dpdu, Direction3 dpdv,
             Normal3 dndu, Normal3 dndv, double t, Shape shape)
     {
-        super(p, new Normal3(dpdu.cross(dpdv).normalize()), error, wo, t);
+        super(p, new Normal3(dpdu.cross(dpdv).normalize()), error, wo, t, null);
         this.uv = uv;
         this.dpdu = dpdu;
         this.dpdv = dpdv;
@@ -42,7 +50,7 @@ public class SurfaceInteraction extends Interaction
             Direction3 dpdv, Normal3 dndu, Normal3 dndv, double t, Shape shape, Normal3 shadingN, Normal3 shadingDndu,
             Normal3 shadingDndv, Direction3 shadingDpdu, Direction3 shadingDpdv)
     {
-        super(p, n, error, wo, t);
+        super(p, n, error, wo, t, null);
         this.uv = uv;
         this.dpdu = dpdu;
         this.dpdv = dpdv;
@@ -50,6 +58,89 @@ public class SurfaceInteraction extends Interaction
         this.dndv = dndv;
         this.shape = shape;
         this.shadingGeometry = new ShadingGeometry(shadingN, shadingDndu, shadingDndv, shadingDpdu, shadingDpdv);
+    }
+    
+    public void computeScatteringFunctions(RayDifferential ray)
+    {
+        computeScatteringFunctions(ray, TransportMode.RADIANCE, false);
+    }
+    
+    public void computeScatteringFunctions(RayDifferential ray, TransportMode mode, boolean allowMultipleLobes)
+    {
+        computeDifferentials(ray);
+        primitive.computeScatteringFunctions(this, mode, allowMultipleLobes);
+    }
+    
+    public void computeDifferentials(RayDifferential ray)
+    {
+        if (ray.hasDifferentials())
+        {
+            // estimate screen space change in p and (u, v)
+            // use plane through p tangent to surface
+            // compute auxiliary intersection points with plane
+            double d = n.dot(new Direction3(p.x(), p.y(), p.z()));
+            double tx = -(n.dot(new Direction3(ray.getRxOrigin())) - d) / n.dot(ray.getRxDirection());
+            double ty = -(n.dot(new Direction3(ray.getRyOrigin())) - d) / n.dot(ray.getRyDirection());
+            Point3 px = ray.getRxOrigin().plus(ray.getRxDirection().times(tx));
+            Point3 py = ray.getRyOrigin().plus(ray.getRyDirection().times(ty));
+            
+            dpdx = px.minus(p);
+            dpdy = py.minus(p);
+            
+            // compute (u, v) offsets at auxiliary points
+            // choose two dimensions for ray offset computation
+            int dim[] = new int[2];
+            if (Math.abs(n.x()) > Math.abs(n.y()) && Math.abs(n.x()) > Math.abs(n.z()))
+            {
+                dim[0] = 1; dim[1] = 2;
+            }
+            else if (Math.abs(n.y()) > Math.abs(n.z()))
+            {
+                dim[0] = 0; dim[1] = 2;
+            }
+            else
+            {
+                dim[0] = 0; dim[1] = 1;
+            }
+            
+            // initialize A, Bx, By matrices for offset computation
+            double[][] A = { { dpdu.get(dim[0]), dpdv.get(dim[0]) },
+                             { dpdu.get(dim[1]), dpdv.get(dim[1]) } };
+            double[] Bx = { px.get(dim[0]) - p.get(dim[0]), px.get(dim[1]) - p.get(dim[1]) };
+            double[] By = { py.get(dim[0]) - p.get(dim[0]), py.get(dim[1]) - p.get(dim[1]) };
+            
+            var solutionX = MatrixMath.solveLinearSystem2x2(A, Bx);
+            if (solutionX == null)
+            {
+                dudx = 0;
+                dvdx = 0;
+            }
+            else
+            {
+                dudx = solutionX.getFirst();
+                dvdx = solutionX.getSecond();
+            }
+            var solutionY = MatrixMath.solveLinearSystem2x2(A, By);
+            if (solutionY == null)
+            {
+                dudy = 0;
+                dvdy = 0;
+            }
+            else
+            {
+                dudy = solutionY.getFirst();
+                dvdy = solutionY.getSecond();
+            }
+        }
+        else
+        {
+            dudx = 0;
+            dvdx = 0;
+            dudy = 0;
+            dvdy = 0;
+            dpdx = new Direction3(0, 0, 0);
+            dpdy = new Direction3(0, 0, 0);
+        }
     }
     
     public Point2 getUv()
@@ -76,10 +167,50 @@ public class SurfaceInteraction extends Interaction
     {
         return dndv;
     }
+    
+    public double getDudx()
+    {
+        return dudx;
+    }
+    
+    public double getDudy()
+    {
+        return dudy;
+    }
+    
+    public double getDvdx()
+    {
+        return dvdx;
+    }
+    
+    public double getDvdy()
+    {
+        return dvdy;
+    }
+    
+    public Direction3 getDpdx()
+    {
+        return dpdx;
+    }
+    
+    public Direction3 getDpdy()
+    {
+        return dpdy;
+    }
 
     public Shape getShape()
     {
         return shape;
+    }
+    
+    public void setBsdf(BidirectionalScatteringDistributionFunction bsdf)
+    {
+        this.bsdf = bsdf;
+    }
+    
+    public BidirectionalScatteringDistributionFunction getBsdf()
+    {
+        return bsdf;
     }
 
     public ShadingGeometry getShadingGeometry()

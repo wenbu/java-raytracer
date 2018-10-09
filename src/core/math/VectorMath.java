@@ -315,7 +315,7 @@ public class VectorMath
             throw new IllegalArgumentException("maxIndex is too large for v2.");
         }
         
-        for (int i = 0; i < maxIndex; i++)
+        for (int i = 0; i < maxIndex + 1; i++)
         {
             v1[i] += v2[i];
         }
@@ -351,7 +351,7 @@ public class VectorMath
             throw new IllegalArgumentException("maxIndex is too large for v2.");
         }
         
-        for (int i = 0; i < maxIndex; i++)
+        for (int i = 0; i < maxIndex + 1; i++)
         {
             v1[i] -= v2[i];
         }
@@ -372,7 +372,7 @@ public class VectorMath
             throw new IllegalArgumentException("maxIndex is too large for v.");
         }
         
-        for (int i = 0; i < maxIndex; i++)
+        for (int i = 0; i < maxIndex + 1; i++)
         {
             v[i] *= s;
         }
@@ -393,7 +393,7 @@ public class VectorMath
             throw new IllegalArgumentException("maxIndex is too large for v.");
         }
         
-        for (int i = 0; i < maxIndex; i++)
+        for (int i = 0; i < maxIndex + 1; i++)
         {
             v[i] /= s;
         }
@@ -424,6 +424,41 @@ public class VectorMath
         }
         
         return product;
+    }
+    
+    public static double[] getMultiplyError(double[][] m, double[] v)
+    {
+        double x = v[0];
+        double y = v[1];
+        double z = v[2];
+        double eX = MathUtilities.gamma(3) * (Math.abs(m[0][0] * x) + Math.abs(m[0][1] * y) + Math.abs(m[0][2] * z));
+        double eY = MathUtilities.gamma(3) * (Math.abs(m[1][0] * x) + Math.abs(m[1][1] * y) + Math.abs(m[1][2] * z));
+        double eZ = MathUtilities.gamma(3) * (Math.abs(m[2][0] * x) + Math.abs(m[2][1] * y) + Math.abs(m[2][2] * z));
+        return new double[] { eX, eY, eZ };
+    }
+    
+    public static double[] getMultiplyError(double[][] m, double[] v, double[] vError)
+    {
+        double vx = v[0];
+        double vy = v[1];
+        double vz = v[2];
+        double ex = vError[0];
+        double ey = vError[1];
+        double ez = vError[2];
+        
+        double eX = (MathUtilities.gamma(3) + 1) *
+                    (Math.abs(m[0][0] * ex) + Math.abs(m[0][1] * ey) + Math.abs(m[0][2] * ez)) +
+                    MathUtilities.gamma(3) *
+                    (Math.abs(m[0][0] * vx) + Math.abs(m[0][1] * vy) + Math.abs(m[0][2] * vz));
+        double eY = (MathUtilities.gamma(3) + 1) *
+                    (Math.abs(m[1][0] * ex) + Math.abs(m[1][1] * ey) + Math.abs(m[1][2] * ez)) +
+                    MathUtilities.gamma(3) *
+                    (Math.abs(m[1][0] * vx) + Math.abs(m[1][1] * vy) + Math.abs(m[1][2] * vz));
+        double eZ = (MathUtilities.gamma(3) + 1) *
+                    (Math.abs(m[2][0] * ex) + Math.abs(m[2][1] * ey) + Math.abs(m[2][2] * ez)) +
+                    MathUtilities.gamma(3) *
+                    (Math.abs(m[2][0] * vx) + Math.abs(m[2][1] * vy) + Math.abs(m[2][2] * vz));
+        return new double[] { eX, eY, eZ };
     }
     
     /**

@@ -45,10 +45,25 @@ public class Point2 extends Vector2
         return new Direction2(VectorMath.subtract(vector, other.getVector()));
     }
     
+    public Point2 minus(Direction2 other)
+    {
+        return new Point2(VectorMath.subtract(vector, other.getVector()));
+    }
+    
     public Point2 times(double scalar)
     {
         return new Point2(vector[0] * scalar,
                           vector[1] * scalar);
+    }
+    
+    public Point2 floor()
+    {
+        return new Point2(Math.floor(vector[0]), Math.floor(vector[1]));
+    }
+    
+    public Point2 ceil()
+    {
+        return new Point2(Math.ceil(vector[0]), Math.ceil(vector[1]));
     }
     
     public double distanceTo(Point2 other)
@@ -57,10 +72,31 @@ public class Point2 extends Vector2
         return VectorMath.getLength(v[0], v[1]);
     }
     
+    public static Point2 max(Point2 p1, Point2 p2)
+    {
+        return new Point2(Math.max(p1.x(), p2.x()), Math.max(p1.y(), p2.y()));
+    }
+    
+    public static Point2 min(Point2 p1, Point2 p2)
+    {
+        return new Point2(Math.min(p1.x(), p2.x()), Math.min(p1.y(), p2.y()));
+    }
+    
     @Override
     public String toString()
     {
         return String.format("Point [%f, %f]", vector[0], vector[1]);
+    }
+    
+    @Override
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof Point2))
+        {
+            return false;
+        }
+        Point2 p2 = (Point2) other;
+        return this.x() == p2.x() && this.y() == p2.y();
     }
     
     @Override

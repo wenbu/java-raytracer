@@ -1,36 +1,41 @@
 package scene.lights.impl;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.EnumSet;
 
-import core.Ray;
-import core.colors.Color;
+import core.colors.RGBSpectrum;
+import core.math.Direction3;
+import core.math.Point2;
 import core.math.Point3;
-import scene.interactions.impl.SurfaceInteraction;
+import core.math.Transformation;
+import core.tuple.Quadruple;
+import scene.interactions.Interaction;
 import scene.lights.Light;
+import scene.medium.Medium.MediumInterface;
 
 public class PointLight extends Light
 {
     private final Point3 position;
+    private final RGBSpectrum intensity;
     
-    public PointLight(Point3 position, Color color)
+    public PointLight(Transformation lightToWorld, MediumInterface mediumInterface, RGBSpectrum intensity)
     {
-        super(color);
-        this.position = position;
+        super(EnumSet.of(LightType.DELTA_POSITION), lightToWorld, mediumInterface);
+        position = lightToWorld.transform(new Point3());
+        this.intensity = intensity;
     }
-    
-    public PointLight(Point3 position, Color ambientColor, Color diffuseColor, Color specularColor)
-    {
-        super(ambientColor, diffuseColor, specularColor);
-        this.position = position;
-    }
-    
     @Override
-    public Set<Ray> getLightRay(SurfaceInteraction intersection)
+    public Quadruple<RGBSpectrum, Direction3, Double, VisibilityTester> sampleRadiance(Interaction ref, Point2 u)
     {
-        Set<Ray> lightRays = new HashSet<>();
-        Point3 origin = intersection.getP();
-        lightRays.add(new Ray(origin, position));
-        return lightRays;
+        Direction3 wi = position.minus(ref.getP()).normalize();
+        double pdf = 1;
+        VisibilityTester vis = new VisibilityTester(ref, new Interaction(position, ref.getT(), mediumInterface));
+        RGBSpectrum radiance = intensity.divideBy(position.minus(ref.getP()).lengthSquared());
+        return new Quadruple<>(radiance, wi, pdf, vis);
+    }
+
+    @Override
+    public RGBSpectrum power()
+    {
+        return intensity.times(4 * Math.PI);
     }
 }

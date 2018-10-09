@@ -5,6 +5,8 @@ import static core.math.MathUtilities.quadratic;
 
 import core.Ray;
 import core.math.Direction3;
+import core.math.MathUtilities;
+import core.math.MathUtilities.eDouble;
 import core.math.Normal3;
 import core.math.Point2;
 import core.math.Point3;
@@ -55,14 +57,19 @@ public class Sphere extends Shape
     @Override
     public Pair<Double, SurfaceInteraction> intersect(Ray ray, boolean testAlpha)
     {
-        Ray objectSpaceRay = worldToObject.transform(ray);
+        var transformedRay = worldToObject.transformWithError(ray);
+        Ray objectSpaceRay = transformedRay.getFirst();
+        Direction3 originError = transformedRay.getSecond();
+        Direction3 directionError = transformedRay.getThird();
 
-        Pair<Double, Double> quadraticSolution = getQuadraticIntersectionSolution(objectSpaceRay);
+        Pair<eDouble, eDouble> quadraticSolution = getQuadraticIntersectionSolution(objectSpaceRay,
+                                                                                    originError,
+                                                                                    directionError);
         if (quadraticSolution == null)
         {
             return null;
         }
-        Triple<Point3, Double, Double> closestValidIntersection = getClosestValidIntersection(quadraticSolution, objectSpaceRay);
+        Triple<Point3, eDouble, Double> closestValidIntersection = getClosestValidIntersection(quadraticSolution, objectSpaceRay);
         if (closestValidIntersection == null)
         {
             return null;
@@ -70,7 +77,7 @@ public class Sphere extends Shape
         
         // found hit -- compute parametric representation
         Point3 pHit = closestValidIntersection.getFirst();
-        double tShapeHit = closestValidIntersection.getSecond();
+        eDouble tShapeHit = closestValidIntersection.getSecond();
         double phi = closestValidIntersection.getThird();
         
         double px = pHit.x();
@@ -78,7 +85,7 @@ public class Sphere extends Shape
         double pz = pHit.z();
         double u = phi / phiMax;
         double theta = Math.acos(clamp(pz / radius, -1, 1));
-        double v = (theta - thetaMin) / (thetaMax / thetaMin);
+        double v = (theta - thetaMin) / (thetaMax - thetaMin);
         
         double zRadius = Math.sqrt(px * px + py * py);
         double invZRadius = 1 / zRadius;
@@ -103,8 +110,8 @@ public class Sphere extends Shape
                                    dpdv.times((e * F - f * E) * invEGF2) ));
         Normal3 dndv = new Normal3(dpdu.times((g * F - f * G) * invEGF2).plus(
                                    dpdv.times((f * F - g * E) * invEGF2) ));
-        // TODO
-        Direction3 pError = new Direction3(0, 0, 0);
+        
+        Direction3 pError = new Direction3(pHit).abs().timesEquals(MathUtilities.gamma(5));
         SurfaceInteraction isect = objectToWorld.transform(new SurfaceInteraction(pHit,
                                                                                   pError,
                                                                                   new Point2(u, v),
@@ -115,20 +122,26 @@ public class Sphere extends Shape
                                                                                   dndv,
                                                                                   ray.getTime(),
                                                                                   this));
-        return new Pair<>(tShapeHit, isect);
+        double tHit = tShapeHit.getValue();
+        return new Pair<>(tHit, isect);
     }
     
     @Override
     public boolean intersectP(Ray ray, boolean testAlpha)
     {
-        Ray objectSpaceRay = worldToObject.transform(ray);
+        var transformedRay = worldToObject.transformWithError(ray);
+        Ray objectSpaceRay = transformedRay.getFirst();
+        Direction3 originError = transformedRay.getSecond();
+        Direction3 directionError = transformedRay.getThird();
 
-        Pair<Double, Double> quadraticSolution = getQuadraticIntersectionSolution(objectSpaceRay);
+        var quadraticSolution = getQuadraticIntersectionSolution(objectSpaceRay,
+                                                                 originError,
+                                                                 directionError);
         if (quadraticSolution == null)
         {
             return false;
         }
-        Triple<Point3, Double, Double> closestValidIntersection = getClosestValidIntersection(quadraticSolution, objectSpaceRay);
+        var closestValidIntersection = getClosestValidIntersection(quadraticSolution, objectSpaceRay);
         if (closestValidIntersection == null)
         {
             return false;
@@ -136,49 +149,50 @@ public class Sphere extends Shape
         return true;
     }
     
-    private Pair<Double, Double> getQuadraticIntersectionSolution(Ray objectSpaceRay)
+    private Pair<eDouble, eDouble> getQuadraticIntersectionSolution(Ray objectSpaceRay,
+            Direction3 originError, Direction3 directionError)
     {
-        double ox = objectSpaceRay.getOrigin().x();
-        double oy = objectSpaceRay.getOrigin().y();
-        double oz = objectSpaceRay.getOrigin().z();
-        double dx = objectSpaceRay.getDirection().x();
-        double dy = objectSpaceRay.getDirection().y();
-        double dz = objectSpaceRay.getDirection().z();
+        eDouble ox = new eDouble(objectSpaceRay.getOrigin().x(), originError.x());
+        eDouble oy = new eDouble(objectSpaceRay.getOrigin().y(), originError.y());
+        eDouble oz = new eDouble(objectSpaceRay.getOrigin().z(), originError.z());
+        eDouble dx = new eDouble(objectSpaceRay.getDirection().x(), directionError.x());
+        eDouble dy = new eDouble(objectSpaceRay.getDirection().y(), directionError.y());
+        eDouble dz = new eDouble(objectSpaceRay.getDirection().z(), directionError.z());
         
         // compute quadratic sphere coefficients
-        double a = dx * dx + dy * dy + dz * dz;
-        double b = 2 * (dx * ox + dy * oy + dz * oz);
-        double c = ox * ox + oy * oy + oz * oz - radius * radius;
+        eDouble a = new eDouble(dx.times(dx).plus(dy.times(dy)).plus(dz.times(dz)));
+        eDouble b = new eDouble(dx.times(ox).plus(dy.times(oy)).plus(dz.times(oz)).times(2));
+        eDouble c = new eDouble(ox.times(ox).plus(oy.times(oy)).plus(oz.times(oz)).minus(new eDouble(radius * radius)));
         
         // solve quadratic equation
         return quadratic(a, b, c);
     }
     
     // returns intersection point, parametric t of intersection, phi at intersection
-    private Triple<Point3, Double, Double> getClosestValidIntersection(Pair<Double, Double> t, Ray ray)
+    private Triple<Point3, eDouble, Double> getClosestValidIntersection(Pair<eDouble, eDouble> t, Ray ray)
     {
-        double t0 = t.getFirst();
-        double t1 = t.getSecond();
+        eDouble t0 = t.getFirst();
+        eDouble t1 = t.getSecond();
         
         // check t0 and t1 for nearest intersection with quadric
         // valid values are 0 < t < ray.tMax
-        if (t0 > ray.getTMax() || t1 <= 0)
+        if (t0.upperBound() > ray.getTMax() || t1.lowerBound() <= 0)
         {
             return null;
         }
         
-        double tShapeHit = t0;
-        if (tShapeHit <= 0)
+        eDouble tShapeHit = t0;
+        if (tShapeHit.lowerBound() <= 0)
         {
             tShapeHit = t1;
-            if (tShapeHit > ray.getTMax())
+            if (tShapeHit.upperBound() > ray.getTMax())
             {
                 return null;
             }
         }
         
         // compute hit position (in object space) and phi
-        Pair<Point3, Double> positionAndPhi = computeHitPositionAndPhi(tShapeHit, ray);
+        Pair<Point3, Double> positionAndPhi = computeHitPositionAndPhi(tShapeHit.getValue(), ray);
         Point3 pHit = positionAndPhi.getFirst();
         double phi = positionAndPhi.getSecond();
         
@@ -191,13 +205,13 @@ public class Sphere extends Shape
             {
                 return null;
             }
-            if (t1 > ray.getTMax())
+            if (t1.upperBound() > ray.getTMax())
             {
                 return null;
             }
             tShapeHit = t1;
             
-            positionAndPhi = computeHitPositionAndPhi(tShapeHit, ray);
+            positionAndPhi = computeHitPositionAndPhi(tShapeHit.getValue(), ray);
             pHit = positionAndPhi.getFirst();
             phi = positionAndPhi.getSecond();
             if ((zMin > -radius && pHit.z() < zMin) ||
@@ -213,6 +227,7 @@ public class Sphere extends Shape
     private Pair<Point3, Double> computeHitPositionAndPhi(double t, Ray ray)
     {
         Point3 pHit = ray.pointAt(t);
+        pHit = pHit.times(radius / pHit.distanceTo(new Point3()));
         if (pHit.x() == 0 && pHit.y() == 0)
         {
             pHit.setX(1e-5 * radius);

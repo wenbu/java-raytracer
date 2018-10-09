@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import core.colors.Color;
+import core.colors.RGBSpectrum;
 import core.math.Point3;
 
 /**
@@ -18,7 +18,7 @@ public class Pixel
     private final Point3 pixelLL;
     private final Point3 pixelLR;
 
-    private final Set<Color> samples;
+    private final Set<RGBSpectrum> samples;
 
     public Pixel(Point3 pixelUL,
             Point3 pixelUR,
@@ -33,12 +33,12 @@ public class Pixel
         samples = new HashSet<>();
     }
 
-    public void addSample(Color sample)
+    public void addSample(RGBSpectrum sample)
     {
         samples.add(sample);
     }
 
-    public void addSamples(Collection<Color> samples)
+    public void addSamples(Collection<RGBSpectrum> samples)
     {
         this.samples.addAll(samples);
     }

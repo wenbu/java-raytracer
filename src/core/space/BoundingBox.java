@@ -217,7 +217,7 @@ public class BoundingBox
     public Pair<Double, Double> intersect(Ray ray)
     {
         double t0 = 0;
-        double t1 = ray.getMaxT();
+        double t1 = ray.getTMax();
         
         for (int i = 0; i < 3; i++)
         {
@@ -231,6 +231,8 @@ public class BoundingBox
                 tNear = tFar;
                 tFar = temp;
             }
+            
+            tFar *= 1 + 2 * MathUtilities.gamma(3);
             
             t0 = tNear > t0 ? tNear : t0;
             t1 = tFar < t1 ? tFar : t1;
@@ -258,6 +260,8 @@ public class BoundingBox
         double tyMin = (get(    dirIsNegative[1]).y() - ray.getOrigin().y()) * inverseDirection.y();
         double tyMax = (get(1 - dirIsNegative[1]).y() - ray.getOrigin().y()) * inverseDirection.y();
         
+        tMax *= 1 + 2 * MathUtilities.gamma(3);
+        tyMax *= 1 + 2 * MathUtilities.gamma(3);
         if (tMin > tyMax || tyMin > tMax)
         {
             return false;
@@ -276,6 +280,7 @@ public class BoundingBox
         double tzMin = (get(    dirIsNegative[2]).z() - ray.getOrigin().z()) * inverseDirection.z();
         double tzMax = (get(1 - dirIsNegative[2]).z() - ray.getOrigin().z()) * inverseDirection.z();
         
+        tzMax *= 1 + 2 * MathUtilities.gamma(3);
         if (tMin > tzMax || tzMin > tMax)
         {
             return false;
@@ -291,6 +296,6 @@ public class BoundingBox
             tMax = tzMax;
         }
         
-        return (tMin < ray.getMaxT()) && (tMax > 0);
+        return (tMin < ray.getTMax()) && (tMax > 0);
     }
 }

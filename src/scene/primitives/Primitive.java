@@ -4,6 +4,7 @@ import core.Ray;
 import core.space.BoundingBox;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.materials.Material;
+import scene.materials.TransportMode;
 
 public interface Primitive
 {
@@ -11,10 +12,8 @@ public interface Primitive
     SurfaceInteraction intersect(Ray ray);
     boolean intersectP(Ray ray);
     // AreaLight getAreaLight();
-    // TODO: use pbrt Material when done
     Material getMaterial();
-    // void computeScatteringFunctions(SurfaceInteraction surfaceInteraction,
-    //                                 MemoryArena arena,
-    //                                 TransportMode mode,
-    //                                 boolean allowMultipleLobes);
+    void computeScatteringFunctions(SurfaceInteraction surfaceInteraction,
+                                    TransportMode mode,
+                                    boolean allowMultipleLobes);
 }

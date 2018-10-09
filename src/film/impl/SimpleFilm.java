@@ -1,7 +1,7 @@
 package film.impl;
 
-import core.colors.Color;
-
+import core.colors.RGBSpectrum;
+/*
 public class SimpleFilm extends JFrameFilm
 {
     public SimpleFilm(int imageX, int imageY)
@@ -19,3 +19,4 @@ public class SimpleFilm extends JFrameFilm
                   (int) ( sample.b() * 255 ));
     }
 }
+*/

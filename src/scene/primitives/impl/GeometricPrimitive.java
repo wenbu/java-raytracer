@@ -5,6 +5,8 @@ import core.space.BoundingBox;
 import scene.geometry.Shape;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.materials.Material;
+import scene.materials.TransportMode;
+import scene.medium.Medium.MediumInterface;
 import scene.primitives.Primitive;
 
 public class GeometricPrimitive implements Primitive
@@ -12,12 +14,13 @@ public class GeometricPrimitive implements Primitive
     private final Shape shape;
     private final Material material;
     // private final AreaLight areaLight;
-    // private final MediumInterface mediumInterface;
+    private final MediumInterface mediumInterface;
     
-    public GeometricPrimitive(Shape shape, Material material)
+    public GeometricPrimitive(Shape shape, Material material, MediumInterface mediumInterface)
     {
         this.shape = shape;
         this.material = material;
+        this.mediumInterface = mediumInterface;
     }
 
     @Override
@@ -40,8 +43,24 @@ public class GeometricPrimitive implements Primitive
         
         ray.setTMax(tHit);
         surfaceInteraction.setPrimitive(this);
-        // TODO set MediumInterface on surfaceInteraction
+        if (mediumInterface.isMediumTransition())
+        {
+            surfaceInteraction.setMediumInterface(mediumInterface);
+        }
+        else
+        {
+            surfaceInteraction.setMediumInterface(new MediumInterface(ray.getMedium()));
+        }
         return surfaceInteraction;
+    }
+    
+    @Override
+    public void computeScatteringFunctions(SurfaceInteraction isect, TransportMode mode, boolean allowMultipleLobes)
+    {
+        if (material != null)
+        {
+            material.computeScatteringFunctions(isect, mode, allowMultipleLobes);   
+        }
     }
 
     @Override
