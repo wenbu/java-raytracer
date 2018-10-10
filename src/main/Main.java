@@ -19,6 +19,7 @@ import scene.lights.Light;
 import scene.lights.impl.DirectionalLight;
 import scene.materials.Material;
 import scene.materials.impl.MatteMaterial;
+import scene.materials.impl.PlasticMaterial;
 import scene.medium.Medium;
 import scene.medium.Medium.MediumInterface;
 import scene.primitives.Primitive;
@@ -89,25 +90,40 @@ public class Main
 
         Transformation sphereTransform1 = Transformation.getTranslation(0, -20, 0);
         Sphere sphere1 = new Sphere(sphereTransform1, sphereTransform1.inverse(), false, 3);
-        Material material1 = new MatteMaterial(new ConstantTexture<>(Colors.MAGENTA),
-                                               new ConstantTexture<>(0.1),
-                                               null);
+//        Material material1 = new MatteMaterial(new ConstantTexture<>(Colors.MAGENTA),
+//                                               new ConstantTexture<>(0.1),
+//                                               null);
+        Material material1 = new PlasticMaterial(new ConstantTexture<>(Colors.MAGENTA),
+                                                 new ConstantTexture<>(Colors.WHITE),
+                                                 new ConstantTexture<>(0.1),
+                                                 null,
+                                                 false);
         Primitive spherePrimitive1 = new GeometricPrimitive(sphere1, material1, new MediumInterface());
         primitives.add(spherePrimitive1);
 
         Transformation sphereTransform2 = Transformation.getTranslation(-2, -15, 2);
         Sphere sphere2 = new Sphere(sphereTransform2, sphereTransform2.inverse(), false, 1);
-        Material material2 = new MatteMaterial(new ConstantTexture<>(Colors.YELLOW),
-                                               new ConstantTexture<>(0.1),
-                                               null);
+//        Material material2 = new MatteMaterial(new ConstantTexture<>(Colors.YELLOW),
+//                                               new ConstantTexture<>(0.1),
+//                                               null);
+        Material material2 = new PlasticMaterial(new ConstantTexture<>(Colors.YELLOW),
+                                                 new ConstantTexture<>(Colors.WHITE),
+                                                 new ConstantTexture<>(0.4),
+                                                 null,
+                                                 false);
         Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2, new MediumInterface());
         primitives.add(spherePrimitive2);
 
         Transformation sphereTransform3 = Transformation.getTranslation(-2, -15, -2);
         Sphere sphere3 = new Sphere(sphereTransform3, sphereTransform3.inverse(), false, 1);
-        Material material3 = new MatteMaterial(new ConstantTexture<>(Colors.CYAN),
-                                               new ConstantTexture<>(0.1),
-                                               null);
+//        Material material3 = new MatteMaterial(new ConstantTexture<>(Colors.CYAN),
+//                                               new ConstantTexture<>(0.1),
+//                                               null);
+        Material material3 = new PlasticMaterial(new ConstantTexture<>(Colors.CYAN),
+                                                 new ConstantTexture<>(Colors.WHITE),
+                                                 new ConstantTexture<>(0.6),
+                                                 null,
+                                                 false);
         Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3, new MediumInterface());
         primitives.add(spherePrimitive3);
 
@@ -124,7 +140,12 @@ public class Main
                                                                null,
                                                                null,
                                                                null);
-        Material material4 = new MatteMaterial(new ConstantTexture<>(Colors.GRAY10), new ConstantTexture<>(0.1), null);
+//        Material material4 = new MatteMaterial(new ConstantTexture<>(Colors.GRAY10), new ConstantTexture<>(0.1), null);
+        Material material4 = new PlasticMaterial(new ConstantTexture<>(Colors.GRAY10),
+                                                 new ConstantTexture<>(Colors.WHITE),
+                                                 new ConstantTexture<>(0.001),
+                                                 null,
+                                                 false);
         List<Primitive> trianglePrimitives = triangles.stream().map(t -> new GeometricPrimitive(t, material4, new MediumInterface())).collect(Collectors.toList());
         primitives.addAll(trianglePrimitives);
 
