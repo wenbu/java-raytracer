@@ -70,16 +70,8 @@ public abstract class PixelSampler extends Sampler
     {
         if (current2DDimension < samples2D.size())
         {
-            try
-            {
             List<Point2> samples = samples2D.get(current2DDimension++);
-            Point2 sample = samples.get((int) currentPixelSampleIndex);
-            return sample;
-            }
-            catch (IndexOutOfBoundsException e)
-            {
-                throw e;
-            }
+            return samples.get((int) currentPixelSampleIndex);
         }
         else
         {

@@ -1,19 +1,10 @@
 package main;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import camera.Camera;
 import camera.impl.PerspectiveCamera;
 import core.colors.Colors;
 import core.colors.RGBSpectrum;
-import core.math.Direction2;
-import core.math.Direction3;
-import core.math.Point2;
-import core.math.Point3;
-import core.math.Transformation;
+import core.math.*;
 import core.space.BoundingBox2;
 import film.Film;
 import film.filter.impl.BoxFilter;
@@ -23,6 +14,7 @@ import sampler.Sampler;
 import sampler.impl.StratifiedSampler;
 import scene.Scene;
 import scene.geometry.impl.Sphere;
+import scene.geometry.impl.Triangle;
 import scene.lights.Light;
 import scene.lights.impl.DirectionalLight;
 import scene.materials.Material;
@@ -34,6 +26,12 @@ import scene.primitives.impl.GeometricPrimitive;
 import scene.primitives.impl.SimpleAggregate;
 import texture.impl.ConstantTexture;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class Main
 {
     // TODO: scene parser
@@ -41,7 +39,7 @@ public class Main
     {
         // XXX more for camera?
         Sampler sampler = new StratifiedSampler(1, 1, false, 1);
-        
+
         Point2 resolution = new Point2(400, 400);
         Film film = new Film(resolution,
                              new BoundingBox2(0, 0, 1, 1),
@@ -60,7 +58,7 @@ public class Main
                                               1,
                                               0,
                                               3,
-                                              30,
+                                              2 * Math.toDegrees(Math.atan(1.0/3.0)),
                                               film,
                                               medium);
 //        Camera camera = new OrthographicCamera(cameraTransform.inverse(),
@@ -74,45 +72,62 @@ public class Main
 
         Primitive geo = getGeometry();
         List<Light> lights = getLights();
-        
+
         Integrator integrator = new WhittedIntegrator(sampler, camera, 5);
         Scene scene = new Scene(geo, lights);
-        
+
         long timeA = System.currentTimeMillis();
         integrator.render(scene);
         long timeB = System.currentTimeMillis();
 
-        System.out.println("Rendered in " + ( timeB - timeA ) + "ms.");
+        System.out.println("Rendered in " + (timeB - timeA) + "ms.");
     }
 
     private static Primitive getGeometry()
     {
         Set<Primitive> primitives = new HashSet<>();
-        
+
         Transformation sphereTransform1 = Transformation.getTranslation(0, -20, 0);
         Sphere sphere1 = new Sphere(sphereTransform1, sphereTransform1.inverse(), false, 3);
-        Material material1 = new MatteMaterial(new ConstantTexture<RGBSpectrum>(Colors.MAGENTA),
-                                              new ConstantTexture<Double>(0.1),
-                                              null);
+        Material material1 = new MatteMaterial(new ConstantTexture<>(Colors.MAGENTA),
+                                               new ConstantTexture<>(0.1),
+                                               null);
         Primitive spherePrimitive1 = new GeometricPrimitive(sphere1, material1, new MediumInterface());
         primitives.add(spherePrimitive1);
-        
+
         Transformation sphereTransform2 = Transformation.getTranslation(-2, -15, 2);
         Sphere sphere2 = new Sphere(sphereTransform2, sphereTransform2.inverse(), false, 1);
-        Material material2 = new MatteMaterial(new ConstantTexture<RGBSpectrum>(Colors.YELLOW),
-                                               new ConstantTexture<Double>(0.1),
+        Material material2 = new MatteMaterial(new ConstantTexture<>(Colors.YELLOW),
+                                               new ConstantTexture<>(0.1),
                                                null);
         Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2, new MediumInterface());
         primitives.add(spherePrimitive2);
-        
+
         Transformation sphereTransform3 = Transformation.getTranslation(-2, -15, -2);
         Sphere sphere3 = new Sphere(sphereTransform3, sphereTransform3.inverse(), false, 1);
-        Material material3 = new MatteMaterial(new ConstantTexture<RGBSpectrum>(Colors.CYAN),
-                                               new ConstantTexture<Double>(0.1),
+        Material material3 = new MatteMaterial(new ConstantTexture<>(Colors.CYAN),
+                                               new ConstantTexture<>(0.1),
                                                null);
         Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3, new MediumInterface());
         primitives.add(spherePrimitive3);
-        
+
+        Transformation triangleTransform = Transformation.IDENTITY;
+        List<Triangle> triangles = Triangle.createTriangleMesh(triangleTransform,
+                                                               triangleTransform.inverse(),
+                                                               false,
+                                                               1,
+                                                               new int[]{0},
+                                                               3,
+                                                               new Point3[]{ new Point3(5, -17, 5),
+                                                                             new Point3(1, -20, 4),
+                                                                             new Point3(6, -20, -1) },
+                                                               null,
+                                                               null,
+                                                               null);
+        Material material4 = new MatteMaterial(new ConstantTexture<>(Colors.GRAY10), new ConstantTexture<>(0.1), null);
+        List<Primitive> trianglePrimitives = triangles.stream().map(t -> new GeometricPrimitive(t, material4, new MediumInterface())).collect(Collectors.toList());
+        primitives.addAll(trianglePrimitives);
+
         return new SimpleAggregate(primitives);
     }
 
@@ -120,6 +135,7 @@ public class Main
     {
         List<Light> lights = new LinkedList<>();
 
+        // TODO investigate why the sign of y is not what is expected
         Light light1 = new DirectionalLight(new Transformation(),
                                             new RGBSpectrum(1, 0.1, 0.1),
                                             new Direction3(-1, 1, 1));

@@ -76,17 +76,4 @@ public class StratifiedSampler extends PixelSampler
         copy.random.setSeed(seed);
         return copy;
     }
-
-    public static void main(String[] args)
-    {
-        List<Double> s = new ArrayList<>(Collections.nCopies(10, 0.0));
-        stratifiedSample1D(s, new Random(), false);
-        System.out.println(s);
-        Collections.shuffle(s);
-        System.out.println(s);
-
-        List<Point2> p = new ArrayList<>(Collections.nCopies(9, null));
-        stratifiedSample2D(p, 3, 3, new Random(), false);
-        System.out.println(p);
-    }
 }
