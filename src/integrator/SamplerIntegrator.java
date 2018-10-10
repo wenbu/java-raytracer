@@ -247,14 +247,14 @@ public abstract class SamplerIntegrator implements Integrator
                     if (Double.isNaN(radiance.getSample(0)) ||
                         Double.isNaN(radiance.getSample(1)) || Double.isNaN(radiance.getSample(2)))
                     {
-                        logger.warning(String.format("NaN radiance returned for pixel (%d, %d), sample %d. Setting to black.",
+                        logger.warning(String.format("NaN radiance returned for pixel (%f, %f), sample %d. Setting to black.",
                                                      pixel.x(),
                                                      pixel.y(),
                                                      tileSampler.getCurrentSampleNumber()));
                         radiance = new RGBSpectrum(0);
                     } else if (radiance.getSample(1) < -1e-5)
                     {
-                        logger.warning(String.format("Negative luminance value (%f) returned for pixel (%d, %d), sample %d. Setting to black.",
+                        logger.warning(String.format("Negative luminance value (%f) returned for pixel (%f, %f), sample %d. Setting to black.",
                                                      radiance.getSample(1),
                                                      pixel.x(),
                                                      pixel.y(),
@@ -262,7 +262,7 @@ public abstract class SamplerIntegrator implements Integrator
                         radiance = new RGBSpectrum(0);
                     } else if (Double.isInfinite(radiance.getSample(1)))
                     {
-                        logger.warning(String.format("Infinite luminance returned for pixel (%d, %d), sample %d. Setting to black.",
+                        logger.warning(String.format("Infinite luminance returned for pixel (%f, %f), sample %d. Setting to black.",
                                                      pixel.x(),
                                                      pixel.y(),
                                                      tileSampler.getCurrentSampleNumber()));
