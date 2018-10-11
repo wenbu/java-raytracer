@@ -19,6 +19,7 @@ import scene.lights.Light;
 import scene.lights.impl.DirectionalLight;
 import scene.materials.Material;
 import scene.materials.impl.MatteMaterial;
+import scene.materials.impl.MirrorMaterial;
 import scene.materials.impl.PlasticMaterial;
 import scene.medium.Medium;
 import scene.medium.Medium.MediumInterface;
@@ -98,6 +99,7 @@ public class Main
                                                  new ConstantTexture<>(0.1),
                                                  null,
                                                  false);
+//        Material material1 = new MirrorMaterial(new ConstantTexture<>(Colors.GRAY70), null);
         Primitive spherePrimitive1 = new GeometricPrimitive(sphere1, material1, new MediumInterface());
         primitives.add(spherePrimitive1);
 
@@ -111,6 +113,7 @@ public class Main
                                                  new ConstantTexture<>(0.4),
                                                  null,
                                                  false);
+//        Material material2 = new MirrorMaterial(new ConstantTexture<>(Colors.GRAY70), null);
         Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2, new MediumInterface());
         primitives.add(spherePrimitive2);
 
@@ -124,6 +127,7 @@ public class Main
                                                  new ConstantTexture<>(0.6),
                                                  null,
                                                  false);
+//        Material material3 = new MirrorMaterial(new ConstantTexture<>(Colors.GRAY70), null);
         Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3, new MediumInterface());
         primitives.add(spherePrimitive3);
 
@@ -141,12 +145,17 @@ public class Main
                                                                null,
                                                                null);
 //        Material material4 = new MatteMaterial(new ConstantTexture<>(Colors.GRAY10), new ConstantTexture<>(0.1), null);
-        Material material4 = new PlasticMaterial(new ConstantTexture<>(Colors.GRAY10),
-                                                 new ConstantTexture<>(Colors.WHITE),
-                                                 new ConstantTexture<>(0.001),
-                                                 null,
-                                                 false);
-        List<Primitive> trianglePrimitives = triangles.stream().map(t -> new GeometricPrimitive(t, material4, new MediumInterface())).collect(Collectors.toList());
+//        Material material4 = new PlasticMaterial(new ConstantTexture<>(Colors.GRAY10),
+//                                                 new ConstantTexture<>(Colors.WHITE),
+//                                                 new ConstantTexture<>(0.001),
+//                                                 null,
+//                                                 false);
+        Material material4 = new MirrorMaterial(new ConstantTexture<>(Colors.GRAY70), null);
+        List<Primitive> trianglePrimitives = triangles.stream()
+                                                      .map(t -> new GeometricPrimitive(t,
+                                                                                       material4,
+                                                                                       new MediumInterface()))
+                                                      .collect(Collectors.toList());
         primitives.addAll(trianglePrimitives);
 
         return new SimpleAggregate(primitives);

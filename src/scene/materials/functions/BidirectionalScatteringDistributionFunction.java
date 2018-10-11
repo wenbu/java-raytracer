@@ -96,6 +96,7 @@ public class BidirectionalScatteringDistributionFunction
         Direction3 wo = worldToLocal(woWorld);
         EnumSet<BxDFType> sampledType = bxdfToSample.getType();
         var bxdfSample = bxdfToSample.sample_f(wo, uRemapped);
+        RGBSpectrum f = bxdfSample.getFirst();
         double pdf = bxdfSample.getThird();
         if (pdf == 0)
         {
@@ -121,9 +122,9 @@ public class BidirectionalScatteringDistributionFunction
         }
 
         // compute BSDF value for sampled direction
-        RGBSpectrum f = new RGBSpectrum();
         if (!bxdfToSample.hasType(BxDFType.SPECULAR) && numMatchingComponents > 1)
         {
+            f = new RGBSpectrum();
             boolean reflect = wiWorld.dot(ng) * woWorld.dot(ng) > 0;
             for (AbstractBidirectionalDistributionFunction bxdf : bxdfs)
             {
