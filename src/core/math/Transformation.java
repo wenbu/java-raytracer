@@ -127,6 +127,7 @@ public class Transformation
     
     public static Transformation getRotation(Direction3 rotationAxis, double rotationAngle)
     {
+        rotationAxis = rotationAxis.normalized();
         return getRotation(rotationAxis.x(),
                            rotationAxis.y(),
                            rotationAxis.z(),

@@ -28,15 +28,15 @@ public class Triangle extends Shape
             TriangleMesh mesh, int triNumber)
     {
         super(objectToWorld, worldToObject, reverseOrientation);
-        this.mesh =  mesh;
-        pointIndex = mesh.getIndex(3 * triNumber);
+        this.mesh = mesh;
+        pointIndex = 3 * triNumber;
     }
     
     public static List<Triangle> createTriangleMesh(Transformation objectToWorld, Transformation worldToObject,
-            boolean reverseOrientation, int numTriangles, int[] vertexIndices, int numVertices, Point3[] p,
+            boolean reverseOrientation, int numTriangles, int[] vertexIndices, Point3[] p,
             Direction3[] s, Normal3[] n, Point2[] uv/* , Texture alphaMask */)
     {
-        TriangleMesh mesh = new TriangleMesh(objectToWorld, numTriangles, vertexIndices, numVertices, p, s, n, uv);
+        TriangleMesh mesh = new TriangleMesh(objectToWorld, numTriangles, vertexIndices, p, s, n, uv);
         List<Triangle> triangles = new LinkedList<>();
         for (int i = 0; i < numTriangles; i++)
         {

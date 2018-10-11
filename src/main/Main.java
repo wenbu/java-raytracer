@@ -27,6 +27,7 @@ import scene.primitives.Primitive;
 import scene.primitives.impl.GeometricPrimitive;
 import scene.primitives.impl.SimpleAggregate;
 import texture.impl.ConstantTexture;
+import utilities.MeshUtilities;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -131,19 +132,10 @@ public class Main
         Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3, new MediumInterface());
         primitives.add(spherePrimitive3);
 
-        Transformation triangleTransform = Transformation.IDENTITY;
-        List<Triangle> triangles = Triangle.createTriangleMesh(triangleTransform,
-                                                               triangleTransform.inverse(),
-                                                               false,
-                                                               1,
-                                                               new int[]{0},
-                                                               3,
-                                                               new Point3[]{ new Point3(5, -17, 5),
-                                                                             new Point3(1, -20, 4),
-                                                                             new Point3(6, -20, -1) },
-                                                               null,
-                                                               null,
-                                                               null);
+        List<Triangle> triangles = MeshUtilities.createSingleTriangle(Transformation.IDENTITY,
+                                                                      new Point3(5, -17, 5),
+                                                                      new Point3(1, -20, 4),
+                                                                      new Point3(6, -20, -1));
 //        Material material4 = new MatteMaterial(new ConstantTexture<>(Colors.GRAY10), new ConstantTexture<>(0.1), null);
 //        Material material4 = new PlasticMaterial(new ConstantTexture<>(Colors.GRAY10),
 //                                                 new ConstantTexture<>(Colors.WHITE),
@@ -151,13 +143,30 @@ public class Main
 //                                                 null,
 //                                                 false);
         Material material4 = new MirrorMaterial(new ConstantTexture<>(Colors.GRAY70), null);
-        List<Primitive> trianglePrimitives = triangles.stream()
+        List<Primitive> trianglePrimitives1 = triangles.stream()
+                                                       .map(t -> new GeometricPrimitive(t,
+                                                                                        material4,
+                                                                                        new MediumInterface()))
+                                                       .collect(Collectors.toList());
+        primitives.addAll(trianglePrimitives1);
+
+        Transformation cubeTransform = Transformation.getTranslation(2, -15, -2)
+                                                     .compose(Transformation.getRotation(new Direction3(1, 1, 1),
+                                                                                         60))
+                                                     .compose(Transformation.getUniformScale(Math.sqrt(2)));
+        Material material5 = new PlasticMaterial(new ConstantTexture<>(Colors.GRAY50),
+                                                 new ConstantTexture<>(Colors.WHITE),
+                                                 new ConstantTexture<>(0.01),
+                                                 null,
+                                                 false);
+        List<Triangle> cubeTriangles = MeshUtilities.createCube(cubeTransform, false);
+        List<Primitive> cubePrimitives = cubeTriangles.stream()
                                                       .map(t -> new GeometricPrimitive(t,
-                                                                                       material4,
+                                                                                       material5,
                                                                                        new MediumInterface()))
                                                       .collect(Collectors.toList());
-        primitives.addAll(trianglePrimitives);
-
+        primitives.addAll(cubePrimitives);
+        
         return new SimpleAggregate(primitives);
     }
 
