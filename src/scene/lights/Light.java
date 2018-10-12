@@ -1,12 +1,10 @@
 package scene.lights;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 import core.Ray;
 import core.RayDifferential;
 import core.colors.RGBSpectrum;
-import core.colors.Colors;
 import core.math.Direction3;
 import core.math.Point2;
 import core.math.Transformation;

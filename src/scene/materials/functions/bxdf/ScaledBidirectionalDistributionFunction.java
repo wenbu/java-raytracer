@@ -1,14 +1,11 @@
 package scene.materials.functions.bxdf;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 import core.colors.RGBSpectrum;
 import core.math.Direction3;
 import core.math.Point2;
-import core.tuple.Pair;
 import core.tuple.Quadruple;
-import core.tuple.Triple;
 import scene.materials.functions.AbstractBidirectionalDistributionFunction;
 
 public class ScaledBidirectionalDistributionFunction extends AbstractBidirectionalDistributionFunction

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import core.colors.CoefficientSpectrum;
 import core.colors.RGBSpectrum;
 import core.math.Direction2;
 import core.math.Point2;

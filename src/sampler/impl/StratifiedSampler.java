@@ -1,10 +1,11 @@
 package sampler.impl;
 
-import static utilities.SamplingUtilities.*;
-import java.util.ArrayList;
+import static utilities.SamplingUtilities.latinHypercube;
+import static utilities.SamplingUtilities.stratifiedSample1D;
+import static utilities.SamplingUtilities.stratifiedSample2D;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import core.math.Point2;
 import sampler.PixelSampler;
