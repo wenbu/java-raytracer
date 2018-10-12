@@ -78,7 +78,6 @@ public class Scenes
 
         List<Light> lights = new LinkedList<>();
 
-        // TODO investigate why the sign of y is not what is expected
         Light light1 = new DirectionalLight(new Transformation(),
                                             new RGBSpectrum(1, 0.1, 0.1),
                                             new Direction3(-1, 1, 1));

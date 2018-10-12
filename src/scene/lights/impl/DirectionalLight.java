@@ -22,6 +22,11 @@ public class DirectionalLight extends Light
     private Point3 worldCenter;
     private double worldRadius;
     
+    /**
+     * @param lightToWorld
+     * @param luminance
+     * @param direction from the world to the light
+     */
     public DirectionalLight(Transformation lightToWorld, RGBSpectrum luminance, Direction3 direction)
     {
         super(EnumSet.of(LightType.DELTA_DIRECTION), lightToWorld, new MediumInterface());
