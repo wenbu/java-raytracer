@@ -29,15 +29,18 @@ public abstract class SamplerIntegrator implements Integrator
 
     private final Sampler sampler;
     private final Camera camera;
-    
-    // Runtime.getRuntime().availableProcessors()
-    private final ExecutorService executor = Executors.newFixedThreadPool(1);
+
+    private final ExecutorService executor;
     private static final int TILE_SIZE = 16;
     
     public SamplerIntegrator(Sampler sampler, Camera camera)
     {
         this.sampler = sampler;
         this.camera = camera;
+
+        int numThreads = Runtime.getRuntime().availableProcessors();
+        logger.info("Rendering with " + numThreads + " threads.");
+        executor = Executors.newFixedThreadPool(numThreads);
     }
 
     public void preprocess(Scene scene, Sampler sampler)
@@ -48,8 +51,12 @@ public abstract class SamplerIntegrator implements Integrator
     @Override
     public void render(Scene scene)
     {
+        long preprocessStart = System.currentTimeMillis();
         preprocess(scene, sampler);
+        long preprocessEnd = System.currentTimeMillis();
+        logger.info("Preprocessed scene in " + (preprocessEnd - preprocessStart) + " ms.");
 
+        long renderStart = System.currentTimeMillis();
         BoundingBox2 sampleBounds = camera.getFilm().getSampleBounds();
         Direction2 sampleExtent = sampleBounds.diagonal();
         Point2 nTiles = new Point2((int) (sampleExtent.x() + TILE_SIZE - 1) / TILE_SIZE,
@@ -67,12 +74,18 @@ public abstract class SamplerIntegrator implements Integrator
         {
             executor.shutdown();
             executor.awaitTermination(1000, TimeUnit.DAYS);
-        } catch (InterruptedException e)
+        }
+        catch (InterruptedException e)
         {
             logger.log(Level.WARNING, "Executor was interrupted.", e);
         }
+        long renderEnd = System.currentTimeMillis();
+        logger.info("Rendered in " + (renderEnd - renderStart) + " ms.");
 
+        long imageWriteStart = System.currentTimeMillis();
         camera.getFilm().writeImage(1);
+        long imageWriteEnd = System.currentTimeMillis();
+        logger.info("Wrote image in " + (imageWriteEnd - imageWriteStart) + " ms.");
     }
 
     protected RGBSpectrum getRadiance(RayDifferential ray, Scene scene, Sampler sampler)
