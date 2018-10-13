@@ -10,7 +10,7 @@ import camera.CameraSample;
 
 public abstract class Sampler
 {
-    private static final Logger logger = Logger.getLogger(Sampler.class.getName());
+    protected static final Logger logger = Logger.getLogger(Sampler.class.getName());
     
     // XXX Java's lists and arrays are indexed by ints. This might become a problem
     // with very large sample counts.

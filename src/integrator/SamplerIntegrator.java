@@ -218,6 +218,7 @@ public abstract class SamplerIntegrator implements Integrator
         private final Scene scene;
         private final Point2 nTiles;
         private final BoundingBox2 sampleBounds;
+        private final Sampler tileSampler;
 
         public TileRenderTask(Point2 tile, Scene scene, Point2 nTiles, BoundingBox2 sampleBounds)
         {
@@ -225,13 +226,14 @@ public abstract class SamplerIntegrator implements Integrator
             this.scene = scene;
             this.nTiles = nTiles;
             this.sampleBounds = sampleBounds;
+            
+            int seed = (int) tile.y() * (int) nTiles.x() + (int) tile.x();
+            tileSampler = sampler.getCopy(seed);
         }
 
         @Override
         public void run()
         {
-            int seed = (int) tile.y() * (int) nTiles.x() + (int) tile.x();
-            Sampler tileSampler = sampler.getCopy(seed);
 
             int x0 = (int) sampleBounds.get(0).x() + (int) tile.x() * TILE_SIZE;
             int x1 = Math.min(x0 + TILE_SIZE, (int) sampleBounds.get(1).x());
@@ -249,12 +251,12 @@ public abstract class SamplerIntegrator implements Integrator
                     var r = camera.generateRayDifferential(cameraSample);
                     RayDifferential ray = r.getFirst();
                     double rayWeight = r.getSecond();
-                    ray.scaleDifferentials(1 / Math.sqrt(sampler.getSamplesPerPixel()));
+                    ray.scaleDifferentials(1 / Math.sqrt(tileSampler.getSamplesPerPixel()));
 
                     RGBSpectrum radiance = new RGBSpectrum(0, 0, 0);
                     if (rayWeight > 0)
                     {
-                        radiance = getRadiance(ray, scene, sampler);
+                        radiance = getRadiance(ray, scene, tileSampler);
                     }
 
                     if (Double.isNaN(radiance.getSample(0)) ||
