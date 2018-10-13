@@ -125,9 +125,15 @@ public class Transformation
         // the inverse of a rotation matrix is its transpose
     }
     
+    /**
+     * @param rotationAxis
+     * @param rotationAngle in degrees
+     * @return
+     */
     public static Transformation getRotation(Direction3 rotationAxis, double rotationAngle)
     {
         rotationAxis = rotationAxis.normalized();
+        rotationAngle = Math.toRadians(rotationAngle);
         return getRotation(rotationAxis.x(),
                            rotationAxis.y(),
                            rotationAxis.z(),
