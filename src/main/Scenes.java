@@ -10,8 +10,10 @@ import scene.geometry.impl.Sphere;
 import scene.geometry.impl.Triangle;
 import scene.lights.Light;
 import scene.lights.impl.DirectionalLight;
+import scene.lights.impl.PointLight;
 import scene.materials.Material;
 import scene.medium.Medium;
+import scene.medium.Medium.MediumInterface;
 import scene.primitives.Primitive;
 import scene.primitives.impl.GeometricPrimitive;
 import scene.primitives.impl.SimpleAggregate;
@@ -53,11 +55,7 @@ public class Scenes
                                                                       new Point3(1, -20, 4),
                                                                       new Point3(6, -20, -1));
         Material material4 = MaterialUtilities.getMirrorMaterial(Colors.GRAY30);
-        List<Primitive> trianglePrimitives1 = triangles.stream()
-                                                       .map(t -> new GeometricPrimitive(t,
-                                                                                        material4,
-                                                                                        new Medium.MediumInterface()))
-                                                       .collect(Collectors.toList());
+        List<Primitive> trianglePrimitives1 = getPrimitives(triangles, material4);
         primitives.addAll(trianglePrimitives1);
 
         Transformation cubeTransform = Transformation.getTranslation(2, -15, -2)
@@ -67,27 +65,41 @@ public class Scenes
 
         Material material5 = MaterialUtilities.getPlasticMaterial(Colors.GRAY50, Colors.WHITE, 0.01, false);
         List<Triangle> cubeTriangles = MeshUtilities.createCube(cubeTransform, false);
-        List<Primitive> cubePrimitives = cubeTriangles.stream()
-                                                      .map(t -> new GeometricPrimitive(t,
-                                                                                       material5,
-                                                                                       new Medium.MediumInterface()))
-                                                      .collect(Collectors.toList());
+        List<Primitive> cubePrimitives = getPrimitives(cubeTriangles, material5);
         primitives.addAll(cubePrimitives);
+        
+        Transformation planeTransform1 = Transformation.getTranslation(0, -20, -5).compose(Transformation.getUniformScale(20));
+        Material material6 = MaterialUtilities.getMatteMaterial(Colors.WHITE, 0.5);
+        List<Triangle> planeTriangles1 = MeshUtilities.createQuad(planeTransform1);
+        List<Primitive> planePrimitives1 = getPrimitives(planeTriangles1, material6);
+        primitives.addAll(planePrimitives1);
 
+        Transformation planeTransform2 = Transformation.getTranslation(0, -30, 5)
+                                                       .compose(Transformation.getRotation(new Direction3(1, 0, 0),
+                                                                                           90))
+                                                       .compose(Transformation.getUniformScale(20));
+        List<Triangle> planeTriangles2 = MeshUtilities.createQuad(planeTransform2);
+        List<Primitive> planePrimitives2 = getPrimitives(planeTriangles2, material6);
+        primitives.addAll(planePrimitives2);
+        
         Primitive geo = new SimpleAggregate(primitives);
 
         List<Light> lights = new LinkedList<>();
 
         Light light1 = new DirectionalLight(new Transformation(),
-                                            new RGBSpectrum(1, 0.1, 0.1),
+                                            new RGBSpectrum(0.9, 0.9, 1),
                                             new Direction3(-1, 1, 1));
-        Light light2 = new DirectionalLight(new Transformation(),
-                                            new RGBSpectrum(0.1, 0.1, 1),
-                                            new Direction3(-1, 1, -1));
-
         lights.add(light1);
+        
+        Transformation lightTransform = Transformation.getTranslation(0, 2, 0);
+        Light light2 = new PointLight(lightTransform, new MediumInterface(), new RGBSpectrum(50, 50, 50));
         lights.add(light2);
 
         return new Scene(geo, lights);
+    }
+    
+    private static List<Primitive> getPrimitives(List<Triangle> triangles, Material material)
+    {
+        return triangles.stream().map(triangle -> new GeometricPrimitive(triangle, material, new MediumInterface())).collect(Collectors.toList());
     }
 }

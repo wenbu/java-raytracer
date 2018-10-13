@@ -23,6 +23,28 @@ public class MeshUtilities
     }
     
     /**
+     * Create a unit square centered on the origin with normal (0, 0, 1) with the specified transformation. 
+     */
+    public static List<Triangle> createQuad(Transformation objectToWorld)
+    {
+        Point3[] points = new Point3[] { new Point3(-0.5, -0.5, 0),
+                                         new Point3(-0.5,  0.5, 0),
+                                         new Point3( 0.5, -0.5, 0),
+                                         new Point3( 0.5,  0.5, 0) };
+        int[] vertexIndices = new int[] { 0, 2, 1,   1, 2, 3 };
+
+        return Triangle.createTriangleMesh(objectToWorld,
+                                           objectToWorld.inverse(),
+                                           false,
+                                           2,
+                                           vertexIndices,
+                                           points,
+                                           null,
+                                           null,
+                                           null);
+    }
+    
+    /**
      * Create a unit cube with the specified transformation.
      */
     public static List<Triangle> createCube(Transformation objectToWorld, boolean reverseOrientation)
