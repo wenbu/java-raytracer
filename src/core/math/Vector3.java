@@ -1,5 +1,6 @@
 package core.math;
 
+import core.space.Axis;
 
 public abstract class Vector3
 {
@@ -76,6 +77,11 @@ public abstract class Vector3
                 throw new IllegalArgumentException("Index " + index +
                                                    " is out of range. Valid values: (0,2)");
         }
+    }
+    
+    public double get(Axis axis)
+    {
+        return get(axis.ordinal());
     }
     
     public int maxDimension()

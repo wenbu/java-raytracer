@@ -3,23 +3,23 @@ package scene;
 import java.util.List;
 import java.util.logging.Logger;
 
+import core.Ray;
+import core.colors.RGBSpectrum;
 import core.space.BoundingBox3;
 import sampler.Sampler;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.lights.Light;
-import scene.primitives.Primitive;
-import core.Ray;
-import core.colors.RGBSpectrum;
+import scene.primitives.Aggregate;
 
 public class Scene
 {
     private static final Logger logger = Logger.getLogger(Scene.class.getName());
 
-    private Primitive aggregate;
+    private Aggregate aggregate;
     private List<Light> lights;
     private BoundingBox3 worldBound;
     
-    public Scene(Primitive aggregate, List<Light> lights)
+    public Scene(Aggregate aggregate, List<Light> lights)
     {
         this.aggregate = aggregate;
         this.lights = lights;

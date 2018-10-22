@@ -4,12 +4,14 @@ import java.util.Set;
 
 import core.Ray;
 import core.space.BoundingBox3;
+import scene.geometry.Shape;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.materials.Material;
 import scene.materials.TransportMode;
+import scene.primitives.Aggregate;
 import scene.primitives.Primitive;
 
-public class SimpleAggregate implements Primitive
+public class SimpleAggregate implements Aggregate
 {
     private final Set<Primitive> primitives;
     private BoundingBox3 worldBound;
@@ -76,6 +78,12 @@ public class SimpleAggregate implements Primitive
     public Material getMaterial()
     {
         throw new UnsupportedOperationException("SimpleAggregate.getMaterial");
+    }
+    
+    @Override
+    public Shape getShape()
+    {
+        throw new UnsupportedOperationException("SimpleAggregate.getShape");
     }
 
     @Override

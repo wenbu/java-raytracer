@@ -13,12 +13,16 @@ public abstract class Shape
     protected final boolean reverseOrientation;
     protected final boolean swapsHandedness;
     
+    private static int shapeCounter = 0;
+    private final String debugName;
+    
     public Shape(Transformation objectToWorld, Transformation worldToObject, boolean reverseOrientation)
     {
         this.objectToWorld = objectToWorld;
         this.worldToObject = worldToObject;
         this.reverseOrientation = reverseOrientation;
         this.swapsHandedness = objectToWorld.swapsHandedness();
+        this.debugName = this.getClass().getSimpleName() + shapeCounter++;
     }
     
     public boolean isOrientationReversed()
@@ -66,4 +70,10 @@ public abstract class Shape
     }
     
     public abstract double surfaceArea();
+    
+    @Override
+    public String toString()
+    {
+        return debugName;
+    }
 }

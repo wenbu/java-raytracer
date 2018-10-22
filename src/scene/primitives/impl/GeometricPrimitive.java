@@ -75,4 +75,9 @@ public class GeometricPrimitive implements Primitive
         return material;
     }
 
+    @Override
+    public Shape getShape()
+    {
+        return shape;
+    }
 }

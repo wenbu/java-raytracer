@@ -12,11 +12,6 @@ public class BoundingBox3
     private final Point3 minPoint;
     private final Point3 maxPoint;
 
-    public enum Axis
-    {
-        X, Y, Z
-    }
-
     public BoundingBox3()
     {
         minPoint = new Point3(Point3.POSITIVE_INFINITY);
@@ -49,6 +44,12 @@ public class BoundingBox3
     {
         minPoint = new Point3(minX, minY, minZ);
         maxPoint = new Point3(maxX, maxY, maxZ);
+    }
+    
+    public BoundingBox3(BoundingBox3 other)
+    {
+        minPoint = other.minPoint;
+        maxPoint = other.maxPoint;
     }
     
     public Point3 get(int index)
@@ -297,5 +298,13 @@ public class BoundingBox3
         }
         
         return (tMin < ray.getTMax()) && (tMax > 0);
+    }
+    
+    public boolean intersect(Ray ray, Direction3 inverseDirection, boolean[] dirIsNegative)
+    {
+        int[] intDirIsNegative = new int[] { dirIsNegative[0] ? 1 : 0,
+                                             dirIsNegative[1] ? 1 : 0,
+                                             dirIsNegative[2] ? 1 : 0 };
+        return intersect(ray, inverseDirection, intDirIsNegative);
     }
 }
