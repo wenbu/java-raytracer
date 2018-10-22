@@ -54,7 +54,7 @@ public class BoundingVolumeHierarchy implements Aggregate
             i++;
         }
         
-        List<Primitive> orderedPrimitives = new LinkedList<>(); // needed?
+        List<Primitive> orderedPrimitives = new LinkedList<>();
         BuildNode buildTreeRoot;
         int numBuildNodes;
         if (splitMethod == SplitMethod.HLBVH)
@@ -148,6 +148,9 @@ public class BoundingVolumeHierarchy implements Aggregate
                     
                     if (!leftPartition.isEmpty() && !rightPartition.isEmpty())
                     {
+                        logger.fine("MIDDLE: Partitioned " + primitiveInfos.size() +
+                                    " primitives into sublists of size " + leftPartition.size() +
+                                    " and " + rightPartition.size() + ".");
                         break;
                     }
                     else
@@ -160,7 +163,7 @@ public class BoundingVolumeHierarchy implements Aggregate
                     primitiveInfos.sort(Comparator.comparingDouble(pi -> pi.getCentroid().get(splitAxis)));
                     leftPartition = primitiveInfos.subList(0, mid);
                     rightPartition = primitiveInfos.subList(mid, primitiveInfos.size());
-                    logger.info("EQUAL_COUNTS: Partitioned " + primitiveInfos.size() +
+                    logger.fine("EQUAL_COUNTS: Partitioned " + primitiveInfos.size() +
                                 " primitives into sublists of size " + leftPartition.size() +
                                 " and " + rightPartition.size() + ".");
                     break;
@@ -237,8 +240,6 @@ public class BoundingVolumeHierarchy implements Aggregate
                         double leafCost = numPrimitives;
                         if (numPrimitives > maxPrimitivesPerNode || minCost < leafCost)
                         {
-                            // uses std::partition -- there is a cheaper way to do this than
-                            // sorting the list
                             final BoundingBox3 finalCentroidBounds = new BoundingBox3(centroidBounds);
                             final int finalSplitBucket = minCostSplitBucket;
                             var splitPrimitiveInfos = primitiveInfos.stream()
@@ -255,7 +256,7 @@ public class BoundingVolumeHierarchy implements Aggregate
                                                                     }));
                             leftPartition = splitPrimitiveInfos.get(false);
                             rightPartition = splitPrimitiveInfos.get(true);
-                            logger.info("SURFACE_AREA_HEURISTIC: Partitioned " + primitiveInfos.size() +
+                            logger.fine("SURFACE_AREA_HEURISTIC: Partitioned " + primitiveInfos.size() +
                                         " primitives into sublists of size " + leftPartition.size() +
                                         " and " + rightPartition.size() + ".");
                         }
