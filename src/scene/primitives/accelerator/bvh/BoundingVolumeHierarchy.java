@@ -63,7 +63,8 @@ public class BoundingVolumeHierarchy implements Aggregate
         long treeBuildEnd = System.currentTimeMillis();
 
         logger.info("Spent " + (treeBuildEnd - treeBuildStart) +
-                    "ms building BVH tree with split method " + splitMethod + ".");
+                    "ms building BVH tree with split method " + splitMethod +
+                    ". Number of primitives = " + primitives.size());
         
         this.primitives = Collections.unmodifiableList(orderedPrimitives);
     }

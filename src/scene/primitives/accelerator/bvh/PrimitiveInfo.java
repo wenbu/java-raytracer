@@ -77,7 +77,7 @@ public class PrimitiveInfo
     @Override
     public String toString()
     {
-        return "BvhPrimitiveInfo [primitiveNumber=" + primitiveNumber + ", bounds=" + bounds +
+        return "PrimitiveInfo [primitiveNumber=" + primitiveNumber + ", bounds=" + bounds +
                ", centroid=" + centroid + "]";
     }
 }
