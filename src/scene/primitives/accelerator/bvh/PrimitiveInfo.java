@@ -3,7 +3,7 @@ package scene.primitives.accelerator.bvh;
 import core.math.Point3;
 import core.space.BoundingBox3;
 
-class PrimitiveInfo
+public class PrimitiveInfo
 {
     private final int primitiveNumber;
     private final BoundingBox3 bounds;
