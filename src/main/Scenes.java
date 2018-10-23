@@ -1,5 +1,6 @@
 package main;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,32 @@ import utilities.MeshUtilities;
 
 public class Scenes
 {
+    public static Scene fromPdb(String pdbPath)
+    {
+        try
+        {
+            PdbReader pdbReader = new PdbReader(pdbPath);
+            Transformation sceneTransform = Transformation.IDENTITY;
+            List<Primitive> primitives = pdbReader.read(sceneTransform);
+            List<Light> lights = new LinkedList<>();
+
+            Light light1 = new DirectionalLight(new Transformation(),
+                                                new RGBSpectrum(0.9, 0.9, 1),
+                                                new Direction3(-1, 1, 1));
+            lights.add(light1);
+            Transformation lightTransform = Transformation.getTranslation(0, 10, 0);
+            Light light2 = new PointLight(lightTransform, new MediumInterface(), new RGBSpectrum(50, 50, 50));
+            lights.add(light2);
+            
+            Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.SURFACE_AREA_HEURISTIC);
+            
+            return new Scene(geo, lights);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
     public static Scene spheres()
     {
         List<Primitive> primitives = new LinkedList<>();
@@ -128,7 +155,7 @@ public class Scenes
         primitives.addAll(planePrimitives2);
         
         //Aggregate geo = new SimpleAggregate(primitives);
-        Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.EQUAL_COUNTS);
+        Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.SURFACE_AREA_HEURISTIC);
         
         List<Light> lights = new LinkedList<>();
 
