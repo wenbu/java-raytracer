@@ -43,4 +43,12 @@ public class TrowbridgeReitzDistribution implements MicrofacetDistribution
         return (-1 + Math.sqrt(1.f + alpha2Tan2Theta)) / 2;
     }
 
+    // XXX there has to be a better place for this
+    public static double roughnessToAlpha(double roughness)
+    {
+        roughness = Math.max(roughness, 1e-3);
+        double x = Math.log(roughness);
+        return 1.62142 + 0.819955 * x + 0.1734 * x * x + 0.0171201 * x * x * x +
+               0.000640711 * x * x * x * x;
+    }
 }

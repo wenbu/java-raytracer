@@ -1,9 +1,15 @@
 package utilities;
 
 import core.colors.RGBSpectrum;
+import core.math.Direction3;
 
 public class ReflectionUtilities
 {
+    public static boolean sameHemisphere(Direction3 w, Direction3 wp)
+    {
+        return w.z() * wp.z() > 0;
+    }
+    
     // Index of refraction (η) for dielectrics is real-valued.
     public static double fresnelDielectric(double cosThetaI, double etaI, double etaT)
     {
@@ -23,14 +29,16 @@ public class ReflectionUtilities
         double sinThetaI = Math.sqrt(Math.max(0, 1 - cosThetaI * cosThetaI));
         double sinThetaT = etaI / etaT * sinThetaI;
         // handle total internal reflection
-        if (sinThetaI >= 1)
+        if (sinThetaT >= 1)
         {
             return 1;
         }
         double cosThetaT = Math.sqrt(Math.max(0, 1 - sinThetaT * sinThetaT));
 
-        double rParl = ((etaT * cosThetaI) / (etaI * cosThetaT)) / ((etaT * cosThetaI) + (etaI * cosThetaT));
-        double rPerp = ((etaI * cosThetaI) / (etaT * cosThetaT)) / ((etaI * cosThetaI) + (etaT * cosThetaT));
+        double rParl = ((etaT * cosThetaI) - (etaI * cosThetaT)) /
+                       ((etaT * cosThetaI) + (etaI * cosThetaT));
+        double rPerp = ((etaI * cosThetaI) - (etaT * cosThetaT)) /
+                       ((etaI * cosThetaI) + (etaT * cosThetaT));
         return (rParl * rParl + rPerp * rPerp) / 2;
     }
     

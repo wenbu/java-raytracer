@@ -1,6 +1,7 @@
 package utilities;
 
 import core.colors.RGBSpectrum;
+import scene.materials.impl.GlassMaterial;
 import scene.materials.impl.MatteMaterial;
 import scene.materials.impl.MirrorMaterial;
 import scene.materials.impl.PlasticMaterial;
@@ -29,5 +30,18 @@ public class MaterialUtilities
     public static MirrorMaterial getMirrorMaterial(RGBSpectrum constantReflectionColor)
     {
         return new MirrorMaterial(new ConstantTexture<>(constantReflectionColor), null);
+    }
+    
+    public static GlassMaterial getGlassMaterial(RGBSpectrum constantReflectionColor,
+            RGBSpectrum constantTransmissionColor, double constantRoughness,
+            double constantRefractionIndex)
+    {
+        return new GlassMaterial(new ConstantTexture<>(constantReflectionColor),
+                                 new ConstantTexture<>(constantTransmissionColor),
+                                 new ConstantTexture<>(constantRoughness),
+                                 new ConstantTexture<>(constantRoughness),
+                                 new ConstantTexture<>(constantRefractionIndex),
+                                 null,
+                                 false);
     }
 }
