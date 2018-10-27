@@ -34,4 +34,28 @@ public class GeometryUtilities
         po = new Point3(ps[0], ps[1], ps[2]);
         return po;
     }
+    
+    public static Direction3 sphericalDirection(double sinTheta, double cosTheta, double phi)
+    {
+        return new Direction3(sinTheta * Math.cos(phi), sinTheta * Math.sin(phi), cosTheta);
+    }
+    
+    public static Direction3 sphericalDirection(double sinTheta, double cosTheta, double phi,
+            Direction3 x, Direction3 y, Direction3 z)
+    {
+        return x.times(sinTheta * Math.cos(phi))
+                .plus(y.times(sinTheta * Math.sin(phi)))
+                .plus(z.times(cosTheta));
+    }
+    
+    public static double sphericalTheta(Direction3 v)
+    {
+        return Math.acos(MathUtilities.clamp(v.z(), -1, 1));
+    }
+    
+    public static double sphericalPhi(Direction3 v)
+    {
+        double p = Math.atan2(v.y(), v.x());
+        return (p < 0) ? (p + 2 * Math.PI) : p;
+    }
 }

@@ -54,5 +54,18 @@ public abstract class Vector2
         }
     }
     
+    public void set(int index, double newValue)
+    {
+        switch(index)
+        {
+            case 0:
+            case 1:
+                vector[index] = newValue;
+                break;
+            default:
+                throw new IllegalArgumentException("Index " + index + " is out of range. Valid values: (0,1)");
+        }
+    }
+    
     protected abstract double[] getHomogeneousForm();
 }

@@ -38,7 +38,8 @@ public abstract class SamplerIntegrator implements Integrator
         this.sampler = sampler;
         this.camera = camera;
 
-        int numThreads = Runtime.getRuntime().availableProcessors();
+//        int numThreads = Runtime.getRuntime().availableProcessors();
+        int numThreads = 1;
         logger.info("Rendering with " + numThreads + " threads.");
         executor = Executors.newFixedThreadPool(numThreads);
     }
