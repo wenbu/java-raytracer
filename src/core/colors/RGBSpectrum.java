@@ -33,6 +33,12 @@ public class RGBSpectrum extends CoefficientSpectrum
         this.g = newSamples[1];
         this.b = newSamples[2];
     }
+    
+    public static RGBSpectrum fromRGB(double[] rgb)
+    {
+        // TODO map to XYZ
+        return new RGBSpectrum(rgb);
+    }
 
     public double r()
     {
@@ -72,6 +78,24 @@ public class RGBSpectrum extends CoefficientSpectrum
         return plus(new RGBSpectrum(s));
     }
     
+    public RGBSpectrum plusEquals(RGBSpectrum s2)
+    {
+        for (int i = 0; i < numSpectrumSamples; i++)
+        {
+            samples[i] += s2.samples[i];
+        }
+        return this;
+    }
+    
+    public RGBSpectrum plusEquals(double s)
+    {
+        for (int i = 0; i < numSpectrumSamples; i++)
+        {
+            samples[i] += s;
+        }
+        return this;
+    }
+    
     public RGBSpectrum minus(RGBSpectrum s2)
     {
         double[] newSamples = new double[numSpectrumSamples];
@@ -85,6 +109,24 @@ public class RGBSpectrum extends CoefficientSpectrum
     public RGBSpectrum minus(double s)
     {
         return minus(new RGBSpectrum(s));
+    }
+    
+    public RGBSpectrum minusEquals(RGBSpectrum s2)
+    {
+        for (int i = 0; i < numSpectrumSamples; i++)
+        {
+            samples[i] -= s2.samples[i];
+        }
+        return this;
+    }
+    
+    public RGBSpectrum minusEquals(double s)
+    {
+        for (int i = 0; i < numSpectrumSamples; i++)
+        {
+            samples[i] -= s;
+        }
+        return this;
     }
     
     public RGBSpectrum times(RGBSpectrum s2)
@@ -107,6 +149,24 @@ public class RGBSpectrum extends CoefficientSpectrum
         return new RGBSpectrum(newSamples);
     }
     
+    public RGBSpectrum timesEquals(RGBSpectrum s2)
+    {
+        for (int i = 0; i < numSpectrumSamples; i++)
+        {
+            samples[i] *= s2.samples[i];
+        }
+        return this;
+    }
+    
+    public RGBSpectrum timesEquals(double s)
+    {
+        for (int i = 0; i < numSpectrumSamples; i++)
+        {
+            samples[i] *= s;
+        }
+        return this;
+    }
+    
     public RGBSpectrum divideBy(RGBSpectrum s2)
     {
         double[] newSamples = new double[numSpectrumSamples];
@@ -125,6 +185,24 @@ public class RGBSpectrum extends CoefficientSpectrum
             newSamples[i] = samples[i] / s;
         }
         return new RGBSpectrum(newSamples);
+    }
+    
+    public RGBSpectrum divideEquals(RGBSpectrum s2)
+    {
+        for (int i = 0; i < numSpectrumSamples; i++)
+        {
+            samples[i] /= s2.samples[i];
+        }
+        return this;
+    }
+    
+    public RGBSpectrum divideEquals(double s)
+    {
+        for (int i = 0; i < numSpectrumSamples; i++)
+        {
+            samples[i] /= s;
+        }
+        return this;
     }
     
     public RGBSpectrum negative()

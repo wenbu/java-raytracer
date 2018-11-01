@@ -10,6 +10,10 @@ import core.math.Transformation;
 import core.space.BoundingBox2;
 import film.Film;
 import film.filter.impl.BoxFilter;
+import film.filter.impl.GaussianFilter;
+import film.filter.impl.LanczosSincFilter;
+import film.filter.impl.MitchellFilter;
+import film.filter.impl.TriangleFilter;
 import integrator.Integrator;
 import integrator.impl.WhittedIntegrator;
 import sampler.Sampler;
@@ -22,22 +26,22 @@ public class Main
     // TODO: scene parser
     public static void main(String[] args)
     {
-        Sampler sampler = new StratifiedSampler(2, 2, false, 1);
+        Sampler sampler = new StratifiedSampler(3, 3, true, 1);
 
-        Point2 resolution = new Point2(800, 800);
+        Point2 resolution = new Point2(600, 400);
         Film film = new Film(resolution,
                              new BoundingBox2(0, 0, 1, 1),
-                             new BoxFilter(new Direction2(0.5, 0.5)),
+                             new LanczosSincFilter(new Direction2(5, 5), 4),
                              100,
                              "placeholder",
                              1);
         Medium medium = null;
-        Transformation cameraTransform = Transformation.getLookAt(new Point3(0, 0, 0),
+        Transformation cameraTransform = Transformation.getLookAt(new Point3(0, 0, 2),
                                                                   new Point3(0, -20, 0),
                                                                   new Direction3(0, 0, 1));
         // getLookAt returns the world->camera transform.
         Camera camera = new PerspectiveCamera(cameraTransform.inverse(),
-                                              new BoundingBox2(-1, -1, 1, 1),
+                                              new BoundingBox2(-1.5, -1, 1.5, 1),
                                               0,
                                               1,
                                               0,
@@ -55,7 +59,7 @@ public class Main
 //                                               medium);
 
         Integrator integrator = new WhittedIntegrator(sampler, camera, 5);
-        Scene scene = Scenes.getTestScene();
+        Scene scene = Scenes.spheres();
 
         integrator.render(scene);
     }

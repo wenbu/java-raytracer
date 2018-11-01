@@ -1,5 +1,6 @@
 package utilities;
 
+import core.colors.RGBSpectrum;
 import core.tuple.Pair;
 
 public class MathUtilities
@@ -9,10 +10,70 @@ public class MathUtilities
     public static final double INV_2PI = 1 / (2 * Math.PI);
     public static final double PI_OVER_2 = Math.PI / 2;
     public static final double PI_OVER_4 = Math.PI / 4;
+    public static final double INV_LOG2 = 1.442695040888963387004650940071;
+    
+    public static double log2(double x)
+    {
+        return Math.log(x) * INV_LOG2;
+    }
+    
+    public static int log2Int(int x)
+    {
+        return 31 - Integer.numberOfLeadingZeros(x);
+    }
+    
+    public static double lanczos(double x)
+    {
+        return lanczos(x, 2);
+    }
+    
+    public static double lanczos(double x, double tau)
+    {
+        x = Math.abs(x);
+        double lanczos = MathUtilities.sinc(x / tau);
+        return MathUtilities.sinc(x) * lanczos;
+    }
+    
+    public static double sinc(double x)
+    {
+        x = Math.abs(x);
+        if (x < 1e-5)
+        {
+            return 1;
+        }
+        return Math.sin(Math.PI * x) / (Math.PI * x);
+    }
+    
+    public static boolean isPowerOf2(int t)
+    {
+        return (t != 0) && ((t & (t - 1)) == 0);
+    }
+    
+    public static int nextPower2(int t)
+    {
+        int highestOneBit = Integer.highestOneBit(t);
+        if (t == highestOneBit)
+        {
+            return t;
+        }
+        return highestOneBit << 1;
+    }
     
     public static double lerp(double t, double v1, double v2)
     {
         return (1.0 - t) * v1 + t * v2;
+    }
+    
+    public static RGBSpectrum lerp(double t, RGBSpectrum v1, RGBSpectrum v2)
+    {
+        return v1.times(1.0 - t).plus(v2.times(t));
+    }
+    
+    public static int clamp(int val, int low, int high)
+    {
+        if (val < low) return low;
+        else if (val > high) return high;
+        else return val;
     }
     
     public static double clamp(double val, double low, double high)

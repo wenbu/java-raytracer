@@ -3,6 +3,7 @@ package film.filter.impl;
 import core.math.Direction2;
 import core.math.Point2;
 import film.filter.Filter;
+import utilities.MathUtilities;
 
 public class LanczosSincFilter extends Filter
 {
@@ -19,16 +20,6 @@ public class LanczosSincFilter extends Filter
     {
         return windowedSinc(p.x(), radius.x()) * windowedSinc(p.y(), radius.y());
     }
-
-    private double sinc(double x)
-    {
-        x = Math.abs(x);
-        if (x < 1e-5)
-        {
-            return 1;
-        }
-        return Math.sin(Math.PI * x) / (Math.PI * x);
-    }
     
     private double windowedSinc(double x, double radius)
     {
@@ -37,7 +28,6 @@ public class LanczosSincFilter extends Filter
         {
             return 0;
         }
-        double lanczos = sinc(x / tau);
-        return sinc(x) * lanczos;
+        return MathUtilities.lanczos(x, tau);
     }
 }
