@@ -14,7 +14,6 @@ import core.colors.RGBSpectrum;
 import core.math.Transformation;
 import scene.geometry.impl.Sphere;
 import scene.materials.Material;
-import scene.medium.Medium;
 import scene.primitives.Primitive;
 import scene.primitives.impl.GeometricPrimitive;
 import utilities.MaterialUtilities;
@@ -105,7 +104,7 @@ public class PdbReader
                 Transformation transform = sceneTransform.compose(Transformation.getTranslation(x, y, z));
                 Sphere sphere = new Sphere(transform, transform.inverse(), false, radius);
                 Material material = MaterialUtilities.getPlasticMaterial(color, Colors.WHITE, 0.1, false);
-                Primitive primitive = new GeometricPrimitive(sphere, material, new Medium.MediumInterface());
+                Primitive primitive = new GeometricPrimitive(sphere, material);
                 
                 primitives.add(primitive);
             }

@@ -19,7 +19,6 @@ import scene.lights.impl.PointLight;
 import scene.materials.Material;
 import scene.materials.impl.MatteMaterial;
 import scene.materials.impl.PlasticMaterial;
-import scene.medium.Medium;
 import scene.medium.Medium.MediumInterface;
 import scene.primitives.Aggregate;
 import scene.primitives.Primitive;
@@ -27,7 +26,6 @@ import scene.primitives.accelerator.bvh.BoundingVolumeHierarchy;
 import scene.primitives.accelerator.bvh.BoundingVolumeHierarchy.SplitMethod;
 import scene.primitives.impl.GeometricPrimitive;
 import texture.Texture;
-import texture.impl.BilinearInterpolatedTexture;
 import texture.impl.CheckerboardTexture;
 import texture.impl.ConstantTexture;
 import texture.impl.ImageTexture;
@@ -73,7 +71,7 @@ public class Scenes
         Transformation sphereTransform1 = Transformation.getTranslation(-2, -10, 1.5);
         Sphere         sphere          = new Sphere(sphereTransform1, sphereTransform1.inverse(), false, 1.5);
         Material       material        = MaterialUtilities.getGlassMaterial(Colors.WHITE, Colors.WHITE, 0, 1.5);
-        Primitive      spherePrimitive = new GeometricPrimitive(sphere, material, new Medium.MediumInterface());
+        Primitive      spherePrimitive = new GeometricPrimitive(sphere, material);
         primitives.add(spherePrimitive);
         
         Transformation sphereTransform2 = Transformation.getTranslation(0, -15, 2.5);
@@ -81,13 +79,13 @@ public class Scenes
         TextureMapping2D textureMapping = new SphericalMapping2D(sphereTransform2.inverse());
         Texture<RGBSpectrum> tex = new ImageTexture<>(textureMapping, "textures/UV_Grid_Sm.jpg", false, 16, ImageWrap.REPEAT, 1, true, RGBSpectrum.class);
         Material material2 = new PlasticMaterial(tex, new ConstantTexture<>(Colors.WHITE), new ConstantTexture<>(0.1), null, false);
-        Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2, new Medium.MediumInterface());
+        Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2);
         primitives.add(spherePrimitive2);
         
         Transformation sphereTransform3 = Transformation.getTranslation(2, -10, 1.5);
         Sphere sphere3 = new Sphere(sphereTransform3, sphereTransform3.inverse(), false, 1.5);
         Material material3 = MaterialUtilities.getMirrorMaterial(Colors.WHITE);
-        Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3, new Medium.MediumInterface());
+        Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3);
         primitives.add(spherePrimitive3);
         
         Transformation planeTransform = Transformation.getTranslation(0, -20, 0)
@@ -117,19 +115,19 @@ public class Scenes
         Transformation sphereTransform1 = Transformation.getTranslation(0, -20, 0);
         Sphere         sphere1          = new Sphere(sphereTransform1, sphereTransform1.inverse(), false, 3);
         Material       material1        = MaterialUtilities.getPlasticMaterial(Colors.MAGENTA, Colors.WHITE, 0.1, false);
-        Primitive      spherePrimitive1 = new GeometricPrimitive(sphere1, material1, new Medium.MediumInterface());
+        Primitive      spherePrimitive1 = new GeometricPrimitive(sphere1, material1);
         primitives.add(spherePrimitive1);
 
         Transformation sphereTransform2 = Transformation.getTranslation(-2, -15, 2);
         Sphere sphere2 = new Sphere(sphereTransform2, sphereTransform2.inverse(), false, 1);
         Material material2 = MaterialUtilities.getPlasticMaterial(Colors.YELLOW, Colors.WHITE, 0.4, false);
-        Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2, new Medium.MediumInterface());
+        Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2);
         primitives.add(spherePrimitive2);
 
         Transformation sphereTransform3 = Transformation.getTranslation(-2, -15, -2);
         Sphere sphere3 = new Sphere(sphereTransform3, sphereTransform3.inverse(), false, 1);
         Material material3 = MaterialUtilities.getGlassMaterial(Colors.WHITE, Colors.WHITE, 0, 1.5);
-        Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3, new Medium.MediumInterface());
+        Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3);
         primitives.add(spherePrimitive3);
 
         List<Triangle> triangles = MeshUtilities.createSingleTriangle(Transformation.IDENTITY,
@@ -183,6 +181,6 @@ public class Scenes
     
     private static List<Primitive> getPrimitives(List<Triangle> triangles, Material material)
     {
-        return triangles.stream().map(triangle -> new GeometricPrimitive(triangle, material, new MediumInterface())).collect(Collectors.toList());
+        return triangles.stream().map(triangle -> new GeometricPrimitive(triangle, material)).collect(Collectors.toList());
     }
 }

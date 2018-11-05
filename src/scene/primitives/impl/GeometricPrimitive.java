@@ -17,7 +17,18 @@ public class GeometricPrimitive implements Primitive
     private final AreaLight areaLight;
     private final MediumInterface mediumInterface;
     
-    public GeometricPrimitive(Shape shape, Material material, AreaLight areaLight, MediumInterface mediumInterface)
+    public GeometricPrimitive(Shape shape, Material material)
+    {
+        this(shape, material, null, new MediumInterface());
+    }
+    
+    public GeometricPrimitive(Shape shape, Material material, MediumInterface mediumInterface)
+    {
+        this(shape, material, null, mediumInterface);
+    }
+    
+    public GeometricPrimitive(Shape shape, Material material, AreaLight areaLight,
+            MediumInterface mediumInterface)
     {
         this.shape = shape;
         this.material = material;
