@@ -109,16 +109,6 @@ public class Direction3 extends Vector3
         return this;
     }
 
-    public double dot(Vector3 other)
-    {
-        return VectorUtilities.dotProduct(vector, other.vector);
-    }
-    
-    public double absDot(Vector3 other)
-    {
-        return Math.abs(dot(other));
-    }
-
     public Direction3 cross(Vector3 other)
     {
         double x1 = vector[0];

@@ -23,8 +23,8 @@ public abstract class Light
     }
     
     private final EnumSet<LightType> lightType;
-    private final Transformation lightToWorld;
-    private final Transformation worldToLight;
+    protected final Transformation lightToWorld;
+    protected final Transformation worldToLight;
     private final int numSamples;
     protected final MediumInterface mediumInterface;
     
@@ -48,6 +48,7 @@ public abstract class Light
     }
     
     public abstract Quadruple<RGBSpectrum, Direction3, Double, VisibilityTester> sampleRadiance(Interaction ref, Point2 u);
+    public abstract double pdfRadiance(Interaction ref, Direction3 wi);
     public abstract RGBSpectrum power();
     public void preprocess(Scene scene)
     {

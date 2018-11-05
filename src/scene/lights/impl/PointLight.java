@@ -38,4 +38,10 @@ public class PointLight extends Light
     {
         return intensity.times(4 * Math.PI);
     }
+    
+    @Override
+    public double pdfRadiance(Interaction ref, Direction3 wi)
+    {
+        return 0;
+    }
 }

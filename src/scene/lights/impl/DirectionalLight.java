@@ -61,4 +61,10 @@ public class DirectionalLight extends Light
     {
         return luminance.times(Math.PI * worldRadius * worldRadius);
     }
+
+    @Override
+    public double pdfRadiance(Interaction ref, Direction3 wi)
+    {
+        return 0;
+    }
 }

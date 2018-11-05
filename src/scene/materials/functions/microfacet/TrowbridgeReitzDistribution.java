@@ -2,15 +2,22 @@ package scene.materials.functions.microfacet;
 
 import static scene.materials.functions.BidirectionalScatteringDistributionFunction.*;
 import core.math.Direction3;
+import core.math.Point2;
 import scene.materials.functions.MicrofacetDistribution;
 
-public class TrowbridgeReitzDistribution implements MicrofacetDistribution
+public class TrowbridgeReitzDistribution extends MicrofacetDistribution
 {
     private final double alphax;
     private final double alphay;
 
     public TrowbridgeReitzDistribution(double alphax, double alphay)
     {
+        this(alphax, alphay, true);
+    }
+    
+    public TrowbridgeReitzDistribution(double alphax, double alphay, boolean sampleVisibleArea)
+    {
+        super(sampleVisibleArea);
         this.alphax = alphax;
         this.alphay = alphay;
     }
@@ -50,5 +57,11 @@ public class TrowbridgeReitzDistribution implements MicrofacetDistribution
         double x = Math.log(roughness);
         return 1.62142 + 0.819955 * x + 0.1734 * x * x + 0.0171201 * x * x * x +
                0.000640711 * x * x * x * x;
+    }
+
+    @Override
+    public Direction3 sampleNormalDistribution(Direction3 wo, Point2 u)
+    {
+        throw new UnsupportedOperationException("TODO");
     }
 }

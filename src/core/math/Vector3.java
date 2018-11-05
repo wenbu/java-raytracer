@@ -1,6 +1,7 @@
 package core.math;
 
 import core.space.Axis;
+import utilities.VectorUtilities;
 
 public abstract class Vector3
 {
@@ -92,6 +93,16 @@ public abstract class Vector3
     public double maxComponent()
     {
         return Math.max(x(), Math.max(y(), z()));
+    }
+    
+    public double dot(Vector3 other)
+    {
+        return VectorUtilities.dotProduct(vector, other.vector);
+    }
+    
+    public double absDot(Vector3 other)
+    {
+        return Math.abs(dot(other));
     }
     
     protected abstract double[] getHomogeneousForm();

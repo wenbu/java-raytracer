@@ -69,4 +69,9 @@ public class SpecularTransmission extends AbstractBidirectionalDistributionFunct
         return new Quadruple<>(ft.divideBy(absCosTheta(wi)), wi, pdf, type);
     }
 
+    @Override
+    public double pdf(Direction3 wo, Direction3 wi)
+    {
+        return 0;
+    }
 }

@@ -71,6 +71,7 @@ public abstract class AbstractBidirectionalDistributionFunction
         RGBSpectrum r = new RGBSpectrum(0, 0, 0);
         for (Point2 sample : samples)
         {
+            // estimate one term of rho_hd
             var sample_f = sample_f(wo, sample);
             double pdf = sample_f.getThird();
             if (pdf > 0)
@@ -93,6 +94,7 @@ public abstract class AbstractBidirectionalDistributionFunction
         RGBSpectrum r = new RGBSpectrum(0, 0, 0);
         for (int i = 0; i < u1.length; i++)
         {
+            // estimate one term of rho_hh
             Direction3 wo = uniformSampleHemisphere(u1[i]);
             double pdfo = uniformHemispherePdf();
             var sample_f = sample_f(wo, u2[i]);

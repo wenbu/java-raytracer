@@ -1,9 +1,12 @@
 package scene.geometry.impl;
 
-import static utilities.MathUtilities.clamp;
+import static utilities.GeometryUtilities.*;
+import static utilities.SamplingUtilities.*;
+import static utilities.MathUtilities.*;
 import static utilities.MathUtilities.quadratic;
 
 import core.Ray;
+import core.math.CoordinateSystem;
 import core.math.Direction3;
 import utilities.MathUtilities;
 import utilities.MathUtilities.eDouble;
@@ -15,6 +18,7 @@ import core.space.BoundingBox3;
 import core.tuple.Pair;
 import core.tuple.Triple;
 import scene.geometry.Shape;
+import scene.interactions.Interaction;
 import scene.interactions.impl.SurfaceInteraction;
 
 public class Sphere extends Shape
@@ -245,5 +249,94 @@ public class Sphere extends Shape
     public double surfaceArea()
     {
         return phiMax * radius * (zMax - zMin);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * Uses {@link SamplingUtilities#uniformSampleSphere} to sample the unit sphere
+     * and scale the point by the radius.
+     */
+    @Override
+    public Interaction sample(Point2 u)
+    {
+        Point3 pObj = new Point3(0, 0, 0).plus(uniformSampleSphere(u).times(radius));
+        Normal3 n = objectToWorld.transform(new Normal3(pObj.x(), pObj.y(), pObj.z())).normalize();
+        if (reverseOrientation)
+        {
+            n.timesEquals(-1);
+        }
+        // reproject pObj to sphere surface and compute error
+        pObj.timesEquals(radius / pObj.distanceTo(new Point3(0, 0, 0)));
+        Direction3 pObjError = new Direction3(pObj).abs().times(gamma(5));
+        
+        return new Interaction(pObj, n, pObjError);
+    }
+    
+    @Override
+    public Interaction sample(Interaction ref, Point2 u)
+    {
+        // compute coordinate system for sphere sampling
+        Point3 pCenter = objectToWorld.transform(new Point3(0, 0, 0));
+        Direction3 wc = pCenter.minus(ref.getP()).normalize();
+        CoordinateSystem coordinateSystem = new CoordinateSystem(wc);
+        Direction3 wcX = coordinateSystem.getV2();
+        Direction3 wcY = coordinateSystem.getV3();
+        
+        // sample uniformly on sphere if p is inside it
+        Point3 pOrigin = offsetRayOrigin(ref.getP(), ref.getError(), ref.getN(), pCenter.minus(ref.getP()));
+        if (pOrigin.distanceSquared(pCenter) <= radius * radius)
+        {
+            return sample(u);
+        }
+        
+        // otherwise, sample sphere uniformly inside subtended cone
+        // compute theta and phi for sample in cone
+        double sinThetaMax2 = radius * radius / ref.getP().distanceSquared(pCenter);
+        double cosThetaMax = Math.sqrt(Math.max(0, 1 - sinThetaMax2));
+        double cosTheta = (1 - u.get(0)) + u.get(0) * cosThetaMax;
+        double sinTheta = Math.sqrt(Math.max(0, 1 - cosTheta * cosTheta));
+        double phi = u.get(1) * 2 * Math.PI;
+        
+        // compute angle alpha from sphere center to sampled point on surface
+        double dc = ref.getP().distanceTo(pCenter);
+        double ds = dc * cosTheta - Math.sqrt(Math.max(0, radius * radius - dc * dc * sinTheta * sinTheta));
+        double cosAlpha = (dc * dc + radius * radius - ds * ds) / (2 * dc * radius);
+        double sinAlpha = Math.sqrt(Math.max(0, 1 - cosAlpha * cosAlpha));
+        
+        // compute surface normal and sampled point on sphere
+        Direction3 nObj = sphericalDirection(sinAlpha, cosAlpha, phi, wcX.times(-1), wcY.times(-1), wc.times(-1));
+        Point3 pObj = new Point3(nObj.x(), nObj.y(), nObj.z()).times(radius);
+        
+        // return interaction for sampled point on sphere
+        pObj.timesEquals(radius / pObj.distanceTo(new Point3(0, 0, 0)));
+        Direction3 pObjError = new Direction3(pObj).abs().times(gamma(5));
+        
+        var pAndError = objectToWorld.transformWithError(pObj, pObjError);
+        Point3 p = pAndError.getFirst();
+        Direction3 pError = pAndError.getSecond();
+        Normal3 n = objectToWorld.transform(new Normal3(nObj));
+        if (reverseOrientation)
+        {
+            n.timesEquals(-1);
+        }
+        return new Interaction(p, n, pError);
+    }
+    
+    @Override
+    public double pdf(Interaction ref, Direction3 wi)
+    {
+        Point3 pCenter = objectToWorld.transform(new Point3(0, 0, 0));
+        // return uniform pdf if point inside sphere
+        Point3 pOrigin = offsetRayOrigin(ref.getP(), ref.getError(), ref.getN(), pCenter.minus(ref.getP()));
+        if (pOrigin.distanceSquared(pCenter) <= radius * radius)
+        {
+            return super.pdf(ref, wi);
+        }
+        
+        // otherwise, compute general sphere pdf
+        double sinThetaMax2 = radius * radius / ref.getP().distanceSquared(pCenter);
+        double cosThetaMax = Math.sqrt(Math.max(0, 1 - sinThetaMax2));
+        return uniformConePdf(cosThetaMax);
     }
 }

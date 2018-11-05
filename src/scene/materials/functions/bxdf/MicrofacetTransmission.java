@@ -1,15 +1,19 @@
 package scene.materials.functions.bxdf;
 
 import static scene.materials.functions.BidirectionalScatteringDistributionFunction.cosTheta;
-import static scene.materials.functions.BidirectionalScatteringDistributionFunction.sameHemisphere;
+import static scene.materials.functions.BidirectionalScatteringDistributionFunction.*;
 
 import java.util.EnumSet;
 
 import core.colors.RGBSpectrum;
 import core.math.Direction3;
+import core.math.Normal3;
+import core.math.Point2;
+import core.tuple.Quadruple;
 import scene.materials.TransportMode;
 import scene.materials.functions.AbstractBidirectionalDistributionFunction;
 import scene.materials.functions.MicrofacetDistribution;
+import scene.materials.functions.AbstractBidirectionalDistributionFunction.BxDFType;
 import scene.materials.functions.fresnel.FresnelDielectric;
 
 public class MicrofacetTransmission extends AbstractBidirectionalDistributionFunction
@@ -69,4 +73,38 @@ public class MicrofacetTransmission extends AbstractBidirectionalDistributionFun
                                                              sqrtDenominator)));
     }
 
+    @Override
+    public Quadruple<RGBSpectrum, Direction3, Double, EnumSet<BxDFType>> sample_f(
+            Direction3 wo, Point2 sample)
+    {
+        Direction3 wh = distribution.sampleNormalDistribution(wo,  sample);
+        double eta = cosTheta(wo) > 0 ? (etaA / etaB) : (etaB / etaA);
+        Direction3 wi = refract(wo, new Normal3(wh), eta);
+        if (wi == null)
+        {
+            return new Quadruple<>(new RGBSpectrum(0), wi, 0.0, type);
+        }
+        
+        double pdf = pdf(wo, wi);
+        return new Quadruple<>(f(wo, wi), wi, pdf, type);
+    }
+    
+    @Override
+    public double pdf(Direction3 wo, Direction3 wi)
+    {
+        if (sameHemisphere(wo, wi))
+        {
+            return 0;
+        }
+        
+        // compute wh from wo, wi for microfacet transmission
+        double eta = cosTheta(wo) > 0 ? (etaB / etaA) : (etaA / etaB);
+        Direction3 wh = wo.plus(wi.times(eta)).normalize();
+        
+        // compute change of variables dwhdwi for microfacet transmission
+        double sqrtDenom = wo.dot(wh) + eta * wi.dot(wh);
+        double dwhdwi = Math.abs((eta * eta * wi.dot(wh)) / (sqrtDenom * sqrtDenom));
+        
+        return distribution.pdf(wo, wh) * dwhdwi;
+    }
 }

@@ -38,4 +38,10 @@ public class SpecularReflection extends AbstractBidirectionalDistributionFunctio
         RGBSpectrum reflectedColor = r.times(fresnel.evaluate(cosTheta(wi))).divideBy(absCosTheta(wi));
         return new Quadruple<>(reflectedColor, wi, pdf, type);
     }
+    
+    @Override
+    public double pdf(Direction3 wo, Direction3 wi)
+    {
+        return 0;
+    }
 }

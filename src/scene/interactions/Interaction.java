@@ -18,6 +18,11 @@ public class Interaction
 
     public Normal3 n;
 
+    public Interaction(Point3 p, Normal3 n, Direction3 pError)
+    {
+        this(p, n, pError, null, 0, null);
+    }
+    
     public Interaction(Point3 p, double t, MediumInterface mediumInterface)
     {
         this(p, null, null, null, t, mediumInterface);

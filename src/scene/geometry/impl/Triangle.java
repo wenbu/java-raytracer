@@ -1,5 +1,7 @@
 package scene.geometry.impl;
 
+import static utilities.MathUtilities.*;
+import static utilities.SamplingUtilities.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +19,7 @@ import core.math.Transformation;
 import core.tuple.Pair;
 import core.tuple.Triple;
 import scene.geometry.Shape;
+import scene.interactions.Interaction;
 import scene.interactions.impl.SurfaceInteraction;
 
 public class Triangle extends Shape
@@ -352,6 +355,41 @@ public class Triangle extends Shape
         Point3 p2 = mesh.getPoint(pointIndex + 2);
         
         return 0.5 * p1.minus(p0).cross(p2.minus(p0)).length();
+    }
+
+    @Override
+    public Interaction sample(Point2 u)
+    {
+        Point2 b = uniformSampleTriangle(u);
+        Point3 p0 = mesh.getPoint(pointIndex);
+        Point3 p1 = mesh.getPoint(pointIndex + 1);
+        Point3 p2 = mesh.getPoint(pointIndex + 2);
+
+        Point3 p = p0.times(b.get(0))
+                     .plus(p1.times(b.get(1)))
+                     .plus(p2.times(1 - b.get(0) - b.get(1)));
+        Normal3 n;
+        if (mesh.getN() != null)
+        {
+            n = mesh.getN()[pointIndex].times(b.get(0))
+                                       .plus(mesh.getN()[pointIndex + 1].times(b.get(1)))
+                                       .plus(mesh.getN()[pointIndex + 2].times(1 - b.get(0) -
+                                                                               b.get(1))).normalize();
+        }
+        else
+        {
+            n = new Normal3(p1.minus(p0).cross(p2.minus(p0))).normalize();
+        }
+        if (reverseOrientation)
+        {
+            n.timesEquals(-1);
+        }
+
+        Point3 pAbsSum = p0.times(b.get(0)).abs()
+                           .plus(p1.times(b.get(1)).abs())
+                           .plus(p2.times(1 - b.get(0) - b.get(1)).abs());
+        Direction3 pError = new Direction3(pAbsSum).times(gamma(6));
+        return new Interaction(p, n, pError);
     }
 
 }

@@ -11,12 +11,74 @@ import core.math.Point2;
 
 public class SamplingUtilities
 {
+    public static double balanceHeuristic(int nf, double fPdf, int ng, double gPdf)
+    {
+        return (nf * fPdf) / (nf * fPdf + ng * gPdf);
+    }
+    
+    public static double powerHeuristic(int nf, double fPdf, int ng, double gPdf)
+    {
+        double f = nf * fPdf;
+        double g = ng * gPdf;
+        return (f * f) / (f * f + g * g);
+    }
+    
+    public static Point2 rejectionSampleDisk(Random random)
+    {
+        double x = 0;
+        double y = 0;
+        do
+        {
+            x = 1 - 2 * random.nextDouble();
+            y = 1 - 2 * random.nextDouble();
+        }
+        while (x * x + y * y > 1);
+        return new Point2(x, y);
+    }
+    
+    public static Point2 uniformSampleTriangle(Point2 u)
+    {
+        double su0 = Math.sqrt(u.get(0));
+        return new Point2(1 - su0, u.get(1) * su0);
+    }
+    
+    public static double uniformConePdf(double cosThetaMax)
+    {
+        return 1 / (2 * Math.PI * (1 - cosThetaMax));
+    }
+    
+    public static Direction3 uniformSampleCone(Point2 u, double cosThetaMax)
+    {
+        double cosTheta = (1 - u.get(0)) + u.get(0) * cosThetaMax;
+        double sinTheta = Math.sqrt(1 - cosTheta * cosTheta);
+        double phi = u.get(1) * 2 * Math.PI;
+        return new Direction3(Math.cos(phi) * sinTheta, Math.sin(phi) * sinTheta, cosTheta);
+    }
+    
     public static Direction3 cosineSampleHemisphere(Point2 u)
     {
         Point2 d = concentricSampleDisk(u);
         double z = Math.sqrt(Math.max(0, 1 - d.x() * d.x() - d.y() * d.y()));
 
         return new Direction3(d.x(), d.y(), z);
+    }
+    
+    public static double cosineHemispherePdf(double cosTheta)
+    {
+        return cosTheta * INV_PI;
+    }
+    
+    public static Direction3 uniformSampleSphere(Point2 u)
+    {
+        double z = 1 - 2 * u.get(0);
+        double r = Math.sqrt(Math.max(0, 1 - z * z));
+        double phi = 2 * Math.PI * u.get(1);
+        return new Direction3(r * Math.cos(phi), r * Math.sin(phi), z);
+    }
+    
+    public static double uniformSpherePdf()
+    {
+        return INV_4PI;
     }
     
     public static Direction3 uniformSampleHemisphere(Point2 u)
@@ -30,6 +92,13 @@ public class SamplingUtilities
     public static double uniformHemispherePdf()
     {
         return INV_2PI;
+    }
+    
+    public static Point2 uniformSampleDisk(Point2 u)
+    {
+        double r = Math.sqrt(u.get(0));
+        double theta = 2 * Math.PI * u.get(1);
+        return new Point2(r * Math.cos(theta), r * Math.sin(theta));
     }
 
     public static Point2 concentricSampleDisk(Point2 u)

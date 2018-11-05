@@ -5,9 +5,13 @@ import java.util.EnumSet;
 
 import core.colors.RGBSpectrum;
 import core.math.Direction3;
+import core.math.Normal3;
+import core.math.Point2;
+import core.tuple.Quadruple;
 import scene.materials.functions.AbstractBidirectionalDistributionFunction;
 import scene.materials.functions.Fresnel;
 import scene.materials.functions.MicrofacetDistribution;
+import scene.materials.functions.AbstractBidirectionalDistributionFunction.BxDFType;
 
 /**
  * An implementation of the Torrance-Sparrow model.
@@ -50,4 +54,20 @@ public class MicrofacetReflection extends AbstractBidirectionalDistributionFunct
                 .divideBy(4 * cosThetaI * cosThetaO);
     }
 
+    @Override
+    public Quadruple<RGBSpectrum, Direction3, Double, EnumSet<BxDFType>> sample_f(
+            Direction3 wo, Point2 sample)
+    {
+        // sample microfacet orientation wh and reflected direction wi
+        Direction3 wh = distribution.sampleNormalDistribution(wo, sample);
+        Direction3 wi = reflect(wo, new Normal3(wh));
+        if (!sameHemisphere(wo, wi))
+        {
+            return new Quadruple<>(new RGBSpectrum(0), wi, 0.0, type);
+        }
+        // compute pdf of wi for microfacet reflection
+        double pdf = distribution.pdf(wo, wh) / (4 * wo.dot(wh));
+        
+        return new Quadruple<>(f(wo, wi), wi, pdf, type);
+    }
 }

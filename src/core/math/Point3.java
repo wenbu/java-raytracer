@@ -64,11 +64,28 @@ public class Point3 extends Vector3
                           vector[2] * scalar);
     }
     
+    public Point3 timesEquals(double scalar)
+    {
+        VectorUtilities.timesEquals(this.getVector(), scalar);
+        VectorUtilities.timesEquals(this.getVector(), scalar, MAX_INDEX);
+        return this;
+    }
+    
     public Point3 divideBy(double scalar)
     {
         return new Point3(vector[0] / scalar,
                           vector[1] / scalar,
                           vector[2] / scalar);
+    }
+    
+    public Point3 abs()
+    {
+        return new Point3(VectorUtilities.abs(vector));
+    }
+    
+    public double distanceSquared(Point3 other)
+    {
+        return (this.minus(other)).lengthSquared();
     }
     
     public double distanceTo(Point3 other)
