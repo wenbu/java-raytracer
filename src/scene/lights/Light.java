@@ -28,12 +28,14 @@ public abstract class Light
     private final int numSamples;
     protected final MediumInterface mediumInterface;
     
-    public Light(EnumSet<LightType> lightType, Transformation lightToWorld, MediumInterface mediumInterface)
+    public Light(EnumSet<LightType> lightType, Transformation lightToWorld,
+            MediumInterface mediumInterface)
     {
         this(lightType, lightToWorld, 1, mediumInterface);
     }
     
-    public Light(EnumSet<LightType> lightType, Transformation lightToWorld, int numSamples, MediumInterface mediumInterface)
+    public Light(EnumSet<LightType> lightType, Transformation lightToWorld, int numSamples,
+            MediumInterface mediumInterface)
     {
         this.lightType = lightType;
         this.lightToWorld = lightToWorld;

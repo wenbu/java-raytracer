@@ -251,6 +251,14 @@ public class MipMap<T>
             }
         }
     }
+
+    /**
+     * Lookup with no filter. 
+     */
+    public T lookup(Point2 st)
+    {
+        return lookup(st, 0);
+    }
     
     /**
      * Lookup with isotropic triangle filter (trilinear)

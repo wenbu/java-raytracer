@@ -6,6 +6,7 @@ import core.Ray;
 import core.space.BoundingBox3;
 import scene.geometry.Shape;
 import scene.interactions.impl.SurfaceInteraction;
+import scene.lights.AreaLight;
 import scene.materials.Material;
 import scene.materials.TransportMode;
 import scene.primitives.Aggregate;
@@ -91,6 +92,12 @@ public class SimpleAggregate implements Aggregate
             TransportMode mode, boolean allowMultipleLobes)
     {
         throw new UnsupportedOperationException("SimpleAggregate.computeScatteringFunctions");
+    }
+
+    @Override
+    public AreaLight getAreaLight()
+    {
+        throw new UnsupportedOperationException("SimpleAggregate.getAreaLight");
     }
 
 }

@@ -11,10 +11,7 @@ import java.util.logging.Logger;
 import core.Ray;
 import core.math.Direction3;
 import core.space.BoundingBox3;
-import scene.geometry.Shape;
 import scene.interactions.impl.SurfaceInteraction;
-import scene.materials.Material;
-import scene.materials.TransportMode;
 import scene.primitives.Aggregate;
 import scene.primitives.Primitive;
 import scene.primitives.accelerator.bvh.tree.EqualCountsTreeBuilder;
@@ -223,24 +220,5 @@ public class BoundingVolumeHierarchy implements Aggregate
             }
         }
         return false;
-    }
-    
-    @Override
-    public Material getMaterial()
-    {
-        throw new UnsupportedOperationException("No material for BoundingVolumeHierarchy.");
-    }
-    
-    @Override
-    public Shape getShape()
-    {
-        throw new UnsupportedOperationException("No shape for BoundingVolumeHierarchy.");
-    }
-
-    @Override
-    public void computeScatteringFunctions(SurfaceInteraction surfaceInteraction,
-            TransportMode mode, boolean allowMultipleLobes)
-    {
-        throw new UnsupportedOperationException("No scattering functions for BoundingVolumeHierarchy.");
     }
 }

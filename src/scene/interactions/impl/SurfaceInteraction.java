@@ -1,6 +1,7 @@
 package scene.interactions.impl;
 
 import core.RayDifferential;
+import core.colors.RGBSpectrum;
 import core.math.Direction3;
 import utilities.MatrixUtilities;
 import core.math.Normal3;
@@ -8,6 +9,7 @@ import core.math.Point2;
 import core.math.Point3;
 import scene.geometry.Shape;
 import scene.interactions.Interaction;
+import scene.lights.AreaLight;
 import scene.materials.TransportMode;
 import scene.materials.functions.BidirectionalScatteringDistributionFunction;
 import scene.primitives.Primitive;
@@ -57,6 +59,19 @@ public class SurfaceInteraction extends Interaction
         this.dndv = dndv;
         this.shape = shape;
         this.shadingGeometry = new ShadingGeometry(shadingN, shadingDndu, shadingDndv, shadingDpdu, shadingDpdv);
+    }
+    
+    public RGBSpectrum getEmittedRadiance(Direction3 w)
+    {
+        AreaLight areaLight = primitive.getAreaLight();
+        if (areaLight != null)
+        {
+            return areaLight.radiance(this, w);
+        }
+        else
+        {
+            return new RGBSpectrum(0);
+        }
     }
     
     public void computeScatteringFunctions(RayDifferential ray)

@@ -4,6 +4,7 @@ import core.Ray;
 import core.space.BoundingBox3;
 import scene.geometry.Shape;
 import scene.interactions.impl.SurfaceInteraction;
+import scene.lights.AreaLight;
 import scene.materials.Material;
 import scene.materials.TransportMode;
 import scene.medium.Medium.MediumInterface;
@@ -13,13 +14,14 @@ public class GeometricPrimitive implements Primitive
 {
     private final Shape shape;
     private final Material material;
-    // private final AreaLight areaLight;
+    private final AreaLight areaLight;
     private final MediumInterface mediumInterface;
     
-    public GeometricPrimitive(Shape shape, Material material, MediumInterface mediumInterface)
+    public GeometricPrimitive(Shape shape, Material material, AreaLight areaLight, MediumInterface mediumInterface)
     {
         this.shape = shape;
         this.material = material;
+        this.areaLight = areaLight;
         this.mediumInterface = mediumInterface;
     }
 
@@ -79,5 +81,11 @@ public class GeometricPrimitive implements Primitive
     public Shape getShape()
     {
         return shape;
+    }
+
+    @Override
+    public AreaLight getAreaLight()
+    {
+        return areaLight;
     }
 }
