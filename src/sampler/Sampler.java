@@ -104,7 +104,6 @@ public abstract class Sampler
     {
         if (sampleArray1DIndex == sampleArrays1D.size())
         {
-            logger.warning("Insufficient 1D samples.");
             return null;
         }
         return sampleArrays1D.get(sampleArray1DIndex++).get((int) currentPixelSampleIndex);
@@ -119,7 +118,6 @@ public abstract class Sampler
     {
         if (sampleArray2DIndex == sampleArrays2D.size())
         {
-            logger.warning("Insufficient 2D samples.");
             return null;
         }
         return sampleArrays2D.get(sampleArray2DIndex++).get((int) currentPixelSampleIndex);

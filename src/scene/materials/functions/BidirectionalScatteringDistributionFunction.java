@@ -72,7 +72,7 @@ public class BidirectionalScatteringDistributionFunction
         int numMatchingComponents = numComponents(flags);
         if (numMatchingComponents == 0)
         {
-            return new Quadruple<>(new RGBSpectrum(0), null, 0.0, EnumSet.noneOf(BxDFType.class));
+            return new Quadruple<>(new RGBSpectrum(0), new Direction3(0, 0, 0), 0.0, EnumSet.noneOf(BxDFType.class));
         }
         int comp = Math.min((int) Math.floor(u.get(0) * numMatchingComponents),
                             numMatchingComponents - 1);
@@ -100,7 +100,7 @@ public class BidirectionalScatteringDistributionFunction
         double pdf = bxdfSample.getThird();
         if (pdf == 0)
         {
-            return null;
+            return new Quadruple<>(new RGBSpectrum(0), new Direction3(0, 0, 0), 0.0, EnumSet.noneOf(BxDFType.class));
         }
         Direction3 wi = bxdfSample.getSecond();
         Direction3 wiWorld = localToWorld(wi);

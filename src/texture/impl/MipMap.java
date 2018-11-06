@@ -57,6 +57,7 @@ public class MipMap<T>
             throw new RuntimeException("Unsupported type " + clazz.getName());
         }
         
+        // XXX TODO Resampling isn't working. Need to investigate.
         T[] resampledImage = null;
         if (!isPowerOf2((int) resolution.get(0)) || !isPowerOf2((int) resolution.get(1)))
         {
@@ -70,7 +71,7 @@ public class MipMap<T>
             resampledImage = (T[]) Array.newInstance(clazz, resizeX * resizeY);
             // apply sWeights to zoom in s direction
             // TODO: parallelize in t?
-            for (int t = 0; t < resolution.get(0); t++)
+            for (int t = 0; t < resolution.get(1); t++)
             {
                 for (int s = 0; s < resizeX; s++)
                 {
@@ -257,7 +258,7 @@ public class MipMap<T>
      */
     public T lookup(Point2 st)
     {
-        return lookup(st, 0);
+        return lookup(st, 0.5);
     }
     
     /**
@@ -522,6 +523,7 @@ public class MipMap<T>
         {
             // compute resampling weights for ith texel
             double center = (i + 0.5) * (oldRes / newRes);
+            wt[i] = new ResampleWeight();
             wt[i].firstTexel = (int) Math.floor((center - filterWidth) + 0.5);
             for (int j = 0; j < 4; j++)
             {

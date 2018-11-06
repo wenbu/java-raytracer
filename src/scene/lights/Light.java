@@ -49,17 +49,34 @@ public abstract class Light
         return lightType.contains(LightType.DELTA_POSITION) || lightType.contains(LightType.DELTA_DIRECTION);
     }
     
-    public abstract Quadruple<RGBSpectrum, Direction3, Double, VisibilityTester> sampleRadiance(Interaction ref, Point2 u);
+    /**
+     * Sample_Li
+     */
+    public abstract Quadruple<RGBSpectrum, Direction3, Double, VisibilityTester> sampleRadiance(
+            Interaction ref, Point2 u);
+
+    /**
+     * Pdf_Li
+     */
     public abstract double pdfRadiance(Interaction ref, Direction3 wi);
+
     public abstract RGBSpectrum power();
+    
     public void preprocess(Scene scene)
     {
         
     }
     
+    public int getNumSamples()
+    {
+        return numSamples;
+    }
+    
     /**
      * Return radiance due to rays that don't hit any geometry. (i.e. that escape the scene)
      * Default implementation returns no radiance.
+     * 
+     * Le
      */
     public RGBSpectrum emittedRadiance(RayDifferential ray)
     {

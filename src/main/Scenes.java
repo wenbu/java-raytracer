@@ -15,6 +15,7 @@ import scene.geometry.impl.Sphere;
 import scene.geometry.impl.Triangle;
 import scene.lights.Light;
 import scene.lights.impl.DirectionalLight;
+import scene.lights.impl.InfiniteAreaLight;
 import scene.lights.impl.PointLight;
 import scene.materials.Material;
 import scene.materials.impl.MatteMaterial;
@@ -70,7 +71,7 @@ public class Scenes
         
         Transformation sphereTransform1 = Transformation.getTranslation(-2, -10, 1.5);
         Sphere         sphere          = new Sphere(sphereTransform1, sphereTransform1.inverse(), false, 1.5);
-        Material       material        = MaterialUtilities.getGlassMaterial(Colors.WHITE, Colors.WHITE, 0, 1.5);
+        Material       material        = MaterialUtilities.getGlassMaterial(Colors.GRAY20, Colors.GRAY80, 0, 1.5);
         Primitive      spherePrimitive = new GeometricPrimitive(sphere, material);
         primitives.add(spherePrimitive);
         
@@ -78,7 +79,8 @@ public class Scenes
         Sphere sphere2 = new Sphere(sphereTransform2, sphereTransform2.inverse(), false, 2.5);
         TextureMapping2D textureMapping = new SphericalMapping2D(sphereTransform2.inverse());
         Texture<RGBSpectrum> tex = new ImageTexture<>(textureMapping, "textures/UV_Grid_Sm.jpg", false, 16, ImageWrap.REPEAT, 1, true, RGBSpectrum.class);
-        Material material2 = new PlasticMaterial(tex, new ConstantTexture<>(Colors.WHITE), new ConstantTexture<>(0.1), null, false);
+        Material material2 = new PlasticMaterial(tex, new ConstantTexture<>(Colors.WHITE),
+                                                 new ConstantTexture<>(0.4), null, false);
         Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2);
         primitives.add(spherePrimitive2);
         
@@ -89,25 +91,27 @@ public class Scenes
         primitives.add(spherePrimitive3);
         
         Transformation planeTransform = Transformation.getTranslation(0, -20, 0)
-                                                      .compose(Transformation.getUniformScale(200));
-        TextureMapping2D planeTextureMapping = new PlanarMapping2D(new Direction3(1, 0, 0), new Direction3(0, 1, 0), 0.02, 0.02);
-        Texture<RGBSpectrum> checkerTexture = new CheckerboardTexture<>(planeTextureMapping, Colors.BLACK, Colors.WHITE, 1);
+                                                      .compose(Transformation.getUniformScale(2000));
+        TextureMapping2D planeTextureMapping = new PlanarMapping2D(new Direction3(1, 0, 0), new Direction3(0, 1, 0), 0.002, 0.002);
+        Texture<RGBSpectrum> checkerTexture = new CheckerboardTexture<>(planeTextureMapping, Colors.GRAY10, Colors.GRAY90, 1);
         Material planeMaterial = new MatteMaterial(checkerTexture, new ConstantTexture<>(0.0), null);
         List<Triangle> planeTriangles = MeshUtilities.createQuad(planeTransform);
         List<Primitive> planePrimitives = getPrimitives(planeTriangles, planeMaterial);
         primitives.addAll(planePrimitives);
         
         List<Light> lights = new LinkedList<>();
-
-        Light light1 = new DirectionalLight(new Transformation(),
-                                            new RGBSpectrum(0.9, 0.9, 1),
-                                            new Direction3(-1, 1, 1));
-        lights.add(light1);
+        
+        Light light = new InfiniteAreaLight(Transformation.IDENTITY,
+                                             new RGBSpectrum(1),
+                                             20,
+                                             "textures/vp_sky_v2_002_sm.jpg");
+        lights.add(light);
         
         Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.SURFACE_AREA_HEURISTIC);
         
         return new Scene(geo, lights);
     }
+    
     public static Scene getTestScene()
     {
         List<Primitive> primitives = new LinkedList<>();
@@ -162,7 +166,6 @@ public class Scenes
         List<Primitive> planePrimitives2 = getPrimitives(planeTriangles2, material6);
         primitives.addAll(planePrimitives2);
         
-        //Aggregate geo = new SimpleAggregate(primitives);
         Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.SURFACE_AREA_HEURISTIC);
         
         List<Light> lights = new LinkedList<>();

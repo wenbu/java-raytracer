@@ -15,87 +15,109 @@ public class ImageUtilities
 {
     public static Pair<RGBSpectrum[], Point2> getImageArray(String filePath, boolean gamma)
     {
-        File img = new File(filePath);
-        BufferedImage bufferedImage;
+        BufferedImage bufferedImage = null;
         try
         {
-            bufferedImage = ImageIO.read(img);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("Failed to read image " + filePath);
-        }
-        
-        byte[] pixels = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
-        RGBSpectrum[] ret;
-        int bytesPerPixel;
-        if (bufferedImage.getColorModel().hasAlpha())
-        {
-            bytesPerPixel = 4;
-        }
-        else
-        {
-            bytesPerPixel = 3;
-        }
-        ret = new RGBSpectrum[pixels.length / bytesPerPixel];
-        for (int i = 0; i < ret.length; i++)
-        {
-            double r = remapToDouble(pixels[bytesPerPixel * i]);
-            double g = remapToDouble(pixels[bytesPerPixel * i + 1]);
-            double b = remapToDouble(pixels[bytesPerPixel * i + 2]);
-            if (gamma)
+            File img = new File(filePath);
+            try
             {
-                r = inverseGammaCorrect(r);
-                g = inverseGammaCorrect(g);
-                b = inverseGammaCorrect(b);
+                bufferedImage = ImageIO.read(img);
             }
-            ret[i] = new RGBSpectrum(r, g, b);
+            catch (IOException e)
+            {
+                throw new RuntimeException("Failed to read image " + filePath);
+            }
+            
+            byte[] pixels = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
+            RGBSpectrum[] ret;
+            int bytesPerPixel;
+            if (bufferedImage.getColorModel().hasAlpha())
+            {
+                bytesPerPixel = 4;
+            }
+            else
+            {
+                bytesPerPixel = 3;
+            }
+            ret = new RGBSpectrum[pixels.length / bytesPerPixel];
+            for (int i = 0; i < ret.length; i++)
+            {
+                double b = remapToDouble(pixels[bytesPerPixel * i]);
+                double g = remapToDouble(pixels[bytesPerPixel * i + 1]);
+                double r = remapToDouble(pixels[bytesPerPixel * i + 2]);
+                if (gamma)
+                {
+                    r = inverseGammaCorrect(r);
+                    g = inverseGammaCorrect(g);
+                    b = inverseGammaCorrect(b);
+                }
+                ret[i] = new RGBSpectrum(r, g, b);
+            }
+            
+            return new Pair<>(ret, new Point2(bufferedImage.getWidth(), bufferedImage.getHeight()));
         }
-        
-        return new Pair<>(ret, new Point2(bufferedImage.getWidth(), bufferedImage.getHeight()));
+        finally
+        {
+            if (bufferedImage != null)
+            {
+                bufferedImage.flush();
+                bufferedImage = null;
+            }
+        }
     }
     
     public static Pair<Double[], Point2> getGrayscaleImageArray(String filePath, boolean gamma)
     {
         File img = new File(filePath);
-        BufferedImage bufferedImage;
+        BufferedImage bufferedImage = null;
         try
         {
-            bufferedImage = ImageIO.read(img);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("Failed to read image " + filePath);
-        }
-        
-        byte[] pixels = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
-        Double[] ret;
-        int bytesPerPixel;
-        if (bufferedImage.getColorModel().hasAlpha())
-        {
-            bytesPerPixel = 4;
-        }
-        else
-        {
-            bytesPerPixel = 3;
-        }
-        ret = new Double[pixels.length / bytesPerPixel];
-        for (int i = 0; i < ret.length; i++)
-        {
-            double r = remapToDouble(pixels[bytesPerPixel * i]);
-            double g = remapToDouble(pixels[bytesPerPixel * i + 1]);
-            double b = remapToDouble(pixels[bytesPerPixel * i + 2]);
-            if (gamma)
+            try
             {
-                r = inverseGammaCorrect(r);
-                g = inverseGammaCorrect(g);
-                b = inverseGammaCorrect(b);
+                bufferedImage = ImageIO.read(img);
             }
-            // XXX pbrt just uses the g channel instead of taking the average
-            ret[i] = (r + g + b) / 3;
+            catch (IOException e)
+            {
+                throw new RuntimeException("Failed to read image " + filePath);
+            }
+            
+            byte[] pixels = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
+            Double[] ret;
+            int bytesPerPixel;
+            if (bufferedImage.getColorModel().hasAlpha())
+            {
+                bytesPerPixel = 4;
+            }
+            else
+            {
+                bytesPerPixel = 3;
+            }
+            ret = new Double[pixels.length / bytesPerPixel];
+            for (int i = 0; i < ret.length; i++)
+            {
+                double r = remapToDouble(pixels[bytesPerPixel * i]);
+                double g = remapToDouble(pixels[bytesPerPixel * i + 1]);
+                double b = remapToDouble(pixels[bytesPerPixel * i + 2]);
+                if (gamma)
+                {
+                    r = inverseGammaCorrect(r);
+                    g = inverseGammaCorrect(g);
+                    b = inverseGammaCorrect(b);
+                }
+                // XXX pbrt just uses the g channel instead of taking the average
+                ret[i] = (r + g + b) / 3;
+            }
+            
+            return new Pair<>(ret, new Point2(bufferedImage.getWidth(), bufferedImage.getHeight()));
         }
-        
-        return new Pair<>(ret, new Point2(bufferedImage.getWidth(), bufferedImage.getHeight()));
+        finally
+        {
+            if (bufferedImage != null)
+            {
+                bufferedImage.flush();
+                bufferedImage = null;
+            }
+        }
     }
     
     public static double gammaCorrect(double value)

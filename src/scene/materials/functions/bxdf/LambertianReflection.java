@@ -7,7 +7,6 @@ import core.colors.RGBSpectrum;
 import core.math.Direction3;
 import core.math.Point2;
 import core.tuple.Pair;
-import core.tuple.Quadruple;
 import core.tuple.Triple;
 import scene.materials.functions.AbstractBidirectionalDistributionFunction;
 
@@ -27,14 +26,7 @@ public class LambertianReflection extends AbstractBidirectionalDistributionFunct
         return r.divideBy(Math.PI);
     }
 
-    @Override
-    public Quadruple<RGBSpectrum, Direction3, Double, EnumSet<BxDFType>> sample_f(Direction3 wo, Point2 sample)
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
- // hemispherical-directional reflectance
+    // hemispherical-directional reflectance
     // total reflection in a given direction due to constant illumination over the hemisphere
     public Pair<RGBSpectrum, Set<Point2>> rho(Direction3 wo, int nSamples)
     {

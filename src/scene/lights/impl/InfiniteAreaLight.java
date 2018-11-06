@@ -1,6 +1,12 @@
 package scene.lights.impl;
 
+import static utilities.GeometryUtilities.sphericalPhi;
+import static utilities.GeometryUtilities.sphericalTheta;
+import static utilities.MathUtilities.INV_2PI;
+import static utilities.MathUtilities.INV_PI;
+
 import java.util.EnumSet;
+import java.util.logging.Logger;
 
 import core.RayDifferential;
 import core.colors.RGBSpectrum;
@@ -17,22 +23,25 @@ import scene.lights.Light;
 import scene.medium.Medium;
 import texture.impl.MipMap;
 import texture.impl.MipMap.ImageWrap;
-import utilities.GeometryUtilities;
 import utilities.ImageUtilities;
 import utilities.MathUtilities;
 
 public class InfiniteAreaLight extends Light
 {
+    private static final Logger logger = Logger.getLogger(InfiniteAreaLight.class.getName());
+    
     private final MipMap<RGBSpectrum> radianceMap;
     private final Distribution2D distribution;
     private Point3 worldCenter;
     private double worldRadius;
     
-    public InfiniteAreaLight(Transformation lightToWorld, RGBSpectrum radiance, int numSamples, String fileName)
+    public InfiniteAreaLight(Transformation lightToWorld, RGBSpectrum radiance, int numSamples,
+            String fileName)
     {
         super(EnumSet.of(LightType.INFINITE), lightToWorld, numSamples, new Medium.MediumInterface());
         RGBSpectrum[] texels;
         Point2 resolution;
+        long startInitTexture = System.currentTimeMillis();
         if (fileName != null && !fileName.isEmpty())
         {
             var image = ImageUtilities.getImageArray(fileName, false); // pass in gamma flag?
@@ -48,7 +57,10 @@ public class InfiniteAreaLight extends Light
             resolution = new Point2(1, 1);
             texels = new RGBSpectrum[] { new RGBSpectrum(1, 1, 1).times(radiance) };
         }
-        radianceMap = new MipMap<>(RGBSpectrum.class, resolution, texels, true, 1, ImageWrap.CLAMP);
+        radianceMap = new MipMap<>(RGBSpectrum.class, resolution, texels, true, 1, ImageWrap.REPEAT);
+        long endInitTexture = System.currentTimeMillis();
+        
+        logger.info("Spent " + (endInitTexture - startInitTexture) + "ms initializing texture " + fileName + ".");
         
         // compute scalar-valued image from environment map
         int width = (int) resolution.x();
@@ -67,8 +79,13 @@ public class InfiniteAreaLight extends Light
             }
         }
         
+        long endInitLookup = System.currentTimeMillis();
+        logger.info("Spent " + (endInitLookup - endInitTexture) + "ms initializing lookup for " + fileName + ".");
+        
         // compute sampling distributions for rows and columns of image
         distribution = new Distribution2D(img, width, height);
+        long endInitDist = System.currentTimeMillis();
+        logger.info("Spent " + (endInitDist - endInitLookup) + "ms initializing distribution for " + fileName + ".");
     }
     
     @Override
@@ -123,22 +140,30 @@ public class InfiniteAreaLight extends Light
     @Override
     public RGBSpectrum power()
     {
-        return radianceMap.lookup(new Point2(0.5, 0.5), 0.5).times(Math.PI * worldRadius * worldRadius);
+        return radianceMap.lookup(new Point2(0.5, 0.5)).times(Math.PI * worldRadius * worldRadius);
     }
 
     @Override
     public RGBSpectrum emittedRadiance(RayDifferential ray)
     {
         Direction3 w = worldToLight.transform(ray.getDirection()).normalize();
-        Point2 st = new Point2(GeometryUtilities.sphericalPhi(w) * MathUtilities.INV_2PI,
-                               GeometryUtilities.sphericalTheta(w) * MathUtilities.INV_2PI);
+        Point2 st = new Point2(sphericalPhi(w) * MathUtilities.INV_2PI,
+                               sphericalTheta(w) * MathUtilities.INV_PI);
         return radianceMap.lookup(st, 0);
     }
 
     @Override
-    public double pdfRadiance(Interaction ref, Direction3 wi)
+    public double pdfRadiance(Interaction ref, Direction3 w)
     {
-        // TODO Auto-generated method stub
-        return 0;
+        Direction3 wi = worldToLight.transform(w);
+        double theta = sphericalTheta(wi);
+        double phi = sphericalPhi(wi);
+        double sinTheta = Math.sin(theta);
+        if (sinTheta == 0)
+        {
+            return 0;
+        }
+        return distribution.pdf(new Point2(phi * INV_2PI, theta * INV_PI)) /
+               (2 * Math.PI * Math.PI * sinTheta);
     }
 }

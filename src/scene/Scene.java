@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import core.Ray;
 import core.colors.RGBSpectrum;
 import core.space.BoundingBox3;
+import core.tuple.Pair;
 import sampler.Sampler;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.lights.Light;
@@ -46,7 +47,7 @@ public class Scene
         return aggregate.intersectP(ray);
     }
     
-    public RGBSpectrum intersectTr(Ray ray, Sampler sampler, SurfaceInteraction surfaceInteraction)
+    public Pair<RGBSpectrum, SurfaceInteraction> intersectTr(Ray ray, Sampler sampler)
     {
         // XXX This depends on intersect() properly updating tMax. Not sure if that's working.
         RGBSpectrum transmittance = new RGBSpectrum(1, 1, 1);
@@ -66,11 +67,11 @@ public class Scene
             {
                 return null;
             }
-            if (surfaceInteraction.getPrimitive().getMaterial() != null)
+            if (hitSurface.getPrimitive().getMaterial() != null)
             {
-                return transmittance;
+                return new Pair<>(transmittance, hitSurface);
             }
-            ray = surfaceInteraction.spawnRay(ray.getDirection());
+            ray = hitSurface.spawnRay(ray.getDirection());
         }
     }
     

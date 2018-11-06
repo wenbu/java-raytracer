@@ -14,11 +14,11 @@ import javax.swing.WindowConstants;
 import core.colors.RGBSpectrum;
 import core.concurrency.AtomicDouble;
 import core.math.Direction2;
-import utilities.MathUtilities;
 import core.math.Point2;
 import core.space.BoundingBox2;
-import film.filter.Filter;
 import film.FilmTile.FilmTilePixel;
+import film.filter.Filter;
+import utilities.MathUtilities;
 
 public class Film
 {
@@ -166,7 +166,8 @@ public class Film
         // Scale samples from [0,1) to [0,256)
         for (int i = 0; i < imageRgb.length; i++)
         {
-            imageRgb[i] = MathUtilities.clamp(255 * MathUtilities.gammaCorrect(imageRgb[i]) + 0.5, 0, 255);
+            double scaledSample = 255 * MathUtilities.gammaCorrect(imageRgb[i]);
+            imageRgb[i] = MathUtilities.clamp(scaledSample, 0, 255);
         }
         displayImage((int) resolution.x(), (int) resolution.y(), imageRgb, true);
     }

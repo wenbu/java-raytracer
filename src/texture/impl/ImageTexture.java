@@ -1,5 +1,7 @@
 package texture.impl;
 
+import java.util.logging.Logger;
+
 import core.colors.RGBSpectrum;
 import core.math.Direction2;
 import core.math.Point2;
@@ -11,6 +13,8 @@ import utilities.ImageUtilities;
 
 public class ImageTexture<T> implements Texture<T>
 {
+    private static final Logger logger = Logger.getLogger(ImageTexture.class.getName());
+    
     private final TextureMapping2D mapping;
     private MipMap<T> mipMap;
 
@@ -18,7 +22,12 @@ public class ImageTexture<T> implements Texture<T>
             double maxAnisotropy, ImageWrap wrapMode, double scale, boolean gamma, Class<T> clazz)
     {
         this.mapping = mapping;
+        
+        long start = System.currentTimeMillis();
         mipMap = getTexture(fileName, doTrilinear, maxAnisotropy, wrapMode, scale, gamma, clazz);
+        long end = System.currentTimeMillis();
+        
+        logger.info("Spent " + (end - start) + "ms initializing " + fileName + ".");
     }
 
     private MipMap<T> getTexture(String fileName, boolean doTrilinear, double maxAnisotropy,

@@ -41,6 +41,7 @@ public class BoundingVolumeHierarchy implements Aggregate
         
         if (primitives.isEmpty())
         {
+            this.primitives = Collections.emptyList();
             return;
         }
 
@@ -94,6 +95,11 @@ public class BoundingVolumeHierarchy implements Aggregate
     @Override
     public SurfaceInteraction intersect(Ray ray)
     {
+        if (nodes == null)
+        {
+            return null;
+        }
+        
         SurfaceInteraction intersection = null;
         Direction3 invDirection = new Direction3(1 / ray.getDirection().x(),
                                                  1 / ray.getDirection().y(),
