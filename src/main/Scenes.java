@@ -13,7 +13,9 @@ import core.math.Transformation;
 import scene.Scene;
 import scene.geometry.impl.Sphere;
 import scene.geometry.impl.Triangle;
+import scene.lights.AreaLight;
 import scene.lights.Light;
+import scene.lights.impl.DiffuseAreaLight;
 import scene.lights.impl.DirectionalLight;
 import scene.lights.impl.InfiniteAreaLight;
 import scene.lights.impl.PointLight;
@@ -43,18 +45,24 @@ public class Scenes
     {
         try
         {
-            PdbReader pdbReader = new PdbReader(pdbPath);
+            PdbReader pdbReader = new PdbReader(pdbPath, 1.5);
             Transformation sceneTransform = Transformation.IDENTITY;
             List<Primitive> primitives = pdbReader.read(sceneTransform);
             List<Light> lights = new LinkedList<>();
+//
+//            Light light1 = new DirectionalLight(new Transformation(),
+//                                                new RGBSpectrum(0.9, 0.9, 1),
+//                                                new Direction3(-1, 1, 1));
+//            lights.add(light1);
+//            Transformation lightTransform = Transformation.getTranslation(0, 10, 0);
+//            Light light2 = new PointLight(lightTransform, new MediumInterface(), new RGBSpectrum(50, 50, 50));
+//            lights.add(light2);
 
-            Light light1 = new DirectionalLight(new Transformation(),
-                                                new RGBSpectrum(0.9, 0.9, 1),
-                                                new Direction3(-1, 1, 1));
-            lights.add(light1);
-            Transformation lightTransform = Transformation.getTranslation(0, 10, 0);
-            Light light2 = new PointLight(lightTransform, new MediumInterface(), new RGBSpectrum(50, 50, 50));
-            lights.add(light2);
+            Light light = new InfiniteAreaLight(Transformation.IDENTITY,
+                                                 new RGBSpectrum(1),
+                                                 20,
+                                                 "textures/vp_sky_v2_002_sm.jpg");
+            lights.add(light);
             
             Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.SURFACE_AREA_HEURISTIC);
             
@@ -65,6 +73,7 @@ public class Scenes
             throw new RuntimeException(e);
         }
     }
+    
     public static Scene spheres()
     {
         List<Primitive> primitives = new LinkedList<>();
@@ -135,12 +144,13 @@ public class Scenes
         primitives.add(spherePrimitive3);
 
         List<Triangle> triangles = MeshUtilities.createSingleTriangle(Transformation.IDENTITY,
-                                                                      new Point3(5, -17, 5),
                                                                       new Point3(1, -20, 4),
+                                                                      new Point3(5, -17, 5),
                                                                       new Point3(6, -20, -1));
-        Material material4 = MaterialUtilities.getMirrorMaterial(Colors.GRAY30);
-        List<Primitive> trianglePrimitives1 = getPrimitives(triangles, material4);
-        primitives.addAll(trianglePrimitives1);
+        Material material4 = MaterialUtilities.getMatteMaterial(Colors.WHITE, 1.0);
+        AreaLight light3 = new DiffuseAreaLight(Transformation.IDENTITY, new MediumInterface(), new RGBSpectrum(10, 10, 10), 1, triangles.get(0));
+        Primitive trianglePrimitive = new GeometricPrimitive(triangles.get(0), material4, light3, new MediumInterface());
+        primitives.add(trianglePrimitive);
 
         Transformation cubeTransform = Transformation.getTranslation(2, -15, -2)
                                                      .compose(Transformation.getRotation(new Direction3(1, 1, 1),
@@ -157,27 +167,21 @@ public class Scenes
         List<Triangle> planeTriangles1 = MeshUtilities.createQuad(planeTransform1);
         List<Primitive> planePrimitives1 = getPrimitives(planeTriangles1, material6);
         primitives.addAll(planePrimitives1);
-
-        Transformation planeTransform2 = Transformation.getTranslation(0, -30, 5)
-                                                       .compose(Transformation.getRotation(new Direction3(1, 0, 0),
-                                                                                           90))
-                                                       .compose(Transformation.getUniformScale(20));
-        List<Triangle> planeTriangles2 = MeshUtilities.createQuad(planeTransform2);
-        List<Primitive> planePrimitives2 = getPrimitives(planeTriangles2, material6);
-        primitives.addAll(planePrimitives2);
         
         Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.SURFACE_AREA_HEURISTIC);
         
         List<Light> lights = new LinkedList<>();
 
-        Light light1 = new DirectionalLight(new Transformation(),
-                                            new RGBSpectrum(0.9, 0.9, 1),
-                                            new Direction3(-1, 1, 1));
-        lights.add(light1);
+//        Light light1 = new DirectionalLight(new Transformation(),
+//                                            new RGBSpectrum(0.9, 0.9, 1),
+//                                            new Direction3(-1, 1, 1));
+//        lights.add(light1);
         
-        Transformation lightTransform = Transformation.getTranslation(0, 2, 0);
-        Light light2 = new PointLight(lightTransform, new MediumInterface(), new RGBSpectrum(50, 50, 50));
-        lights.add(light2);
+//        Transformation lightTransform = Transformation.getTranslation(0, 2, 0);
+//        Light light2 = new PointLight(lightTransform, new MediumInterface(), new RGBSpectrum(50, 50, 50));
+//        lights.add(light2);
+        
+        lights.add(light3);
 
         return new Scene(geo, lights);
     }

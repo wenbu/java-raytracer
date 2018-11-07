@@ -21,6 +21,7 @@ import utilities.MaterialUtilities;
 public class PdbReader
 {
     private final String filePath;
+    private final double radiusMultiplier;
     
     private static class ElementInfo
     {
@@ -54,9 +55,10 @@ public class PdbReader
         elements.put("P", new ElementInfo(0.7, 0.5, 0.1, 1));
     }
     
-    public PdbReader(String filePath)
+    public PdbReader(String filePath, double radiusMultiplier)
     {
         this.filePath = filePath;
+        this.radiusMultiplier = radiusMultiplier;
     }
     
     public List<Primitive> read(Transformation sceneTransform) throws FileNotFoundException, IOException
@@ -102,7 +104,7 @@ public class PdbReader
                 double radius = elementInfo.getRadius();
                 
                 Transformation transform = sceneTransform.compose(Transformation.getTranslation(x, y, z));
-                Sphere sphere = new Sphere(transform, transform.inverse(), false, radius);
+                Sphere sphere = new Sphere(transform, transform.inverse(), false, radius * radiusMultiplier);
                 Material material = MaterialUtilities.getPlasticMaterial(color, Colors.WHITE, 0.1, false);
                 Primitive primitive = new GeometricPrimitive(sphere, material);
                 
