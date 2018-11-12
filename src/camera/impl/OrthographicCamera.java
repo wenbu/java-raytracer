@@ -4,6 +4,7 @@ import camera.ProjectiveCamera;
 import core.Ray;
 import core.RayDifferential;
 import core.math.Direction3;
+import core.math.Point2;
 import utilities.MathUtilities;
 import core.math.Point3;
 import core.math.Transformation;
@@ -12,6 +13,8 @@ import core.tuple.Pair;
 import film.Film;
 import camera.CameraSample;
 import scene.medium.Medium;
+
+import static utilities.SamplingUtilities.concentricSampleDisk;
 
 public class OrthographicCamera extends ProjectiveCamera
 {
@@ -49,8 +52,12 @@ public class OrthographicCamera extends ProjectiveCamera
         Point3 pCamera = rasterToCamera.transform(pFilm);
         
         Ray ray = new Ray(pCamera, new Direction3(0, 0, 1));
-        
-        // TODO modify ray for depth of field
+
+        // modify ray for depth of field
+        if (lensRadius > 0)
+        {
+            applyDepthOfField(ray, sample);
+        }
         
         ray.setTime(MathUtilities.lerp(sample.getTime(), shutterOpen, shutterClose));
         ray.setMedium(medium);
@@ -66,12 +73,26 @@ public class OrthographicCamera extends ProjectiveCamera
         Point3 pCamera = rasterToCamera.transform(pFilm);
         
         RayDifferential ray = new RayDifferential(pCamera, new Direction3(0, 0, 1));
-        
-        // TODO modify ray for depth of field
-        
+
+        // modify ray for depth of field
         if (lensRadius > 0)
         {
-            // TODO handle lenses
+            applyDepthOfField(ray, sample);
+        }
+
+        if (lensRadius > 0)
+        {
+            // sample point on lens
+            Point2 pLens = concentricSampleDisk(sample.getPLens()).times(lensRadius);
+            double ft = focalDistance / ray.getDirection().z();
+
+            Point3 pFocus = pCamera.plus(dxCamera).plus(new Direction3(0, 0, ft));
+            ray.setRxOrigin(new Point3(pLens.x(), pLens.y(), 0));
+            ray.setRxDirection(pFocus.minus(ray.getRxOrigin()).normalize());
+
+            pFocus = pCamera.plus(dyCamera).plus(new Direction3(0, 0, ft));
+            ray.setRyOrigin(new Point3(pLens.x(), pLens.y(), 0));
+            ray.setRyDirection(pFocus.minus(ray.getRyOrigin()).normalize());
         }
         else
         {
