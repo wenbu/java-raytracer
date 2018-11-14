@@ -121,12 +121,12 @@ public abstract class Light
                 {
                     return new RGBSpectrum(0, 0, 0);
                 }
-                /* TODO transmittance
-                 * if (ray.getMedium() != null)
-                 * {
-                 *     transmittance = transmittance.times(ray.getMedium().transmittance(ray, sampler));
-                 * }
-                 */
+                /* TODO update transmittance for current ray segment
+                if (ray.getMedium() != null)
+                {
+                    transmittance = transmittance.times(ray.getMedium().transmittance(ray, sampler));
+                }
+                */
                 if (isect == null)
                 {
                     break;

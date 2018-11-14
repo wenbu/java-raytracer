@@ -16,7 +16,7 @@ import scene.primitives.Primitive;
 
 public class SurfaceInteraction extends Interaction
 {
-    private final Point2 uv;
+    private Point2 uv;
     private final Direction3 dpdu, dpdv;
     private final Normal3 dndu, dndv;
     private final Shape shape;
@@ -59,6 +59,29 @@ public class SurfaceInteraction extends Interaction
         this.dndv = dndv;
         this.shape = shape;
         this.shadingGeometry = new ShadingGeometry(shadingN, shadingDndu, shadingDndv, shadingDpdu, shadingDpdv);
+    }
+
+    /**
+     * Shallow copy constructor.
+     */
+    public SurfaceInteraction(SurfaceInteraction s)
+    {
+        super(s.p, s.n, s.error, s.wo, s.t, s.mediumInterface);
+        this.uv = s.uv;
+        this.dpdu = s.dpdu;
+        this.dpdv = s.dpdv;
+        this.dndu = s.dndu;
+        this.dndv = s.dndv;
+        this.shape = s.shape;
+        this.shadingGeometry = s.shadingGeometry;
+        this.primitive = s.primitive;
+        this.bsdf = s.bsdf;
+        this.dpdx = s.dpdx;
+        this.dpdy = s.dpdy;
+        this.dudx = s.dudx;
+        this.dudy = s.dudy;
+        this.dvdx = s.dvdx;
+        this.dvdy = s.dvdy;
     }
     
     public RGBSpectrum getEmittedRadiance(Direction3 w)
@@ -156,7 +179,12 @@ public class SurfaceInteraction extends Interaction
             dpdy = new Direction3(0, 0, 0);
         }
     }
-    
+
+    public void setUv(Point2 uv)
+    {
+        this.uv = uv;
+    }
+
     public Point2 getUv()
     {
         return uv;

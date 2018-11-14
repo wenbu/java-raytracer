@@ -32,7 +32,7 @@ public class WhittedIntegrator extends SamplerIntegrator
         {
             for (Light light : scene.getLights())
             {
-                radiance = radiance.plus(light.emittedRadiance(ray));
+                radiance.plusEquals(light.emittedRadiance(ray));
             }
             return radiance;
         }
@@ -41,8 +41,9 @@ public class WhittedIntegrator extends SamplerIntegrator
         Normal3 n = surfaceInteraction.getShadingGeometry().getN();
         Direction3 wo = surfaceInteraction.getWo();
         surfaceInteraction.computeScatteringFunctions(ray);
-        // TODO when area lights are added
-        // radiance = radiance.plus(surfaceInteraction.emittedRadiance(wo));
+
+        radiance.plusEquals(surfaceInteraction.getEmittedRadiance(wo));
+
         for (Light light : scene.getLights())
         {
             var sample = light.sampleRadiance(surfaceInteraction, sampler.get2D());
@@ -59,14 +60,14 @@ public class WhittedIntegrator extends SamplerIntegrator
             RGBSpectrum f = surfaceInteraction.getBsdf().f(wo, wi);
             if (!f.isBlack() && visibility.unoccluded(scene))
             {
-                radiance = radiance.plus(f.times(incidentRadiance).times(wi.absDot(n) / pdf));
+                radiance.plusEquals(f.times(incidentRadiance).times(wi.absDot(n) / pdf));
             }
         }
         
         if (depth + 1 < maxDepth)
         {
-            radiance = radiance.plus(specularReflect(ray, surfaceInteraction, scene, sampler, depth));
-            radiance = radiance.plus(specularTransmit(ray, surfaceInteraction, scene, sampler, depth));
+            radiance.plusEquals(specularReflect(ray, surfaceInteraction, scene, sampler, depth));
+            radiance.plusEquals(specularTransmit(ray, surfaceInteraction, scene, sampler, depth));
         }
         
         return radiance;

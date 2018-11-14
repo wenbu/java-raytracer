@@ -9,10 +9,12 @@ import core.math.Point3;
 import core.math.Transformation;
 import core.space.BoundingBox2;
 import film.Film;
+import film.filter.impl.BoxFilter;
 import film.filter.impl.MitchellFilter;
 import integrator.Integrator;
 import integrator.impl.DirectLightingIntegrator;
 import integrator.impl.DirectLightingIntegrator.LightStrategy;
+import integrator.impl.debug.UnlitIntegrator;
 import sampler.Sampler;
 import sampler.impl.StratifiedSampler;
 import scene.Scene;
@@ -22,9 +24,9 @@ public class Main
     // TODO: scene parser
     public static void main(String[] args)
     {
-        Sampler sampler = new StratifiedSampler(10, 10, true, 10);
+        Sampler sampler = new StratifiedSampler(5, 5, true, 4);
 
-        Point2 resolution = new Point2(640, 360);
+        Point2 resolution = new Point2(512, 512);
         Film film = getFilm(resolution);
         
         Point3 cameraPosition = new Point3(0, 0, 2);
@@ -33,7 +35,7 @@ public class Main
         Camera camera = getCamera(cameraPosition, cameraLookAt, cameraUp, resolution, 40, film);
 
         Integrator integrator = new DirectLightingIntegrator(sampler, camera, LightStrategy.UNIFORM_SAMPLE_ALL, 5);
-        Scene scene = Scenes.getTestScene();
+        Scene scene = Scenes.oneSphere();
 
         integrator.render(scene);
     }
@@ -44,7 +46,7 @@ public class Main
                              new BoundingBox2(0, 0, 1, 1),
                              new MitchellFilter(new Direction2(1, 1), 0.6, 0.2),
                              100,
-                             "placeholder",
+                             "img/img-" + System.currentTimeMillis() + ".png",
                              1);
         return film;
     }

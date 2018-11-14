@@ -29,7 +29,7 @@ public class MatteMaterial implements Material
     {
         if (bump != null)
         {
-            // TODO bumpmapping
+            bump(bump, si);
         }
         
         BidirectionalScatteringDistributionFunction bsdf = new BidirectionalScatteringDistributionFunction(si);

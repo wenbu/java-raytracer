@@ -35,7 +35,10 @@ public class PlasticMaterial implements Material
     public void computeScatteringFunctions(SurfaceInteraction si, TransportMode mode,
             boolean allowMultipleLobes)
     {
-        // TODO bumpmapping
+        if (bumpMap != null)
+        {
+            bump(bumpMap, si);
+        }
 
         BidirectionalScatteringDistributionFunction bsdf = new BidirectionalScatteringDistributionFunction(si);
         
@@ -52,8 +55,7 @@ public class PlasticMaterial implements Material
             double rough = roughness.evaluate(si);
             if (remapRoughness)
             {
-                // TODO
-                // rough = TrowbridgeReitzDistribution.roughnessToAlpha(rough);
+                rough = TrowbridgeReitzDistribution.roughnessToAlpha(rough);
             }
             MicrofacetDistribution distribution = new TrowbridgeReitzDistribution(rough, rough);
             bsdf.addBxdf(new MicrofacetReflection(ks, distribution, fresnel));

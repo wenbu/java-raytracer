@@ -6,8 +6,8 @@ import scene.medium.Medium;
 
 public class Ray
 {
-    protected final Point3 origin;
-    protected final Direction3 direction;
+    protected Point3 origin;
+    protected Direction3 direction;
 
     private double tMax;
     private double time;
@@ -52,11 +52,21 @@ public class Ray
         return origin;
     }
 
+    public void setOrigin(Point3 origin)
+    {
+        this.origin = origin;
+    }
+
     public Direction3 getDirection()
     {
         return direction;
     }
-    
+
+    public void setDirection(Direction3 direction)
+    {
+        this.direction = direction;
+    }
+
     /**
      * @param t
      * @return the Point at origin + t * direction

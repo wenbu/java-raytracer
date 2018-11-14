@@ -3,6 +3,7 @@ package scene.materials.functions;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.logging.Logger;
 
 import core.colors.RGBSpectrum;
 import core.math.Direction3;
@@ -16,6 +17,8 @@ import scene.materials.functions.AbstractBidirectionalDistributionFunction.BxDFT
 
 public class BidirectionalScatteringDistributionFunction
 {
+    private static final Logger logger = Logger.getLogger(BidirectionalScatteringDistributionFunction.class.getName());
+
     private final double eta;
     private final Normal3 ns, ng;
     private final Direction3 ss, ts;
