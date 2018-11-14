@@ -16,6 +16,11 @@ public class Normal3 extends Vector3
     {
         this(direction.getVector());
     }
+
+    public Normal3(Normal3 normalToCopy)
+    {
+        this(normalToCopy.getVector());
+    }
     
     Normal3(double[] vector)
     {

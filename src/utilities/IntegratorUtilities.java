@@ -55,7 +55,7 @@ public class IntegratorUtilities
             {
                 // estimate direct lighting using sample arrays
                 RGBSpectrum directRadiance = new RGBSpectrum(0);
-                for (int k = 0; j < numSamples; k++)
+                for (int k = 0; k < numSamples; k++)
                 {
                     directRadiance.plusEquals(estimateDirect(it,
                                                              uScatteringArray.get(k),
@@ -134,7 +134,7 @@ public class IntegratorUtilities
                 // TODO evaluate phase function for light sampling strategy
                 throw new UnsupportedOperationException("MediumInteraction TODO");
             }
-            
+
             if(!f.isBlack())
             {
                 // compute effect of visibility for light source sample
@@ -146,7 +146,7 @@ public class IntegratorUtilities
                 {
                     radiance = new RGBSpectrum(0);
                 }
-                
+
                 // add light's contribution to reflected radiance
                 if (!radiance.isBlack())
                 {
@@ -170,8 +170,6 @@ public class IntegratorUtilities
             if (it instanceof SurfaceInteraction)
             {
                 // sample scattered direction for surface interactions
-                try
-                {
                 SurfaceInteraction isect = (SurfaceInteraction) it;
                 var sample = isect.getBsdf().sampleF(isect.getWo(), uScattering, bsdfFlags);
                 f = sample.getFirst();
@@ -180,18 +178,13 @@ public class IntegratorUtilities
                 EnumSet<BxDFType> sampledType = sample.getFourth();
                 f.timesEquals(wi.absDot(isect.getShadingGeometry().getN()));
                 sampledSpecular = sampledType.contains(BxDFType.SPECULAR);
-                } catch (NullPointerException e)
-                {
-                    System.out.println(":(");
-                    throw e;
-                }
             }
             else
             {
                 // TODO sample scattered direction for medium interactions
                 throw new UnsupportedOperationException("MediumInteraction TODO");
             }
-            
+
             if (!f.isBlack() && scatteringPdf > 0)
             {
                 // account for light contributions along sampled direction wi
@@ -219,7 +212,7 @@ public class IntegratorUtilities
                 {
                     lightIsect = scene.intersect(ray);
                 }
-                
+
                 // add light contribution from material sampling
                 radiance = new RGBSpectrum(0);
                 if (lightIsect != null)
@@ -233,7 +226,7 @@ public class IntegratorUtilities
                 {
                     radiance = light.emittedRadiance(new RayDifferential(ray));
                 }
-                
+
                 if (!radiance.isBlack())
                 {
                     directRadiance.plusEquals(f.times(radiance)

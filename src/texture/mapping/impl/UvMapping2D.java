@@ -12,7 +12,12 @@ public class UvMapping2D implements TextureMapping2D
     private double sv;
     private double du;
     private double dv;
-    
+
+    public UvMapping2D()
+    {
+        this(1, 1, 0, 0);
+    }
+
     public UvMapping2D(double su, double sv, double du, double dv)
     {
         this.su = su;

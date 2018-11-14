@@ -25,12 +25,13 @@ import scene.materials.functions.BidirectionalScatteringDistributionFunction;
 
 public abstract class SamplerIntegrator implements Integrator
 {
-    private static final Logger logger = Logger.getLogger(SamplerIntegrator.class.getName());
+    protected static final Logger logger = Logger.getLogger(SamplerIntegrator.class.getName());
 
     private final Sampler sampler;
     private final Camera camera;
 
     private final ExecutorService executor;
+    private final int numThreads;
     private static final int TILE_SIZE = 16;
     
     public SamplerIntegrator(Sampler sampler, Camera camera)
@@ -38,8 +39,7 @@ public abstract class SamplerIntegrator implements Integrator
         this.sampler = sampler;
         this.camera = camera;
 
-        int numThreads = Runtime.getRuntime().availableProcessors();
-        logger.info("Rendering with " + numThreads + " threads.");
+        numThreads = Runtime.getRuntime().availableProcessors();
         executor = Executors.newFixedThreadPool(numThreads);
     }
 
@@ -56,6 +56,7 @@ public abstract class SamplerIntegrator implements Integrator
         long preprocessEnd = System.currentTimeMillis();
         logger.info("Preprocessed scene in " + (preprocessEnd - preprocessStart) + " ms.");
 
+        logger.info("Rendering with " + numThreads + " threads.");
         long renderStart = System.currentTimeMillis();
         BoundingBox2 sampleBounds = camera.getFilm().getSampleBounds();
         Direction2 sampleExtent = sampleBounds.diagonal();
