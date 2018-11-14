@@ -74,6 +74,25 @@ public class StratifiedSampler extends PixelSampler
                                                        yPixelSamples,
                                                        jitterSamples,
                                                        samples1D.size());
+        for (int i = 0; i < sampleArrays1D.size(); i++)
+        {
+            List<List<Double>> dim = sampleArrays1D.get(i);
+            if (dim.size() != 0)
+            {
+                int arraySize = dim.get(0).size();
+                copy.request1DArray(arraySize);
+            }
+        }
+
+        for (int i = 0; i < sampleArrays2D.size(); i++)
+        {
+            List<List<Point2>> dim = sampleArrays2D.get(i);
+            if (dim.size() != 0)
+            {
+                int arraySize = dim.get(0).size();
+                copy.request2DArray(arraySize);
+            }
+        }
         copy.random.setSeed(seed);
         return copy;
     }
