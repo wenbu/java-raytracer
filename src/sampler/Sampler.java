@@ -12,8 +12,7 @@ public abstract class Sampler
 {
     protected static final Logger logger = Logger.getLogger(Sampler.class.getName());
     
-    // XXX Java's lists and arrays are indexed by ints. This might become a problem
-    // with very large sample counts.
+    // XXX Java's lists and arrays are indexed by ints. This might become a problem with very large sample counts.
     protected final long samplesPerPixel;
     
     protected Point2 currentPixel;

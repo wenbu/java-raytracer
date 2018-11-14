@@ -49,7 +49,6 @@ public class Scene
     
     public Pair<RGBSpectrum, SurfaceInteraction> intersectTr(Ray ray, Sampler sampler)
     {
-        // XXX This depends on intersect() properly updating tMax. Not sure if that's working.
         RGBSpectrum transmittance = new RGBSpectrum(1, 1, 1);
         
         while(true)

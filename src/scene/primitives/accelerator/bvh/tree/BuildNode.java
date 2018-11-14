@@ -3,9 +3,8 @@ package scene.primitives.accelerator.bvh.tree;
 import core.space.Axis;
 import core.space.BoundingBox3;
 
-public class BuildNode
+class BuildNode
 {
-    // XXX Public for now. Move back to package private later;
     public BoundingBox3 bounds;
     public BuildNode[] children = new BuildNode[2];
     public Axis splitAxis;

@@ -101,10 +101,9 @@ public class PerspectiveCamera extends ProjectiveCamera
         // TODO handle depth of field
         
         // compute offset rays for ray differentials
-        // TODO handle lenses
         if (lensRadius > 0)
         {
-            // TODO
+            // TODO handle lenses
         }
         else
         {

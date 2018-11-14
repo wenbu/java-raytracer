@@ -121,7 +121,7 @@ public abstract class Light
                 {
                     return new RGBSpectrum(0, 0, 0);
                 }
-                /* TODO
+                /* TODO transmittance
                  * if (ray.getMedium() != null)
                  * {
                  *     transmittance = transmittance.times(ray.getMedium().transmittance(ray, sampler));
