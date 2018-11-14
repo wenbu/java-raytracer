@@ -2,9 +2,11 @@ package film;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -18,20 +20,24 @@ import core.math.Point2;
 import core.space.BoundingBox2;
 import film.FilmTile.FilmTilePixel;
 import film.filter.Filter;
+import film.writer.PngImageWriter;
 import utilities.MathUtilities;
 
 public class Film
 {
+    private static final Logger logger = Logger.getLogger(Film.class.getName());
+
     private final Point2 resolution;
     private final double diagonal;
     private Filter filter;
-    private final String fileName;
     private final double scale;
     private BoundingBox2 croppedPixelBounds;
     private List<Pixel> pixels;
     
     private static final int FILTER_TABLE_WIDTH = 16;
     private double[] filterTable;
+
+    private final ImageWriter imageWriter;
     
     public Film(Point2 resolution, BoundingBox2 cropWindow, Filter filter, double diagonal, String fileName,
             double scale)
@@ -39,8 +45,8 @@ public class Film
         this.resolution = resolution;
         this.filter = filter;
         this.diagonal = diagonal * 0.001;
-        this.fileName = fileName;
         this.scale = scale;
+        this.imageWriter = new PngImageWriter(fileName);
         
         croppedPixelBounds = new BoundingBox2(new Point2(Math.ceil(resolution.x() * cropWindow.get(0).x()),
                                                          Math.ceil(resolution.y() * cropWindow.get(0).y())),
@@ -169,28 +175,15 @@ public class Film
             double scaledSample = 255 * MathUtilities.gammaCorrect(imageRgb[i]);
             imageRgb[i] = MathUtilities.clamp(scaledSample, 0, 255);
         }
-        displayImage((int) resolution.x(), (int) resolution.y(), imageRgb, true);
-    }
-    
-    // ImageWriter class?
-    private void displayImage(int imageX, int imageY, double[] image, boolean exitOnClose)
-    {
-        JFrame frame = new JFrame();
-        JLabel label = new JLabel();
-        BufferedImage img = new BufferedImage(imageX,
-                                              imageY,
-                                              BufferedImage.TYPE_INT_RGB);
-        WritableRaster raster = (WritableRaster) img.getData();
-        raster.setPixels(0, 0, imageX, imageY, image);
-        img.setData(raster);
-        ImageIcon icon = new ImageIcon(img);
-        label.setIcon(icon);
-        frame.add(label);
-        frame.pack();
-        frame.setVisible(true);
-        if (exitOnClose)
+
+        try
         {
-            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            imageWriter.writeImage((int) resolution.x(), (int) resolution.y(), imageRgb);
+        }
+        catch (IOException e)
+        {
+            logger.severe("IOException while writing image: " + e);
+            throw new RuntimeException(e);
         }
     }
     
