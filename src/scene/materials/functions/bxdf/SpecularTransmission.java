@@ -55,7 +55,7 @@ public class SpecularTransmission extends AbstractBidirectionalDistributionFunct
         Direction3 wi = refract(wo, Normal3.faceForward(new Normal3(0, 0, 1), wo), etaI / etaT);
         if (wi == null)
         {
-            return null;
+            return new Quadruple<>(new RGBSpectrum(0), new Direction3(0, 0, 0), 0.0, EnumSet.noneOf(BxDFType.class));
         }
         
         double pdf = 1;

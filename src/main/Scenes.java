@@ -1,13 +1,9 @@
 package main;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import core.colors.Colors;
 import core.colors.RGBSpectrum;
 import core.math.Direction3;
+import core.math.Point2;
 import core.math.Point3;
 import core.math.Transformation;
 import scene.Scene;
@@ -16,9 +12,7 @@ import scene.geometry.impl.Triangle;
 import scene.lights.AreaLight;
 import scene.lights.Light;
 import scene.lights.impl.DiffuseAreaLight;
-import scene.lights.impl.DirectionalLight;
 import scene.lights.impl.InfiniteAreaLight;
-import scene.lights.impl.PointLight;
 import scene.materials.Material;
 import scene.materials.impl.MatteMaterial;
 import scene.materials.impl.PlasticMaterial;
@@ -29,15 +23,20 @@ import scene.primitives.accelerator.bvh.BoundingVolumeHierarchy;
 import scene.primitives.accelerator.bvh.BoundingVolumeHierarchy.SplitMethod;
 import scene.primitives.impl.GeometricPrimitive;
 import texture.Texture;
-import texture.impl.CheckerboardTexture;
-import texture.impl.ConstantTexture;
-import texture.impl.ImageTexture;
+import texture.impl.*;
 import texture.impl.MipMap.ImageWrap;
 import texture.mapping.TextureMapping2D;
 import texture.mapping.impl.PlanarMapping2D;
 import texture.mapping.impl.SphericalMapping2D;
+import texture.mapping.impl.UvMapping2D;
 import utilities.MaterialUtilities;
 import utilities.MeshUtilities;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Scenes
 {
@@ -80,14 +79,14 @@ public class Scenes
         
         Transformation sphereTransform1 = Transformation.getTranslation(-2, -10, 1.5);
         Sphere         sphere          = new Sphere(sphereTransform1, sphereTransform1.inverse(), false, 1.5);
-        Material       material        = MaterialUtilities.getGlassMaterial(Colors.GRAY20, Colors.GRAY80, 0, 1.5);
+        Material       material        = MaterialUtilities.getGlassMaterial(Colors.GRAY20, Colors.GRAY80, 0, 1.5, null);
         Primitive      spherePrimitive = new GeometricPrimitive(sphere, material);
         primitives.add(spherePrimitive);
         
         Transformation sphereTransform2 = Transformation.getTranslation(0, -15, 2.5);
         Sphere sphere2 = new Sphere(sphereTransform2, sphereTransform2.inverse(), false, 2.5);
-        TextureMapping2D textureMapping = new SphericalMapping2D(sphereTransform2.inverse());
-        Texture<RGBSpectrum> tex = new ImageTexture<>(textureMapping, "textures/UV_Grid_Sm.jpg", false, 16, ImageWrap.REPEAT, 1, true, RGBSpectrum.class);
+        TextureMapping2D textureMapping2 = new SphericalMapping2D(sphereTransform2.inverse());
+        Texture<RGBSpectrum> tex = new ImageTexture<>(textureMapping2, "textures/UV_Grid_Sm.jpg", false, 16, ImageWrap.REPEAT, 1, true, RGBSpectrum.class);
         Material material2 = new PlasticMaterial(tex, new ConstantTexture<>(Colors.WHITE),
                                                  new ConstantTexture<>(0.4), null, false);
         Primitive spherePrimitive2 = new GeometricPrimitive(sphere2, material2);
@@ -95,7 +94,9 @@ public class Scenes
         
         Transformation sphereTransform3 = Transformation.getTranslation(2, -10, 1.5);
         Sphere sphere3 = new Sphere(sphereTransform3, sphereTransform3.inverse(), false, 1.5);
-        Material material3 = MaterialUtilities.getMirrorMaterial(Colors.WHITE);
+        TextureMapping2D textureMapping3 = new SphericalMapping2D(sphereTransform3.inverse());
+        Texture<Double> bump3 = new PyramidTexture(textureMapping3, new Point2(0.125, 0.125), 0, 1);
+        Material material3 = MaterialUtilities.getMirrorMaterial(Colors.WHITE, bump3);
         Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3);
         primitives.add(spherePrimitive3);
         
@@ -118,6 +119,61 @@ public class Scenes
         
         Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.SURFACE_AREA_HEURISTIC);
         
+        return new Scene(geo, lights);
+    }
+
+    public static Scene oneSphere()
+    {
+        List<Primitive> primitives = new LinkedList<>();
+
+        Transformation sphereTransform3 = Transformation.getTranslation(0, -5, 1.5);
+        Sphere sphere3 = new Sphere(sphereTransform3, sphereTransform3.inverse(), false, 1.5);
+        TextureMapping2D textureMapping3 = new UvMapping2D();
+        Texture<Double> bump3 = new PyramidTexture(textureMapping3, new Point2(0.125, 0.125), 0, 1);
+        Material material3 = MaterialUtilities.getMirrorMaterial(Colors.WHITE, bump3);
+        Primitive spherePrimitive3 = new GeometricPrimitive(sphere3, material3);
+        primitives.add(spherePrimitive3);
+
+        Transformation planeTransform = Transformation.getTranslation(0, -20, 0)
+                                                      .compose(Transformation.getUniformScale(2000));
+        TextureMapping2D planeTextureMapping = new PlanarMapping2D(new Direction3(1, 0, 0), new Direction3(0, 1, 0), 0.002, 0.002);
+        Texture<RGBSpectrum> checkerTexture = new CheckerboardTexture<>(planeTextureMapping, Colors.GRAY10, Colors.GRAY90, 1);
+        Material planeMaterial = new MatteMaterial(checkerTexture, new ConstantTexture<>(0.0), null);
+        List<Triangle> planeTriangles = MeshUtilities.createQuad(planeTransform);
+        List<Primitive> planePrimitives = getPrimitives(planeTriangles, planeMaterial);
+        primitives.addAll(planePrimitives);
+
+        List<Light> lights = new LinkedList<>();
+
+        Light light = new InfiniteAreaLight(Transformation.IDENTITY,
+                                            new RGBSpectrum(1),
+                                            1,
+                                            "textures/vp_sky_v2_002_sm.jpg");
+        lights.add(light);
+
+        Aggregate geo = new BoundingVolumeHierarchy(primitives, 5, SplitMethod.SURFACE_AREA_HEURISTIC);
+
+        return new Scene(geo, lights);
+    }
+
+    public static Scene oneQuad()
+    {
+        List<Primitive> primitives = new LinkedList<>();
+
+        Transformation planeTransform = Transformation.getTranslation(0, -5, 1.5)
+                                                      .compose(Transformation.getRotation(new Direction3(1, 0, 0), 90))
+                                                      .compose(Transformation.getUniformScale(3));
+        TextureMapping2D planeTextureMapping = new PlanarMapping2D(new Direction3(1, 0, 0), new Direction3(0, 0, 1), 1, 1);
+        Texture<Double> bump = new PyramidTexture(planeTextureMapping, new Point2(0.25, 0.25), 0, 1);
+        Material material = MaterialUtilities.getMirrorMaterial(Colors.WHITE, bump);
+        List<Triangle> planeTriangles = MeshUtilities.createQuad(planeTransform);
+        List<Primitive> planePrimitives = getPrimitives(planeTriangles, material);
+        primitives.addAll(planePrimitives);
+
+        Light light = new InfiniteAreaLight(Transformation.IDENTITY, new RGBSpectrum(1), 5, "textures/vp_sky_v2_002_sm.jpg");
+        List<Light> lights = Collections.singletonList(light);
+
+        Aggregate geo = new BoundingVolumeHierarchy(primitives, 2, SplitMethod.EQUAL_COUNTS);
         return new Scene(geo, lights);
     }
     

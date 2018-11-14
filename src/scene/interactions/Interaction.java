@@ -10,7 +10,7 @@ import scene.medium.Medium.MediumInterface;
 
 public class Interaction
 {
-    public final Point3 p;
+    public Point3 p;
     public final double t;
     public final Direction3 error;
     public final Direction3 wo;
@@ -62,6 +62,11 @@ public class Interaction
         Point3 origin = GeometryUtilities.offsetRayOrigin(p, error, n, p2.minus(p));
         Direction3 direction = p2.minus(origin);
         return new Ray(origin, direction, 1 - GeometryUtilities.SHADOW_EPSILON, t, getMedium(direction));
+    }
+
+    public void setP(Point3 p)
+    {
+        this.p = p;
     }
 
     public Point3 getP()

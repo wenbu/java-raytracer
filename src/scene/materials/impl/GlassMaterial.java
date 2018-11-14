@@ -43,7 +43,10 @@ public class GlassMaterial implements Material
     public void computeScatteringFunctions(SurfaceInteraction si, TransportMode mode,
             boolean allowMultipleLobes)
     {
-        // TODO bump
+        if (bump != null)
+        {
+            bump(bump, si);
+        }
         
         double eta = index.evaluate(si);
         double uRough = uRoughness.evaluate(si);

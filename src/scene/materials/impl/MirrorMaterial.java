@@ -25,7 +25,10 @@ public class MirrorMaterial implements Material
     public void computeScatteringFunctions(SurfaceInteraction si, TransportMode mode,
             boolean allowMultipleLobes)
     {
-        // TODO bumpmapping
+        if (bump != null)
+        {
+            bump(bump, si);
+        }
 
         BidirectionalScatteringDistributionFunction bsdf = new BidirectionalScatteringDistributionFunction(si);
         
