@@ -23,7 +23,9 @@ public class PngImageWriter implements ImageWriter
     public void writeImage(int resolutionX, int resolutionY, double[] pixels) throws IOException
     {
         File imageFile = new File(fileName);
-        if (!imageFile.exists())
+        logger.info("Writing image to " + imageFile.getAbsolutePath());
+
+        if (!imageFile.getParentFile().exists())
         {
             if (!imageFile.getParentFile().mkdirs())
             {
