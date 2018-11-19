@@ -41,7 +41,6 @@ public class InfiniteAreaLight extends Light
         super(EnumSet.of(LightType.INFINITE), lightToWorld, numSamples, new Medium.MediumInterface());
         RGBSpectrum[] texels;
         Point2 resolution;
-        long startInitTexture = System.currentTimeMillis();
         if (fileName != null && !fileName.isEmpty())
         {
             var image = ImageUtilities.getImageArray(fileName, false); // pass in gamma flag?
@@ -58,9 +57,6 @@ public class InfiniteAreaLight extends Light
             texels = new RGBSpectrum[] { new RGBSpectrum(1, 1, 1).times(radiance) };
         }
         radianceMap = new MipMap<>(RGBSpectrum.class, resolution, texels, true, 1, ImageWrap.REPEAT);
-        long endInitTexture = System.currentTimeMillis();
-        
-        logger.info("Spent " + (endInitTexture - startInitTexture) + "ms initializing texture " + fileName + ".");
         
         // compute scalar-valued image from environment map
         int width = (int) resolution.x();
@@ -79,13 +75,8 @@ public class InfiniteAreaLight extends Light
             }
         }
         
-        long endInitLookup = System.currentTimeMillis();
-        logger.info("Spent " + (endInitLookup - endInitTexture) + "ms initializing lookup for " + fileName + ".");
-        
         // compute sampling distributions for rows and columns of image
         distribution = new Distribution2D(img, width, height);
-        long endInitDist = System.currentTimeMillis();
-        logger.info("Spent " + (endInitDist - endInitLookup) + "ms initializing distribution for " + fileName + ".");
     }
     
     @Override

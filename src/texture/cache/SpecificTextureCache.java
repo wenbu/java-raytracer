@@ -2,6 +2,7 @@ package texture.cache;
 
 import core.math.Point2;
 import core.tuple.Pair;
+import metrics.MetricsLogger;
 import texture.impl.MipMap;
 
 import java.util.HashMap;
@@ -14,6 +15,7 @@ public class SpecificTextureCache<T>
     private final Class<T> clazz;
     private final BiFunction<String, Boolean, Pair<T[], Point2>> imageLoaderFunction;
     private final Map<TextureCacheKey, MipMap<T>> cache;
+    private final MetricsLogger metricsLogger = MetricsLogger.getInstance();
 
     public SpecificTextureCache(Class<T> clazz, BiFunction<String, Boolean, Pair<T[], Point2>> imageLoaderFunction)
     {
@@ -29,13 +31,16 @@ public class SpecificTextureCache<T>
 
         if (cache.containsKey(key))
         {
+            metricsLogger.onTextureCacheHit();
             return cache.get(key);
         }
         else
         {
+            metricsLogger.onTextureCacheMiss();
             var tex = imageLoaderFunction.apply(fileName, gamma);
             T[] img = tex.getFirst();
             Point2 resolution = tex.getSecond();
+
             MipMap<T> mipMap = new MipMap<>(clazz, resolution, img, doTrilinear, maxAnisotropy, wrapMode);
             cache.put(key, mipMap);
             return mipMap;

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import core.Ray;
 import core.math.Direction3;
 import core.space.BoundingBox3;
+import metrics.MetricsLogger;
 import scene.interactions.impl.SurfaceInteraction;
 import scene.primitives.Aggregate;
 import scene.primitives.Primitive;
@@ -21,7 +22,7 @@ import scene.primitives.accelerator.bvh.tree.TreeBuilder;
 
 public class BoundingVolumeHierarchy implements Aggregate
 {
-    public static enum SplitMethod
+    public enum SplitMethod
     {
         SURFACE_AREA_HEURISTIC, HLBVH, MIDDLE, EQUAL_COUNTS;
     }
@@ -60,9 +61,7 @@ public class BoundingVolumeHierarchy implements Aggregate
         nodes = treeBuilder.build(primitiveInfos, orderedPrimitives);
         long treeBuildEnd = System.currentTimeMillis();
 
-        logger.info("Spent " + (treeBuildEnd - treeBuildStart) +
-                    "ms building BVH tree with split method " + splitMethod +
-                    ". Number of primitives = " + primitives.size());
+        MetricsLogger.getInstance().onAcceleratorStructureBuilt(treeBuildEnd - treeBuildStart, primitives.size());
         
         this.primitives = Collections.unmodifiableList(orderedPrimitives);
     }

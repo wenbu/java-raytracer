@@ -17,6 +17,7 @@ import core.math.Point2;
 import core.space.BoundingBox2;
 import film.FilmTile;
 import camera.CameraSample;
+import metrics.MetricsLogger;
 import sampler.Sampler;
 import scene.Scene;
 import scene.interactions.impl.SurfaceInteraction;
@@ -26,6 +27,7 @@ import scene.materials.functions.BidirectionalScatteringDistributionFunction;
 public abstract class SamplerIntegrator implements Integrator
 {
     protected static final Logger logger = Logger.getLogger(SamplerIntegrator.class.getName());
+    protected static final MetricsLogger metricsLogger = MetricsLogger.getInstance();
 
     private final Sampler sampler;
     private final Camera camera;
@@ -54,9 +56,7 @@ public abstract class SamplerIntegrator implements Integrator
         long preprocessStart = System.currentTimeMillis();
         preprocess(scene, sampler);
         long preprocessEnd = System.currentTimeMillis();
-        logger.info("Preprocessed scene in " + (preprocessEnd - preprocessStart) + " ms.");
 
-        logger.info("Rendering with " + numThreads + " threads.");
         long renderStart = System.currentTimeMillis();
         BoundingBox2 sampleBounds = camera.getFilm().getSampleBounds();
         Direction2 sampleExtent = sampleBounds.diagonal();
@@ -81,12 +81,14 @@ public abstract class SamplerIntegrator implements Integrator
             logger.log(Level.WARNING, "Executor was interrupted.", e);
         }
         long renderEnd = System.currentTimeMillis();
-        logger.info("Rendered in " + (renderEnd - renderStart) + " ms.");
+        metricsLogger.onRenderComplete(preprocessEnd - preprocessStart, numThreads, renderEnd - renderStart);
 
         long imageWriteStart = System.currentTimeMillis();
         camera.getFilm().writeImage(1);
         long imageWriteEnd = System.currentTimeMillis();
-        logger.info("Wrote image in " + (imageWriteEnd - imageWriteStart) + " ms.");
+        metricsLogger.onOutputComplete(imageWriteEnd - imageWriteStart);
+
+        metricsLogger.outputMetrics();
     }
 
     protected RGBSpectrum getRadiance(RayDifferential ray, Scene scene, Sampler sampler)

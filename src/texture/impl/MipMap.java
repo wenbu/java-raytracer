@@ -11,11 +11,13 @@ import core.BlockedArray;
 import core.colors.RGBSpectrum;
 import core.math.Direction2;
 import core.math.Point2;
+import metrics.MetricsLogger;
 
 public class MipMap<T>
 {
     private static final Logger logger = Logger.getLogger(MipMap.class.getName());
-    
+    private static final MetricsLogger metricsLogger = MetricsLogger.getInstance();
+
     private final Class<T> clazz;
     private final boolean doTrilinear;
     private final double maxAnisotropy;
@@ -61,6 +63,8 @@ public class MipMap<T>
         T[] resampledImage = null;
         if (!isPowerOf2((int) resolution.get(0)) || !isPowerOf2((int) resolution.get(1)))
         {
+            long textureResampleStart = System.currentTimeMillis();
+
             // resample image to power of 2 resolution
             int resizeX = nextPower2((int) resolution.get(0));
             int resizeY = nextPower2((int) resolution.get(1));
@@ -198,6 +202,8 @@ public class MipMap<T>
                 }
             }
             this.resolution = resampledPow2;
+            long textureResampleEnd = System.currentTimeMillis();
+            metricsLogger.onTextureResampled(textureResampleEnd - textureResampleStart);
         }
         else
         {
@@ -205,6 +211,7 @@ public class MipMap<T>
         }
         
         // initialize mipmap levels
+        long mipmapProcessStart = System.currentTimeMillis();
         int nLevels = 1 + log2Int((int) Math.max(this.resolution.get(0), this.resolution.get(1)));
         pyramid = (BlockedArray<T>[]) Array.newInstance(BlockedArray.class, nLevels);
         // initialize most detailed level
@@ -251,6 +258,8 @@ public class MipMap<T>
                 }
             }
         }
+        long mipmapProcessEnd = System.currentTimeMillis();
+        metricsLogger.onMipmapProcessed(mipmapProcessEnd - mipmapProcessStart);
     }
 
     /**

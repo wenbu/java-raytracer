@@ -10,12 +10,14 @@ import javax.imageio.ImageIO;
 import core.colors.RGBSpectrum;
 import core.math.Point2;
 import core.tuple.Pair;
+import metrics.MetricsLogger;
 
 public class ImageUtilities
 {
     public static Pair<RGBSpectrum[], Point2> getImageArray(String filePath, boolean gamma)
     {
         BufferedImage bufferedImage = null;
+        long textureLoadStart = System.currentTimeMillis();
         try
         {
             File img = new File(filePath);
@@ -63,6 +65,8 @@ public class ImageUtilities
                 bufferedImage.flush();
                 bufferedImage = null;
             }
+            long textureLoadEnd = System.currentTimeMillis();
+            MetricsLogger.getInstance().onTextureLoaded(textureLoadEnd - textureLoadStart);
         }
     }
     
@@ -70,6 +74,7 @@ public class ImageUtilities
     {
         File img = new File(filePath);
         BufferedImage bufferedImage = null;
+        long textureLoadStart = System.currentTimeMillis();
         try
         {
             try
@@ -117,6 +122,8 @@ public class ImageUtilities
                 bufferedImage.flush();
                 bufferedImage = null;
             }
+            long textureLoadEnd = System.currentTimeMillis();
+            MetricsLogger.getInstance().onTextureLoaded(textureLoadEnd - textureLoadStart);
         }
     }
     

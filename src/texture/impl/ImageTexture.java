@@ -21,12 +21,7 @@ public class ImageTexture<T> implements Texture<T>
             double maxAnisotropy, ImageWrap wrapMode, double scale, boolean gamma, Class<T> clazz)
     {
         this.mapping = mapping;
-        
-        long start = System.currentTimeMillis();
         mipMap = TextureCache.getInstance().getTexture(fileName, doTrilinear, maxAnisotropy, wrapMode, scale, gamma, clazz);
-        long end = System.currentTimeMillis();
-        
-        logger.info("Spent " + (end - start) + "ms initializing " + fileName + ".");
     }
 
     @Override
