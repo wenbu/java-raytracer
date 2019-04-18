@@ -18,6 +18,7 @@ public enum Metrics
 
     SCENE_PREPROCESS_TIME(INTEGRATOR, "Scene preprocessing time", MS, MetricsLogger.getInstance()::getScenePreprocessTime),
     RENDER_THREAD_COUNT(INTEGRATOR, "Number of rendering threads", NONE, MetricsLogger.getInstance()::getNumRenderingThreads),
+    NUM_TILES(INTEGRATOR, "Number of tiles", NONE, MetricsLogger.getInstance()::getNumTiles),
     TOTAL_RENDER_TIME(INTEGRATOR, "Total render time", MS, MetricsLogger.getInstance()::getTotalRenderTime),
     OUTPUT_WRITE_TIME(INTEGRATOR, "Output write time", MS, MetricsLogger.getInstance()::getOutputWriteTime);
 
@@ -43,6 +44,11 @@ public enum Metrics
 
     public String getStringForLogging()
     {
-        return String.format(INT_FORMAT_STRING, metricName, valueSupplier.get(), unit.toString());
+        Long value = valueSupplier.get();
+        if (value == null)
+        {
+            return null;
+        }
+        return String.format(INT_FORMAT_STRING, metricName, value, unit.toString());
     }
 }

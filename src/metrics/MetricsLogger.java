@@ -11,13 +11,14 @@ public class MetricsLogger
     private static final Logger logger = Logger.getLogger(MetricsLogger.class.getName());
 
     private Long acceleratorBuildTime = null;
-    private Integer numPrimitives = null;
+    private Long numPrimitives = null;
     private Long scenePreprocessTime = null;
-    private Integer numRenderingThreads = null;
+    private Long numRenderingThreads = null;
+    private Long numTiles = null;
     private Long totalRenderTime = null;
     private Long outputWriteTime = null;
-    private final AtomicInteger textureCacheHits = new AtomicInteger();
-    private final AtomicInteger textureCacheMisses = new AtomicInteger();
+    private final AtomicLong textureCacheHits = new AtomicLong();
+    private final AtomicLong textureCacheMisses = new AtomicLong();
     private final AtomicLong textureLoadTimes = new AtomicLong();
     private final AtomicLong textureResampleTimes = new AtomicLong();
     private final AtomicLong mipmapProcessTimes = new AtomicLong();
@@ -32,7 +33,7 @@ public class MetricsLogger
         textureCacheHits.incrementAndGet();
     }
 
-    long getNumTextureCacheHits()
+    Long getNumTextureCacheHits()
     {
         return textureCacheHits.get();
     }
@@ -42,7 +43,7 @@ public class MetricsLogger
         textureCacheMisses.incrementAndGet();
     }
 
-    long getNumTextureCacheMisses()
+    Long getNumTextureCacheMisses()
     {
         return textureCacheMisses.get();
     }
@@ -52,7 +53,7 @@ public class MetricsLogger
         textureLoadTimes.addAndGet(timeToLoad);
     }
 
-    long getTextureLoadTimes()
+    Long getTextureLoadTimes()
     {
         return textureLoadTimes.get();
     }
@@ -62,7 +63,7 @@ public class MetricsLogger
         textureResampleTimes.addAndGet(timeToResample);
     }
 
-    long getTextureResampleTimes()
+    Long getTextureResampleTimes()
     {
         return textureResampleTimes.get();
     }
@@ -72,12 +73,12 @@ public class MetricsLogger
         mipmapProcessTimes.addAndGet(timeToProcess);
     }
 
-    long getMipmapProcessTimes()
+    Long getMipmapProcessTimes()
     {
         return mipmapProcessTimes.get();
     }
 
-    public void onAcceleratorStructureBuilt(long timeToBuild, int numPrimitives)
+    public void onAcceleratorStructureBuilt(long timeToBuild, long numPrimitives)
     {
         if (acceleratorBuildTime == null && this.numPrimitives == null)
         {
@@ -90,22 +91,33 @@ public class MetricsLogger
         }
     }
 
-    long getAcceleratorBuildTime()
+    Long getAcceleratorBuildTime()
     {
         return acceleratorBuildTime;
     }
 
-    long getNumPrimitives()
+    Long getNumPrimitives()
     {
         return numPrimitives;
     }
 
-    public void onRenderComplete(long scenePreprocessTime, int numRenderingThreads, long totalRenderTime)
+    public void onRenderStart(long scenePreprocessTime, long numRenderingThreads, long numTiles)
     {
-        if (this.scenePreprocessTime == null && this.numRenderingThreads == null && this.totalRenderTime == null)
+        if (this.scenePreprocessTime == null && this.numRenderingThreads == null && this.numTiles == null)
         {
             this.scenePreprocessTime = scenePreprocessTime;
             this.numRenderingThreads = numRenderingThreads;
+            this.numTiles = numTiles;
+        }
+        else
+        {
+            throw new RuntimeException("Programming error. Rendering should only start once.");
+        }
+    }
+    public void onRenderComplete(long totalRenderTime)
+    {
+        if (this.totalRenderTime == null)
+        {
             this.totalRenderTime = totalRenderTime;
         }
         else
@@ -114,17 +126,22 @@ public class MetricsLogger
         }
     }
 
-    long getScenePreprocessTime()
+    Long getScenePreprocessTime()
     {
         return scenePreprocessTime;
     }
 
-    long getNumRenderingThreads()
+    Long getNumRenderingThreads()
     {
         return numRenderingThreads;
     }
 
-    long getTotalRenderTime()
+    Long getNumTiles()
+    {
+        return numTiles;
+    }
+
+    Long getTotalRenderTime()
     {
         return totalRenderTime;
     }
@@ -141,7 +158,7 @@ public class MetricsLogger
         }
     }
 
-    long getOutputWriteTime()
+    Long getOutputWriteTime()
     {
         return outputWriteTime;
     }
@@ -169,7 +186,12 @@ public class MetricsLogger
             sb.append(METRIC_TYPE_SEPARATOR);
             for (Metrics metric : categoryMap.get(category))
             {
-                sb.append(metric.getStringForLogging()).append("\n");
+                String loggingString = metric.getStringForLogging();
+                if (loggingString == null)
+                {
+                    continue;
+                }
+                sb.append(loggingString).append("\n");
             }
         }
 
