@@ -57,11 +57,13 @@ public abstract class SamplerIntegrator implements Integrator
         preprocess(scene, sampler);
         long preprocessEnd = System.currentTimeMillis();
 
-        long renderStart = System.currentTimeMillis();
         BoundingBox2 sampleBounds = camera.getFilm().getSampleBounds();
         Direction2 sampleExtent = sampleBounds.diagonal();
         Point2 nTiles = new Point2((int) (sampleExtent.x() + TILE_SIZE - 1) / TILE_SIZE,
                                    (int) (sampleExtent.y() + TILE_SIZE - 1) / TILE_SIZE);
+        metricsLogger.onRenderStart(preprocessEnd - preprocessStart, numThreads, (int) (nTiles.x() * nTiles.y()));
+
+        long renderStart = System.currentTimeMillis();
         for (int y = 0; y < nTiles.y(); y++)
         {
             for (int x = 0; x < nTiles.x(); x++)
@@ -81,7 +83,7 @@ public abstract class SamplerIntegrator implements Integrator
             logger.log(Level.WARNING, "Executor was interrupted.", e);
         }
         long renderEnd = System.currentTimeMillis();
-        metricsLogger.onRenderComplete(preprocessEnd - preprocessStart, numThreads, renderEnd - renderStart);
+        metricsLogger.onRenderComplete(renderEnd - renderStart);
 
         long imageWriteStart = System.currentTimeMillis();
         camera.getFilm().writeImage(1);
