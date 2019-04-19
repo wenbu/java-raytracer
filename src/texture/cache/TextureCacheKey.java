@@ -1,6 +1,6 @@
 package texture.cache;
 
-import texture.impl.MipMap;
+import texture.mipmap.MipMap;
 
 import java.util.Objects;
 

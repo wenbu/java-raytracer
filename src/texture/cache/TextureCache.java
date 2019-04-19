@@ -1,7 +1,7 @@
 package texture.cache;
 
 import core.colors.RGBSpectrum;
-import texture.impl.MipMap;
+import texture.mipmap.MipMap;
 import utilities.ImageUtilities;
 
 import java.util.HashMap;

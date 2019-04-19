@@ -3,7 +3,7 @@ package texture.cache;
 import core.math.Point2;
 import core.tuple.Pair;
 import metrics.MetricsLogger;
-import texture.impl.MipMap;
+import texture.mipmap.MipMap;
 
 import java.util.HashMap;
 import java.util.Map;

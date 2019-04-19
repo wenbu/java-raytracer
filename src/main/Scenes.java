@@ -24,7 +24,7 @@ import scene.primitives.accelerator.bvh.BoundingVolumeHierarchy.SplitMethod;
 import scene.primitives.impl.GeometricPrimitive;
 import texture.Texture;
 import texture.impl.*;
-import texture.impl.MipMap.ImageWrap;
+import texture.mipmap.MipMap.ImageWrap;
 import texture.mapping.TextureMapping2D;
 import texture.mapping.impl.PlanarMapping2D;
 import texture.mapping.impl.SphericalMapping2D;

@@ -21,8 +21,8 @@ import scene.Scene;
 import scene.interactions.Interaction;
 import scene.lights.Light;
 import scene.medium.Medium;
-import texture.impl.MipMap;
-import texture.impl.MipMap.ImageWrap;
+import texture.mipmap.MipMap;
+import texture.mipmap.MipMap.ImageWrap;
 import utilities.ImageUtilities;
 import utilities.MathUtilities;
 

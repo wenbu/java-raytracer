@@ -7,7 +7,8 @@ import core.math.Point2;
 import scene.interactions.impl.SurfaceInteraction;
 import texture.Texture;
 import texture.cache.TextureCache;
-import texture.impl.MipMap.ImageWrap;
+import texture.mipmap.MipMap;
+import texture.mipmap.MipMap.ImageWrap;
 import texture.mapping.TextureMapping2D;
 
 public class ImageTexture<T> implements Texture<T>
