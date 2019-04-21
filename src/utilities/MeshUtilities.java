@@ -5,10 +5,11 @@ import java.util.List;
 import core.math.Point3;
 import core.math.Transformation;
 import scene.geometry.impl.Triangle;
+import scene.geometry.impl.TriangleMesh;
 
 public class MeshUtilities
 {
-    public static List<Triangle> createSingleTriangle(Transformation objectToWorld, Point3 p1,
+    public static TriangleMesh createSingleTriangle(Transformation objectToWorld, Point3 p1,
             Point3 p2, Point3 p3)
     {
         return Triangle.createTriangleMesh(objectToWorld,
@@ -25,7 +26,7 @@ public class MeshUtilities
     /**
      * Create a unit square centered on the origin with normal (0, 0, 1) with the specified transformation. 
      */
-    public static List<Triangle> createQuad(Transformation objectToWorld)
+    public static TriangleMesh createQuad(Transformation objectToWorld)
     {
         Point3[] points = new Point3[] { new Point3(-0.5, -0.5, 0),
                                          new Point3(-0.5,  0.5, 0),
@@ -47,7 +48,7 @@ public class MeshUtilities
     /**
      * Create a unit cube with the specified transformation.
      */
-    public static List<Triangle> createCube(Transformation objectToWorld, boolean reverseOrientation)
+    public static TriangleMesh createCube(Transformation objectToWorld, boolean reverseOrientation)
     {
         Point3[] points = new Point3[] { new Point3(-0.5, -0.5, -0.5),
                                          new Point3(-0.5, -0.5,  0.5),

@@ -35,13 +35,19 @@ public class Triangle extends Shape
         pointIndex = 3 * triNumber;
     }
     
-    public static List<Triangle> createTriangleMesh(Transformation objectToWorld, Transformation worldToObject,
+    public static TriangleMesh createTriangleMesh(Transformation objectToWorld, Transformation worldToObject,
             boolean reverseOrientation, int numTriangles, int[] vertexIndices, Point3[] p,
             Direction3[] s, Normal3[] n, Point2[] uv/* , Texture alphaMask */)
     {
         TriangleMesh mesh = new TriangleMesh(objectToWorld, numTriangles, vertexIndices, p, s, n, uv);
+        return mesh;
+    }
+
+    public static List<Triangle> getTriangles(TriangleMesh mesh, Transformation objectToWorld,
+                                              Transformation worldToObject, boolean reverseOrientation)
+    {
         List<Triangle> triangles = new LinkedList<>();
-        for (int i = 0; i < numTriangles; i++)
+        for (int i = 0; i < mesh.getNumTriangles(); i++)
         {
             triangles.add(new Triangle(objectToWorld, worldToObject, reverseOrientation, mesh, i));
         }

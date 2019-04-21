@@ -65,6 +65,11 @@ public class TriangleMesh
             s = null;
         }
     }
+
+    public int getNumTriangles()
+    {
+        return numTriangles;
+    }
     
     public Point3 getPoint(int index)
     {
