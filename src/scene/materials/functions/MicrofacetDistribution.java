@@ -61,10 +61,11 @@ public abstract class MicrofacetDistribution
     }
     
     /**
-     * Sample the normal vector distribution.
+     * Sample the normal vector distribution. First a microfacet orientation is sampled, then the incident direction
+     * is found using specular reflection or transmission.
      * @param wo outgoing direction
      * @param u sample
-     * @return
+     * @return sampled incident direction
      */
     public abstract Direction3 sampleNormalDistribution(Direction3 wo, Point2 u);
     

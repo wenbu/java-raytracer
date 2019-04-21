@@ -12,7 +12,7 @@ import film.Film;
 import film.filter.impl.MitchellFilter;
 import integrator.Integrator;
 import integrator.impl.DirectLightingIntegrator;
-import integrator.impl.DirectLightingIntegrator.LightStrategy;
+import integrator.impl.PathIntegrator;
 import sampler.Sampler;
 import sampler.impl.StratifiedSampler;
 import scene.Scene;
@@ -22,18 +22,18 @@ public class Main
     // TODO: scene parser
     public static void main(String[] args)
     {
-        Sampler sampler = new StratifiedSampler(5, 5, true, 4);
+        Sampler sampler = new StratifiedSampler(8, 8, true, 4);
 
-        Point2 resolution = new Point2(512, 512);
+        Point2 resolution = new Point2(1024, 1024);
         Film film = getFilm(resolution);
         
-        Point3 cameraPosition = new Point3(0, 0, 2);
+        Point3 cameraPosition = new Point3(0, 0, 0);
         Point3 cameraLookAt = new Point3(0, -20, 0);
         Direction3 cameraUp = new Direction3(0, 0, 1);
         Camera camera = getCamera(cameraPosition, cameraLookAt, cameraUp, resolution, 40, film);
 
-        Integrator integrator = new DirectLightingIntegrator(sampler, camera, LightStrategy.UNIFORM_SAMPLE_ALL, 5);
-        Scene scene = Scenes.oneSphere();
+        Integrator integrator = new PathIntegrator(5, camera, sampler);
+        Scene scene = Scenes.cornellBox();
 
         integrator.render(scene);
     }
