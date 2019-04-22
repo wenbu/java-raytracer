@@ -85,11 +85,11 @@ public class ProgressTracker
         }
         else if (minutes > 0)
         {
-            return String.format("%02dm%.2fs (%d)", minutes, seconds, millis);
+            return String.format("%02dm%.2fs", minutes, seconds);
         }
         else
         {
-            return String.format("%.2fs (%d)", seconds, millis);
+            return String.format("%.2fs", seconds);
         }
     }
 }
