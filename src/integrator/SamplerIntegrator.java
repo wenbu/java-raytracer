@@ -18,6 +18,7 @@ import core.space.BoundingBox2;
 import film.FilmTile;
 import camera.CameraSample;
 import metrics.MetricsLogger;
+import metrics.ProgressTracker;
 import sampler.Sampler;
 import scene.Scene;
 import scene.interactions.impl.SurfaceInteraction;
@@ -35,6 +36,8 @@ public abstract class SamplerIntegrator implements Integrator
     private final ExecutorService executor;
     private final int numThreads;
     private static final int TILE_SIZE = 16;
+
+    private ProgressTracker progressTracker;
     
     public SamplerIntegrator(Sampler sampler, Camera camera)
     {
@@ -61,7 +64,11 @@ public abstract class SamplerIntegrator implements Integrator
         Direction2 sampleExtent = sampleBounds.diagonal();
         Point2 nTiles = new Point2((int) (sampleExtent.x() + TILE_SIZE - 1) / TILE_SIZE,
                                    (int) (sampleExtent.y() + TILE_SIZE - 1) / TILE_SIZE);
-        metricsLogger.onRenderStart(preprocessEnd - preprocessStart, numThreads, (int) (nTiles.x() * nTiles.y()));
+        int numTiles = (int) (nTiles.x() * nTiles.y());
+        logger.info(String.format("Rendering %d tiles with %d threads.", numTiles, numThreads));
+        progressTracker = new ProgressTracker(numTiles);
+        progressTracker.updateProgressBar();
+        metricsLogger.onRenderStart(preprocessEnd - preprocessStart, numThreads, numTiles);
 
         long renderStart = System.currentTimeMillis();
         for (int y = 0; y < nTiles.y(); y++)
@@ -292,6 +299,7 @@ public abstract class SamplerIntegrator implements Integrator
                 } while (tileSampler.startNextSample());
             }
             camera.getFilm().mergeFilmTile(filmTile);
+            progressTracker.onTileCompleted();
         }
 
     }
