@@ -19,6 +19,7 @@ public enum Metrics
     SCENE_PREPROCESS_TIME(INTEGRATOR, "Scene preprocessing time", MS, MetricsLogger.getInstance()::getScenePreprocessTime),
     RENDER_THREAD_COUNT(INTEGRATOR, "Number of rendering threads", NONE, MetricsLogger.getInstance()::getNumRenderingThreads),
     NUM_TILES(INTEGRATOR, "Number of tiles", NONE, MetricsLogger.getInstance()::getNumTiles),
+    TILES_SKIPPED(INTEGRATOR, "Number of tiles skipped", NONE, MetricsLogger.getInstance()::getNumTilesSkipped),
     TOTAL_RENDER_TIME(INTEGRATOR, "Total render time", MS, MetricsLogger.getInstance()::getTotalRenderTime),
     OUTPUT_WRITE_TIME(INTEGRATOR, "Output write time", MS, MetricsLogger.getInstance()::getOutputWriteTime);
 

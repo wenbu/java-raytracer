@@ -11,6 +11,7 @@ import core.space.BoundingBox2;
 import film.Film;
 import film.filter.impl.MitchellFilter;
 import integrator.Integrator;
+import integrator.SamplerIntegrator;
 import integrator.impl.DirectLightingIntegrator;
 import integrator.impl.PathIntegrator;
 import sampler.Sampler;
@@ -20,11 +21,11 @@ import scene.Scene;
 public class Main
 {
     // TODO: scene parser
-    public static void main(String[] args)
+    public static void main(String[] args) throws InterruptedException
     {
-        Sampler sampler = new StratifiedSampler(8, 8, true, 4);
+        Sampler sampler = new StratifiedSampler(2, 2, true, 4);
 
-        Point2 resolution = new Point2(1024, 1024);
+        Point2 resolution = new Point2(512, 512);
         Film film = getFilm(resolution);
         
         Point3 cameraPosition = new Point3(0, 0, 0);
@@ -35,6 +36,7 @@ public class Main
         Integrator integrator = new PathIntegrator(5, camera, sampler);
         Scene scene = Scenes.cornellBox();
 
+        Runtime.getRuntime().addShutdownHook(new Thread(integrator::shutdownNow));
         integrator.render(scene);
     }
     
@@ -44,7 +46,8 @@ public class Main
                              new BoundingBox2(0, 0, 1, 1),
                              new MitchellFilter(new Direction2(1, 1), 0.6, 0.2),
                              100,
-                             "img/img-" + System.currentTimeMillis() + ".png",
+                             "img",
+                             "img-" + System.currentTimeMillis(),
                              1);
         return film;
     }

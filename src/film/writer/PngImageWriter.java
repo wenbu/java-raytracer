@@ -22,10 +22,10 @@ public class PngImageWriter implements ImageWriter
     @Override
     public void writeImage(int resolutionX, int resolutionY, double[] pixels) throws IOException
     {
-        File imageFile = new File(fileName);
-        logger.info("Writing image to " + imageFile.getAbsolutePath());
+        File imageFile = new File(fileName + ".png");
+        logger.fine("Writing image to " + imageFile.getAbsolutePath());
 
-        if (!imageFile.getParentFile().exists())
+        if (imageFile.getParentFile() != null && !imageFile.getParentFile().exists())
         {
             if (!imageFile.getParentFile().mkdirs())
             {

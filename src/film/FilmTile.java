@@ -21,7 +21,7 @@ public class FilmTile
     
     private final int myTileNum;
     private static AtomicInteger tileNum = new AtomicInteger();
-    
+
     public FilmTile(BoundingBox2 pixelBounds, Direction2 filterRadius, double[] filter, int filterTableWidth)
     {
         this.pixelBounds = pixelBounds;
@@ -37,7 +37,19 @@ public class FilmTile
         {
             pixels.add(new FilmTilePixel());
         }
-        
+    }
+
+    // placeholder
+    public FilmTile(int tileNum, BoundingBox2 pixelBounds, List<FilmTilePixel> pixels)
+    {
+        this.pixelBounds = pixelBounds;
+        this.pixels = pixels;
+        myTileNum = tileNum;
+
+        filterRadius = null;
+        invFilterRadius = null;
+        filter = null;
+        filterTableWidth = 0;
     }
     
     public int getTileNum()
@@ -47,6 +59,7 @@ public class FilmTile
     
     public void addSample(Point2 pFilm, RGBSpectrum radiance, double sampleWeight)
     {
+        // Get the bounds of pixels affected by this sample
         Point2 pFilmDiscrete = pFilm.minus(new Direction2(0.5, 0.5));
         Point2 p0 = pFilmDiscrete.minus(filterRadius).ceil();
         Point2 p1 = pFilmDiscrete.plus(filterRadius).floor().plus(new Direction2(1, 1));
@@ -54,25 +67,13 @@ public class FilmTile
         p1 = Point2.min(p1, pixelBounds.get(1));
         
         // precompute x and y table offsets
-        int ifxSize = (int) p1.x() - (int) p0.x();
-        if (ifxSize < 0)
-        {
-            System.out.println("lmao");
-            return;
-        }
         int[] ifx = new int[(int) p1.x() - (int) p0.x()];
         for (int x = (int) p0.x(); x < (int) p1.x(); x++)
         {
             double fx = Math.abs((x - pFilmDiscrete.x()) * invFilterRadius.x() * filterTableWidth);
             ifx[x - (int)p0.x()] = Math.min((int)Math.floor(fx), filterTableWidth - 1);
         }
-        
-        int ifySize = (int) p1.y() - (int) p0.y();
-        if (ifySize < 0)
-        {
-            System.out.println("lmao");
-            return;
-        }
+
         int[] ify = new int[(int) p1.y() - (int) p0.y()];
         for (int y = (int) p0.y(); y < (int) p1.y(); y++)
         {
@@ -109,10 +110,31 @@ public class FilmTile
         return pixelBounds;
     }
     
+    public String getFileName()
+    {
+        return getFileName(pixelBounds);
+    }
+
+    public static String getFileName(BoundingBox2 boundingBox)
+    {
+        return String.format("%d-%d-%d-%d", (int) boundingBox.get(0).x(), (int) boundingBox.get(0).y(),
+                             (int) boundingBox.get(1).x(), (int) boundingBox.get(1).y());
+    }
+
     public static class FilmTilePixel
     {
         private RGBSpectrum contributionSum = new RGBSpectrum(0, 0, 0);
         private double filterWeightSum = 0;
+
+        FilmTilePixel()
+        {
+        }
+
+        public FilmTilePixel(RGBSpectrum color, double filterWeight)
+        {
+            contributionSum = color;
+            filterWeightSum = filterWeight;
+        }
         
         public void addContribution(RGBSpectrum color)
         {

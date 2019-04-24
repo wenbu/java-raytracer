@@ -93,11 +93,20 @@ public abstract class SamplerIntegrator implements Integrator
         metricsLogger.onRenderComplete(renderEnd - renderStart);
 
         long imageWriteStart = System.currentTimeMillis();
+        camera.getFilm().mergeFilmTiles();
         camera.getFilm().writeImage(1);
         long imageWriteEnd = System.currentTimeMillis();
         metricsLogger.onOutputComplete(imageWriteEnd - imageWriteStart);
 
         metricsLogger.outputMetrics();
+    }
+
+    @Override
+    public void shutdownNow()
+    {
+        logger.info("Shutting down.");
+        executor.shutdownNow();
+        camera.getFilm().mergeFilmTiles();
     }
 
     protected RGBSpectrum getRadiance(RayDifferential ray, Scene scene, Sampler sampler)
@@ -246,7 +255,6 @@ public abstract class SamplerIntegrator implements Integrator
         @Override
         public void run()
         {
-
             int x0 = (int) sampleBounds.get(0).x() + (int) tile.x() * TILE_SIZE;
             int x1 = Math.min(x0 + TILE_SIZE, (int) sampleBounds.get(1).x());
             int y0 = (int) sampleBounds.get(0).y() + (int) tile.y() * TILE_SIZE;
@@ -254,6 +262,12 @@ public abstract class SamplerIntegrator implements Integrator
             BoundingBox2 tileBounds = new BoundingBox2(new Point2(x0, y0), new Point2(x1, y1));
 
             FilmTile filmTile = camera.getFilm().getFilmTile(tileBounds);
+            if (filmTile == null)
+            {
+                progressTracker.onTileCompleted();
+                metricsLogger.onTileSkipped();
+                return;
+            }
             for (Point2 pixel : tileBounds)
             {
                 tileSampler.startPixel(pixel);
@@ -298,7 +312,7 @@ public abstract class SamplerIntegrator implements Integrator
                     filmTile.addSample(cameraSample.getPFilm(), radiance, rayWeight);
                 } while (tileSampler.startNextSample());
             }
-            camera.getFilm().mergeFilmTile(filmTile);
+            camera.getFilm().onFilmTileComplete(filmTile);
             progressTracker.onTileCompleted();
         }
 

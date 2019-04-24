@@ -22,6 +22,7 @@ public class MetricsLogger
     private final AtomicLong textureLoadTimes = new AtomicLong();
     private final AtomicLong textureResampleTimes = new AtomicLong();
     private final AtomicLong mipmapProcessTimes = new AtomicLong();
+    private final AtomicLong tilesSkipped = new AtomicLong();
 
     public static MetricsLogger getInstance()
     {
@@ -161,6 +162,16 @@ public class MetricsLogger
     Long getOutputWriteTime()
     {
         return outputWriteTime;
+    }
+
+    public void onTileSkipped()
+    {
+        this.tilesSkipped.incrementAndGet();
+    }
+
+    Long getNumTilesSkipped()
+    {
+        return tilesSkipped.get();
     }
 
     private static final String METRIC_TYPE_SEPARATOR = "--------------------------------------------------------------------------------\n";

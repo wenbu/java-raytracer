@@ -1,8 +1,9 @@
 package film;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -30,16 +31,23 @@ public class Film
     private static final int FILTER_TABLE_WIDTH = 16;
     private double[] filterTable;
 
+    private final String outputDirectory;
+    private final String fileName;
+    private final String tileDirectory;
     private final ImageWriter imageWriter;
     
-    public Film(Point2 resolution, BoundingBox2 cropWindow, Filter filter, double diagonal, String fileName,
+    public Film(Point2 resolution, BoundingBox2 cropWindow, Filter filter, double diagonal, String outputDirectory, String fileName,
             double scale)
     {
         this.resolution = resolution;
         this.filter = filter;
         this.diagonal = diagonal * 0.001;
         this.scale = scale;
-        this.imageWriter = new PngImageWriter(fileName);
+        this.outputDirectory = outputDirectory;
+        tileDirectory = outputDirectory + "/" + fileName;
+        this.fileName = fileName;
+
+        this.imageWriter = new PngImageWriter(outputDirectory + "/" + fileName);
         
         croppedPixelBounds = new BoundingBox2(new Point2(Math.ceil(resolution.x() * cropWindow.get(0).x()),
                                                          Math.ceil(resolution.y() * cropWindow.get(0).y())),
@@ -80,12 +88,118 @@ public class Film
     
     public FilmTile getFilmTile(BoundingBox2 sampleBounds)
     {
-        Direction2 halfPixel = new Direction2(0.5, 0.5);
         BoundingBox2 bounds = new BoundingBox2(sampleBounds);
+        Direction2 halfPixel = new Direction2(0.5, 0.5);
         Point2 p0 = bounds.get(0).minus(halfPixel).minus(filter.getRadius()).ceil();
         Point2 p1 = bounds.get(1).minus(halfPixel).plus(filter.getRadius()).floor();
         BoundingBox2 tilePixelBounds = new BoundingBox2(p0, p1).intersect(croppedPixelBounds);
+
+        String tileFileName = FilmTile.getFileName(tilePixelBounds);
+        File tileFile = new File(tileDirectory, tileFileName);
+        if (tileFile.exists())
+        {
+            return null;
+        }
+
         return new FilmTile(tilePixelBounds, filter.getRadius(), filterTable, FILTER_TABLE_WIDTH);
+    }
+
+    public void onFilmTileComplete(FilmTile filmTile)
+    {
+        // Write tile information to file
+        double[] tilePixels = new double[3 * filmTile.getPixelBounds().integerArea()];
+        double[] tileWeights = new double[filmTile.getPixelBounds().integerArea()];
+        int tileIndex = 0;
+
+        for (Point2 pixel : filmTile.getPixelBounds())
+        {
+            FilmTilePixel tilePixel = filmTile.getPixel(pixel);
+            double[] xyz = tilePixel.getContribution().toXYZ();
+
+            tileWeights[tileIndex] = tilePixel.getFilterWeight();
+
+            tilePixels[3 * tileIndex] = xyz[0];
+            tilePixels[3 * tileIndex + 1] = xyz[1];
+            tilePixels[3 * tileIndex + 2] = xyz[2];
+            tileIndex += 1;
+        }
+
+        // TODO dedicated writer class?
+        File weightFile = new File(tileDirectory, filmTile.getFileName());
+        weightFile.getParentFile().mkdirs();
+        try(PrintStream weightOutput = new PrintStream(new FileOutputStream(weightFile)))
+        {
+            weightOutput.println(filmTile.getTileNum());
+            for (int i = 0; i < tileWeights.length; i++)
+            {
+                weightOutput.println("{");
+                weightOutput.println("    " + tilePixels[3 * i]);
+                weightOutput.println("    " + tilePixels[3 * i + 1]);
+                weightOutput.println("    " + tilePixels[3 * i + 2]);
+                weightOutput.println("    " + tileWeights[i]);
+                weightOutput.println("},");
+            }
+        }
+        catch (IOException e)
+        {
+            logger.severe("Failed to write tile image data for " + filmTile.getFileName() + ": " + e);
+        }
+    }
+
+    // Read film tiles on disk and merge them
+    public void mergeFilmTiles()
+    {
+        File tileDir = new File(tileDirectory);
+        if (!tileDir.exists())
+        {
+            throw new IllegalStateException(
+                    "Programming error. Tile directory " + tileDir.getAbsolutePath() + " does not exist.");
+        }
+        File[] tiles = tileDir.listFiles();
+        if (tiles == null)
+        {
+            logger.warning("No tiles available in directory " + tileDir.getAbsolutePath());
+            return;
+        }
+
+        for (File file : tiles)
+        {
+            // TODO dedicated reader class?
+            String fileName = file.getName();
+            String[] nameComponents = fileName.split("\\.")[0].split("-");
+            //int tileNum = Integer.valueOf(nameComponents[4]);
+            Point2 min = new Point2(Double.valueOf(nameComponents[0]), Double.valueOf(nameComponents[1]));
+            Point2 max = new Point2(Double.valueOf(nameComponents[2]), Double.valueOf(nameComponents[3]));
+            List<FilmTile.FilmTilePixel> filmTilePixels = new LinkedList<>();
+
+            try (BufferedReader reader = new BufferedReader(new FileReader(file)))
+            {
+                String line;
+                int tileNum = Integer.valueOf(reader.readLine());
+                while ((line = reader.readLine()) != null)
+                {
+                    if (line.contains("{") || line.contains("}"))
+                    {
+                        continue;
+                    }
+
+                    double r = Double.valueOf(line);
+                    double g = Double.valueOf(reader.readLine());
+                    double b = Double.valueOf(reader.readLine());
+                    double weight = Double.valueOf(reader.readLine());
+
+                    filmTilePixels.add(new FilmTile.FilmTilePixel(new RGBSpectrum(r, g, b), weight));
+                }
+
+                FilmTile filmTile = new FilmTile(tileNum, new BoundingBox2(min, max), filmTilePixels);
+                mergeFilmTile(filmTile);
+            }
+            catch (IOException e)
+            {
+                logger.severe("Failed to read tile " + file.getAbsolutePath() + ": " + e);
+            }
+        }
+        // TODO delete tile dir when done? flag?
     }
     
     public synchronized void mergeFilmTile(FilmTile filmTile)
